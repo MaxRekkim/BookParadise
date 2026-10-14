@@ -1,0 +1,56 @@
+name: Build iOS IPA (BookParadise)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-ipa:
+    name: Build Unsigned IPA for Sideloading
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Select Latest Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app
+          xcodebuild -version
+
+      - name: Build Archive (No Code Signing Required)
+        run: |
+          xcodebuild build \
+            -project BookParadise.xcodeproj \
+            -scheme BookParadise \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            BUILD_DIR=build
+
+      - name: Package .app into .ipa
+        run: |
+          mkdir -p Payload
+          # Находим скомпилированное приложение BookParadise.app
+          APP_PATH=$(find build/Release-iphoneos -name "BookParadise.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "Error: BookParadise.app not found in build directory!"
+            exit 1
+          fi
+          echo "Found app at: $APP_PATH"
+          cp -r "$APP_PATH" Payload/
+          zip -r BookParadise.ipa Payload
+          rm -rf Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BookParadise-iOS
+          path: BookParadise.ipa
+          retention-days: 14
