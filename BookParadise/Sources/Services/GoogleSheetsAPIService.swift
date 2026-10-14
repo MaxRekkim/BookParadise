@@ -102,7 +102,27 @@ public class GoogleSheetsAPIService: ObservableObject {
             throw APIError.serverError("Код ответа сервера: \((response as? HTTPURLResponse)?.statusCode ?? -1)")
         }
         
-        let syncResponse = try JSONDecoder().decode(SyncResponse.self, from: data)
+        // Проверка: вернул ли сервер HTML (например, страницу входа Google вместо JSON)
+        if let responseString = String(data: data, encoding: .utf8) {
+            let trimmed = responseString.trimmingCharacters(in: .whitespacesAndNewlines)
+            if trimmed.hasPrefix("<") || trimmed.contains("<!DOCTYPE") || trimmed.contains("<html") {
+                if trimmed.contains("accounts.google.com") || trimmed.contains("ServiceLogin") {
+                    throw APIError.serverError("Google требует авторизацию! В настройках развертывания веб-приложения выберите: «У кого есть доступ: Все (Anyone)» вместо «Только я».")
+                } else if trimmed.contains("ScriptError") || trimmed.contains("Authorization") {
+                    throw APIError.serverError("Требуется подтвердить права доступа в Google Apps Script. В редакторе скрипта нажмите «Выполнить» и разрешите доступ.")
+                } else {
+                    throw APIError.serverError("Google вернул HTML-страницу вместо JSON. Убедитесь, что ссылка заканчивается на /exec и доступ открыт для «Всех».")
+                }
+            }
+        }
+        
+        let syncResponse: SyncResponse
+        do {
+            syncResponse = try JSONDecoder().decode(SyncResponse.self, from: data)
+        } catch let decodeError {
+            throw APIError.serverError("Ошибка разбора данных: \(decodeError.localizedDescription). Проверьте корректность таблицы.")
+        }
+        
         if !syncResponse.success {
             throw APIError.serverError(syncResponse.error ?? "Неизвестная ошибка Google Apps Script")
         }

@@ -47,6 +47,28 @@ public struct BingoItem: Identifiable, Codable, Hashable {
         guard let speed = speedPagesPerDay, speed > 0 else { return false }
         return speed >= plannedPagesPerDay
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case id, title, author, planMonth, totalPages
+        case startDate, endDate, genre, speedPagesPerDay
+        case sortKey, planDays, plannedPagesPerDay
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(Int.self, forKey: .id) ?? 1
+        title = try container.decodeIfPresent(String.self, forKey: .title) ?? ""
+        author = try container.decodeIfPresent(String.self, forKey: .author) ?? ""
+        planMonth = (try container.decodeIfPresent(String.self, forKey: .planMonth) ?? "").uppercased()
+        totalPages = try container.decodeIfPresent(Int.self, forKey: .totalPages) ?? 1
+        startDate = try container.decodeIfPresent(String.self, forKey: .startDate)
+        endDate = try container.decodeIfPresent(String.self, forKey: .endDate)
+        genre = try container.decodeIfPresent(String.self, forKey: .genre) ?? ""
+        speedPagesPerDay = try container.decodeIfPresent(Double.self, forKey: .speedPagesPerDay)
+        sortKey = try container.decodeIfPresent(String.self, forKey: .sortKey)
+        planDays = try container.decodeIfPresent(Int.self, forKey: .planDays) ?? 3
+        plannedPagesPerDay = try container.decodeIfPresent(Double.self, forKey: .plannedPagesPerDay) ?? Double(totalPages / max(1, planDays))
+    }
 }
 
 // MARK: - Книжный Цикл (Серия)
