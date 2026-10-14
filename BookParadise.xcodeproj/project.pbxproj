@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A11C0DE123456789ABCDEF01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11C0DE223456789ABCDEF02 /* Assets.xcassets */; };
 		E4830BD84B2E07F7A6C99C3C /* BookParadiseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877B4DF7790352BDB710122A /* BookParadiseApp.swift */; };
 		0406C60041C9C1E05C1CBC5F /* LibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296DD7C36A7010814F00EADC /* LibraryViewModel.swift */; };
 		2F7CB2045D22F2C180772523 /* BingoAndCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B31F051912C52A30FC0ADD33 /* BingoAndCycle.swift */; };
@@ -31,6 +32,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A11C0DE223456789ABCDEF02 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = BookParadise/Resources/Assets.xcassets; sourceTree = "<group>"; };
 		4CF1DABA89BE0C55C3BC784F /* BookParadise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BookParadise.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC4275F37C711520F972BFA7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BookParadise/Resources/Info.plist; sourceTree = "<group>"; };
 		877B4DF7790352BDB710122A /* BookParadiseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/BookParadiseApp.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 			children = (
 				D8459709F6D9BD48D2B42821 /* Sources */,
 				DC4275F37C711520F972BFA7 /* Info.plist */,
+				A11C0DE223456789ABCDEF02 /* Assets.xcassets */,
 				6D159F361021D92BC3E10E55 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -169,6 +172,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A11C0DE123456789ABCDEF01 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
