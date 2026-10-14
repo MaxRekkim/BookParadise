@@ -21,10 +21,21 @@ jobs:
           sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app
           xcodebuild -version
 
+      - name: Find Xcode Project
+        id: find-project
+        run: |
+          PROJ_PATH=$(find . -name "BookParadise.xcodeproj" -type d | head -n 1)
+          if [ -z "$PROJ_PATH" ]; then
+            echo "Error: BookParadise.xcodeproj not found!"
+            exit 1
+          fi
+          echo "project_path=$PROJ_PATH" >> $GITHUB_OUTPUT
+          echo "Found project at: $PROJ_PATH"
+
       - name: Build Archive (No Code Signing Required)
         run: |
           xcodebuild build \
-            -project BookParadise.xcodeproj \
+            -project "${{ steps.find-project.outputs.project_path }}" \
             -scheme BookParadise \
             -configuration Release \
             -sdk iphoneos \
@@ -37,8 +48,7 @@ jobs:
       - name: Package .app into .ipa
         run: |
           mkdir -p Payload
-          # Находим скомпилированное приложение BookParadise.app
-          APP_PATH=$(find build/Release-iphoneos -name "BookParadise.app" -type d | head -n 1)
+          APP_PATH=$(find build -name "BookParadise.app" -type d | head -n 1)
           if [ -z "$APP_PATH" ]; then
             echo "Error: BookParadise.app not found in build directory!"
             exit 1

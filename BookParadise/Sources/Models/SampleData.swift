@@ -273,7 +273,7 @@ public struct SampleData {
         ]
         
         let readTarget = 77
-        let currentRead = list.filter { $0.status == .read }.count
+        var currentRead = list.filter { $0.status == .read }.count
         
         for item in titlesPool {
             if currentRead >= readTarget { break }

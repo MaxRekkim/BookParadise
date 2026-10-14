@@ -75,7 +75,7 @@ public class GoogleSheetsAPIService: ObservableObject {
         guard FileManager.default.fileExists(atPath: cacheFileURL.path) else { return nil }
         do {
             let data = try Data(contentsOf: cacheFileURL)
-            let wrapper = try JSONDecoder().decode(CachedDataWrapper.self, data: data)
+            let wrapper = try JSONDecoder().decode(CachedDataWrapper.self, from: data)
             return (wrapper.books, wrapper.bingo)
         } catch {
             print("Failed to load local cache: \(error)")
@@ -102,7 +102,7 @@ public class GoogleSheetsAPIService: ObservableObject {
             throw APIError.serverError("Код ответа сервера: \((response as? HTTPURLResponse)?.statusCode ?? -1)")
         }
         
-        let syncResponse = try JSONDecoder().decode(SyncResponse.self, data: data)
+        let syncResponse = try JSONDecoder().decode(SyncResponse.self, from: data)
         if !syncResponse.success {
             throw APIError.serverError(syncResponse.error ?? "Неизвестная ошибка Google Apps Script")
         }
@@ -249,7 +249,7 @@ public class GoogleSheetsAPIService: ObservableObject {
     private func loadPendingQueue() {
         guard FileManager.default.fileExists(atPath: queueFileURL.path),
               let data = try? Data(contentsOf: queueFileURL),
-              let items = try? JSONDecoder().decode([PendingAction].self, data: data) else {
+              let items = try? JSONDecoder().decode([PendingAction].self, from: data) else {
             return
         }
         pendingQueue = items
