@@ -72,17 +72,13 @@ const GENRES = [
  * Обработка GET-запроса: загрузка базы данных и статистики в приложение
  */
 function doGet(e) {
-  const lock = LockService.getScriptLock();
   try {
-    // Ждем до 10 секунд освобождения блокировки при параллельных чтениях/записях
-    lock.waitLock(10000);
-    
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const booksSheet = ss.getSheetByName(SHEET_BOOKS);
     const bingoSheet = ss.getSheetByName(SHEET_BINGO);
     
     if (!booksSheet) {
-      return jsonResponse({ success: false, error: "Лист «" + SHEET_BOOKS + "» не найден в таблице." });
+      return jsonResponse({ success: false, error: "Лист «" + SHEET_BOOKS + "» не найден в таблице. Проверьте название листа." });
     }
 
     // 1. Читаем книги из «База книг»
@@ -152,8 +148,6 @@ function doGet(e) {
 
   } catch (err) {
     return jsonResponse({ success: false, error: err.toString() });
-  } finally {
-    lock.releaseLock();
   }
 }
 
@@ -162,9 +156,9 @@ function doGet(e) {
  */
 function doPost(e) {
   const lock = LockService.getScriptLock();
+  let hasLock = false;
   try {
-    // Блокировка на 30 секунд для предотвращения конфликтов при конкурентной записи
-    lock.waitLock(30000);
+    hasLock = lock.tryLock(10000);
 
     if (!e || !e.postData || !e.postData.contents) {
       return jsonResponse({ success: false, error: "Тело запроса пустое (No POST payload)" });
@@ -206,7 +200,9 @@ function doPost(e) {
   } catch (err) {
     return jsonResponse({ success: false, error: err.toString() });
   } finally {
-    lock.releaseLock();
+    if (hasLock) {
+      try { lock.releaseLock(); } catch(e) {}
+    }
   }
 }
 
