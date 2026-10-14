@@ -43,14 +43,15 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            BUILD_DIR=build
+            BUILD_DIR="${{ github.workspace }}/build"
 
       - name: Package .app into .ipa
         run: |
           mkdir -p Payload
-          APP_PATH=$(find build -name "BookParadise.app" -type d | head -n 1)
+          # Ищем скомпилированное приложение BookParadise.app по всей директории
+          APP_PATH=$(find . -name "BookParadise.app" -type d | head -n 1)
           if [ -z "$APP_PATH" ]; then
-            echo "Error: BookParadise.app not found in build directory!"
+            echo "Error: BookParadise.app not found!"
             exit 1
           fi
           echo "Found app at: $APP_PATH"
