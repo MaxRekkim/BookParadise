@@ -74,7 +74,7 @@ public final class ImageCacheManager {
             
             // Сохранение на диск в фоновом потоке
             diskQueue.async { [weak self] in
-                guard let self = self else { return }
+                guard self != nil else { return }
                 try? data.write(to: diskURL, options: [.atomic])
             }
             

@@ -419,7 +419,7 @@ public class LibraryViewModel: ObservableObject {
         }
     }
     
-    private func recalculateStats() {
+    public func recalculateStats() {
         var read = 0
         var inProg = 0
         var unread = 0
@@ -512,7 +512,7 @@ public class LibraryViewModel: ObservableObject {
     }
     
     private func prefetchCovers() {
-        let urls = books.compactMap { $0.coverURL }
+        let urls = books.compactMap { $0.cleanCoverURL }
         ImageCacheManager.shared.prefetch(urls: urls)
     }
     
