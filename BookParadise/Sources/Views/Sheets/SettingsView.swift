@@ -1,14 +1,22 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 public struct SettingsView: View {
     @ObservedObject public var viewModel: LibraryViewModel
     @ObservedObject private var theme = ThemeManager.shared
+    @ObservedObject private var cloudSync = iCloudSyncManager.shared
     @Environment(\.dismiss) private var dismiss
     
     @State private var webAppURL: String = ""
     @State private var isTestingConnection: Bool = false
     @State private var testResultMessage: String? = nil
     @State private var isSuccess: Bool = false
+    @State private var cacheSizeText: String = ""
+    
+    @State private var exportURL: URL? = nil
+    @State private var isShowingImporter: Bool = false
+    @State private var importAlertMessage: String? = nil
+    @State private var isShowingImportAlert: Bool = false
     
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -152,7 +160,60 @@ public struct SettingsView: View {
                     }
                 }
                 
-                Section(header: Text("Локальные данные")) {
+                // MARK: - Синхронизация между устройствами (iCloud & Бэкапы)
+                Section(header: Text("Синхронизация между устройствами (iCloud)"), footer: Text("Автоматически синхронизирует библиотеку между вашим iPhone, iPad и Mac через личный iCloud.")) {
+                    HStack {
+                        Image(systemName: cloudSync.isICloudAvailable ? "icloud.fill" : "icloud.slash")
+                            .foregroundColor(cloudSync.isICloudAvailable ? .blue : .secondary)
+                        Text("Статус:")
+                        Spacer()
+                        Text(cloudSync.syncStatusMessage)
+                            .font(.caption)
+                            .foregroundColor(cloudSync.isICloudAvailable ? .primary : .secondary)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    
+                    if let exportURL = exportURL {
+                        ShareLink(item: exportURL, preview: SharePreview("Резервная копия Книжный Рай", image: Image(systemName: "books.vertical.fill"))) {
+                            HStack {
+                                Image(systemName: "square.and.arrow.up")
+                                Text("Поделиться бэкапом (AirDrop / Файлы)")
+                            }
+                            .foregroundColor(theme.primaryAccent)
+                        }
+                    } else {
+                        Button(action: generateBackupFile) {
+                            HStack {
+                                Image(systemName: "arrow.down.doc")
+                                Text("Экспортировать резервную копию")
+                            }
+                        }
+                    }
+                    
+                    Button(action: { isShowingImporter = true }) {
+                        HStack {
+                            Image(systemName: "arrow.up.doc")
+                            Text("Импортировать базу из файла")
+                        }
+                    }
+                }
+                
+                Section(header: Text("Локальные данные и кэш")) {
+                    HStack {
+                        Text("Кэш обложек на диске")
+                        Spacer()
+                        Text(cacheSizeText)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Button(action: clearCoverCache) {
+                        HStack {
+                            Image(systemName: "trash")
+                            Text("Очистить кэш обложек")
+                        }
+                        .foregroundColor(.red)
+                    }
+                    
                     Button(role: .destructive, action: resetToDefaultSample) {
                         HStack {
                             Image(systemName: "arrow.counterclockwise")
@@ -168,8 +229,41 @@ public struct SettingsView: View {
                     Button("Готово") { dismiss() }
                 }
             }
+            .fileImporter(
+                isPresented: $isShowingImporter,
+                allowedContentTypes: [.json],
+                allowsMultipleSelection: false
+            ) { result in
+                switch result {
+                case .success(let urls):
+                    if let fileURL = urls.first {
+                        do {
+                            let imported = try iCloudSyncManager.shared.importBackup(from: fileURL)
+                            viewModel.books = imported.books
+                            viewModel.bingoItems = imported.bingo
+                            viewModel.recalculateStats()
+                            viewModel.persistData()
+                            importAlertMessage = "Успешно импортировано книг: \(imported.books.count)"
+                            isShowingImportAlert = true
+                        } catch {
+                            importAlertMessage = "Ошибка импорта: \(error.localizedDescription)"
+                            isShowingImportAlert = true
+                        }
+                    }
+                case .failure(let error):
+                    importAlertMessage = "Ошибка выбора файла: \(error.localizedDescription)"
+                    isShowingImportAlert = true
+                }
+            }
+            .alert("Резервная копия", isPresented: $isShowingImportAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(importAlertMessage ?? "")
+            }
             .onAppear {
                 webAppURL = GoogleSheetsAPIService.shared.apiURLString
+                cacheSizeText = ImageCacheManager.shared.formattedCacheSize()
+                cloudSync.checkICloudStatus()
             }
         }
     }
@@ -231,6 +325,17 @@ public struct SettingsView: View {
                 }
             }
         }
+    }
+    
+    private func clearCoverCache() {
+        ImageCacheManager.shared.clearAllCache()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            cacheSizeText = ImageCacheManager.shared.formattedCacheSize()
+        }
+    }
+    
+    private func generateBackupFile() {
+        self.exportURL = iCloudSyncManager.shared.createExportFileURL(books: viewModel.books, bingo: viewModel.bingoItems)
     }
     
     private func resetToDefaultSample() {

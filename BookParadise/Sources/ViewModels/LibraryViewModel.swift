@@ -68,18 +68,23 @@ public class LibraryViewModel: ObservableObject {
     
     // MARK: - Инициализация (Offline-First)
     public func loadInitialData() {
-        if let cached = GoogleSheetsAPIService.shared.loadFromLocalCache() {
+        if let stored = iCloudSyncManager.shared.load() {
+            self.books = stored.books
+            self.bingoItems = stored.bingo
+        } else if let cached = GoogleSheetsAPIService.shared.loadFromLocalCache() {
             self.books = cached.books
             self.bingoItems = cached.bingo
+            iCloudSyncManager.shared.save(books: self.books, bingo: self.bingoItems)
         } else {
             // Если кэша еще нет — загружаем эталонную базу
             self.books = SampleData.generateInitialBooks()
             self.bingoItems = SampleData.generateInitialBingo()
-            GoogleSheetsAPIService.shared.saveToLocalCache(books: self.books, bingo: self.bingoItems)
+            persistData()
         }
         
         recalculateStats()
         updateMetadataLists()
+        prefetchCovers()
         
         // Фоновая синхронизация, если настроен URL
         if GoogleSheetsAPIService.shared.isConfigured {
@@ -110,6 +115,8 @@ public class LibraryViewModel: ObservableObject {
                 recalculateStats()
             }
             updateMetadataLists()
+            prefetchCovers()
+            persistData()
             self.lastSyncDate = Date()
         } catch {
             self.errorMessage = error.localizedDescription
@@ -165,7 +172,7 @@ public class LibraryViewModel: ObservableObject {
         }
         
         recalculateStats()
-        GoogleSheetsAPIService.shared.saveToLocalCache(books: books, bingo: bingoItems)
+        persistData()
         
         // Отправляем фоновый POST-запрос в таблицу
         GoogleSheetsAPIService.shared.postProgressUpdate(
@@ -217,7 +224,7 @@ public class LibraryViewModel: ObservableObject {
         books.insert(newBook, at: 0)
         recalculateStats()
         updateMetadataLists()
-        GoogleSheetsAPIService.shared.saveToLocalCache(books: books, bingo: bingoItems)
+        persistData()
         
         // Фоновый запрос в Google Таблицу
         GoogleSheetsAPIService.shared.postAddBook(book: newBook)
@@ -257,7 +264,7 @@ public class LibraryViewModel: ObservableObject {
             bingoItems.append(newItem)
         }
         
-        GoogleSheetsAPIService.shared.saveToLocalCache(books: books, bingo: bingoItems)
+        persistData()
         GoogleSheetsAPIService.shared.postUpdatePlan(bookId: book.id, month: cleanMonth, planDays: planDays)
     }
     
@@ -267,7 +274,7 @@ public class LibraryViewModel: ObservableObject {
         bingoItems[idx].planDays = clamped
         bingoItems[idx].plannedPagesPerDay = Double(bingoItems[idx].totalPages / clamped)
         
-        GoogleSheetsAPIService.shared.saveToLocalCache(books: books, bingo: bingoItems)
+        persistData()
         GoogleSheetsAPIService.shared.postUpdatePlan(bookId: item.id, month: bingoItems[idx].planMonth, planDays: clamped)
     }
     
@@ -502,6 +509,16 @@ public class LibraryViewModel: ObservableObject {
         
         self.availableAuthors = Array(authorsSet).sorted()
         self.availableEditions = Array(editionsSet).sorted()
+    }
+    
+    private func prefetchCovers() {
+        let urls = books.compactMap { $0.coverURL }
+        ImageCacheManager.shared.prefetch(urls: urls)
+    }
+    
+    public func persistData() {
+        iCloudSyncManager.shared.save(books: books, bingo: bingoItems)
+        GoogleSheetsAPIService.shared.saveToLocalCache(books: books, bingo: bingoItems)
     }
     
     private func formatDate(_ date: Date) -> String {

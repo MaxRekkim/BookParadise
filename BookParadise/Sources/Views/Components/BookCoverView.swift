@@ -8,34 +8,32 @@ public struct BookCoverView: View {
     public let genre: Genre
     public var cornerRadius: CGFloat = 8
     
+    @State private var image: UIImage?
+    @State private var isLoading: Bool = false
+    
     public init(coverURL: URL?, title: String, author: String = "", genre: Genre = .modernProse, cornerRadius: CGFloat = 8) {
         self.coverURL = coverURL
         self.title = title
         self.author = author
         self.genre = genre
         self.cornerRadius = cornerRadius
+        
+        if let url = coverURL, let mem = ImageCacheManager.shared.cachedImageInMemory(for: url) {
+            _image = State(initialValue: mem)
+        }
     }
     
     public var body: some View {
         Group {
-            if let url = coverURL {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .empty:
-                        ZStack {
-                            placeholderView
-                            ProgressView()
-                                .tint(.white)
-                        }
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    case .failure:
-                        placeholderView
-                    @unknown default:
-                        placeholderView
-                    }
+            if let img = image {
+                Image(uiImage: img)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } else if isLoading {
+                ZStack {
+                    placeholderView
+                    ProgressView()
+                        .tint(.white)
                 }
             } else {
                 placeholderView
@@ -48,6 +46,32 @@ public struct BookCoverView: View {
                 .stroke(Color.primary.opacity(0.08), lineWidth: 1)
         )
         .shadow(color: Color.black.opacity(0.12), radius: 4, x: 0, y: 2)
+        .task(id: coverURL) {
+            await loadCover()
+        }
+    }
+    
+    private func loadCover() async {
+        guard let url = coverURL else {
+            image = nil
+            isLoading = false
+            return
+        }
+        
+        if let mem = ImageCacheManager.shared.cachedImageInMemory(for: url) {
+            self.image = mem
+            self.isLoading = false
+            return
+        }
+        
+        isLoading = true
+        let loaded = await ImageCacheManager.shared.loadImage(from: url)
+        if !Task.isCancelled {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                self.image = loaded
+                self.isLoading = false
+            }
+        }
     }
     
     private var placeholderView: some View {
