@@ -48,6 +48,7 @@
 		A10000172345678900000017 /* ThinkingOrbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000172345678900000017 /* ThinkingOrbView.swift */; };
 		A10000182345678900000018 /* ReadingChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000182345678900000018 /* ReadingChallengeView.swift */; };
 		A10000192345678900000019 /* BookFilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000192345678900000019 /* BookFilterSheet.swift */; };
+		A10000202345678900000020 /* QuoteCardTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000202345678900000020 /* QuoteCardTheme.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -94,6 +95,7 @@
 		B10000172345678900000017 /* ThinkingOrbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ThinkingOrbView.swift; sourceTree = "<group>"; };
 		B10000182345678900000018 /* ReadingChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/ReadingChallengeView.swift; sourceTree = "<group>"; };
 		B10000192345678900000019 /* BookFilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/BookFilterSheet.swift; sourceTree = "<group>"; };
+		B10000202345678900000020 /* QuoteCardTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/QuoteCardTheme.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +162,7 @@
 				B10000172345678900000017 /* ThinkingOrbView.swift */,
 				B10000182345678900000018 /* ReadingChallengeView.swift */,
 				B10000192345678900000019 /* BookFilterSheet.swift */,
+				B10000202345678900000020 /* QuoteCardTheme.swift */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -280,6 +283,7 @@
 				A10000172345678900000017 /* ThinkingOrbView.swift in Sources */,
 				A10000182345678900000018 /* ReadingChallengeView.swift in Sources */,
 				A10000192345678900000019 /* BookFilterSheet.swift in Sources */,
+				A10000202345678900000020 /* QuoteCardTheme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,7 +350,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -355,7 +359,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.3.1;
+				MARKETING_VERSION = 2.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -372,7 +376,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -381,7 +385,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.3.1;
+				MARKETING_VERSION = 2.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;

@@ -33,6 +33,20 @@ public class QuotesManager: ObservableObject {
         saveQuotes()
     }
 
+    public func updateQuote(id: UUID, text: String? = nil, pageNumber: Int? = nil, note: String? = nil, clearNote: Bool = false) {
+        guard let index = quotes.firstIndex(where: { $0.id == id }) else { return }
+        var updated = quotes[index]
+        if let text = text { updated.text = text.trimmingCharacters(in: .whitespacesAndNewlines) }
+        if let pageNumber = pageNumber { updated.pageNumber = pageNumber }
+        if clearNote {
+            updated.note = nil
+        } else if let note = note {
+            updated.note = note.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        quotes[index] = updated
+        saveQuotes()
+    }
+
     private func saveQuotes() {
         do {
             let data = try JSONEncoder().encode(quotes)

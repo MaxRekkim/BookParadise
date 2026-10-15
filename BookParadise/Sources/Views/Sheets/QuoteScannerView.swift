@@ -11,6 +11,7 @@ public struct QuoteScannerView: View {
     @State private var quoteText: String = ""
     @State private var pageNumberText: String = ""
     @State private var personalNote: String = ""
+    @State private var hasPersonalNote: Bool = false
     @State private var isShowingCameraPicker: Bool = false
     @State private var isProcessingOCR: Bool = false
     @State private var recognizedFragments: [String] = []
@@ -97,7 +98,39 @@ public struct QuoteScannerView: View {
                             .frame(width: 120)
                     }
 
-                    TextField("Личная мысль / Заметка к цитате", text: $personalNote)
+                    Toggle(isOn: $hasPersonalNote.animation()) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "note.text")
+                                .foregroundColor(theme.primaryAccent)
+                            Text("Добавить личную заметку")
+                                .font(.subheadline)
+                        }
+                    }
+
+                    if hasPersonalNote {
+                        VStack(alignment: .leading, spacing: 8) {
+                            TextField("Личная мысль / Заметка к цитате", text: $personalNote, axis: .vertical)
+                                .lineLimit(2...4)
+
+                            HStack {
+                                Spacer()
+                                Button(role: .destructive, action: {
+                                    withAnimation {
+                                        personalNote = ""
+                                        hasPersonalNote = false
+                                    }
+                                }) {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "xmark.circle")
+                                        Text("Убрать поле заметки")
+                                    }
+                                    .font(.caption2)
+                                    .foregroundColor(.red)
+                                }
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
                 }
 
                 // Предпросмотр цитаты
@@ -167,11 +200,15 @@ public struct QuoteScannerView: View {
 
     private func saveQuote() {
         let pageNum = Int(pageNumberText)
+        let noteToSave = hasPersonalNote && !personalNote.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? personalNote.trimmingCharacters(in: .whitespacesAndNewlines)
+            : nil
+
         quotesManager.addQuote(
             bookId: book.id,
             text: quoteText,
             pageNumber: pageNum,
-            note: personalNote.isEmpty ? nil : personalNote
+            note: noteToSave
         )
         dismiss()
     }

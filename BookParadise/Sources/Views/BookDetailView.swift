@@ -151,29 +151,33 @@ public struct BookDetailView: View {
 
                     HStack(spacing: 12) {
                         Button(action: { isShowingProgressUpdate = true }) {
-                            HStack {
+                            HStack(spacing: 6) {
                                 Image(systemName: "pencil")
                                 Text("Изменить страницы")
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.8)
                             }
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .foregroundColor(theme.primaryAccent)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
+                            .frame(height: 44)
                             .background(theme.primaryAccent.opacity(0.12))
                             .cornerRadius(10)
                         }
 
                         Button(action: { isShowingPlanSheet = true }) {
-                            HStack {
+                            HStack(spacing: 6) {
                                 Image(systemName: "calendar.badge.plus")
                                 Text("В план бинго")
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.8)
                             }
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .foregroundColor(theme.primaryAccent)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
+                            .frame(height: 44)
                             .background(theme.primaryAccent.opacity(0.12))
                             .cornerRadius(10)
                         }

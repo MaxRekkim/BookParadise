@@ -10,6 +10,12 @@ public struct QuoteCardShareView: View {
     @ObservedObject private var quotesManager = QuotesManager.shared
     @ObservedObject private var theme = ThemeManager.shared
 
+    @State private var selectedTheme: QuoteCardTheme = .parchment
+    @State private var currentNote: String = ""
+    @State private var showNoteOnCard: Bool = true
+    @State private var isShowingNoteEditor: Bool = false
+    @State private var noteDraftText: String = ""
+
     @State private var renderedCardImage: UIImage? = nil
     @State private var isCardCopied: Bool = false
     @State private var isTextCopied: Bool = false
@@ -20,6 +26,17 @@ public struct QuoteCardShareView: View {
         self.quote = quote
         self.book = book
         self.onDismiss = onDismiss
+
+        let initialNote = quote.note ?? ""
+        _currentNote = State(initialValue: initialNote)
+        _showNoteOnCard = State(initialValue: !initialNote.isEmpty)
+
+        if let savedKey = UserDefaults.standard.string(forKey: "SelectedQuoteCardTheme"),
+           let savedTheme = QuoteCardTheme(rawValue: savedKey) {
+            _selectedTheme = State(initialValue: savedTheme)
+        } else {
+            _selectedTheme = State(initialValue: .parchment)
+        }
     }
 
     private func closeSheet() {
@@ -32,15 +49,19 @@ public struct QuoteCardShareView: View {
     public var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: 20) {
                     // Сама открытка-цитата (которую можно сохранить как изображение)
                     quoteCard
                         .padding(.horizontal, 16)
                         .padding(.top, 12)
 
+                    // Блок персонализации (Выбор темы оформления и управление заметкой)
+                    personalizationPanel
+                        .padding(.horizontal, 16)
+
                     // Блок действий шеринга
                     VStack(spacing: 12) {
-                        // 1. Быстрое копирование открытки (PNG) в буфер обмена (идеально для Mac, Telegram, Заметок)
+                        // 1. Быстрое копирование открытки (PNG) в буфер обмена
                         Button(action: copyCardImageToClipboard) {
                             HStack {
                                 Image(systemName: isCardCopied ? "checkmark.circle.fill" : "doc.on.clipboard.fill")
@@ -54,7 +75,7 @@ public struct QuoteCardShareView: View {
                             .cornerRadius(12)
                         }
 
-                        // 2. Системный экспорт/поделиться (нативный ShareLink SwiftUI без блокирующих модальных окон)
+                        // 2. Системный экспорт/поделиться
                         if let img = renderedCardImage {
                             ShareLink(
                                 item: Image(uiImage: img),
@@ -93,7 +114,7 @@ public struct QuoteCardShareView: View {
                         Button(action: copyQuoteText) {
                             HStack {
                                 Image(systemName: isTextCopied ? "checkmark" : "doc.on.doc")
-                                Text(isTextCopied ? "Текст скопирован в буфер!" : "Скопировать только текст цитаты")
+                                Text(isTextCopied ? "Текст скопирован в буфер!" : "Скопировать текст цитаты")
                             }
                             .font(.subheadline)
                             .foregroundColor(.secondary)
@@ -108,7 +129,7 @@ public struct QuoteCardShareView: View {
                             }
                             .font(.caption)
                             .foregroundColor(.red)
-                            .padding(.top, 6)
+                            .padding(.top, 4)
                         }
                     }
                     .padding(.horizontal, 20)
@@ -136,13 +157,192 @@ public struct QuoteCardShareView: View {
                 }
                 Button("Отмена", role: .cancel) {}
             }
+            .sheet(isPresented: $isShowingNoteEditor) {
+                NavigationStack {
+                    Form {
+                        Section(header: Text("Личная мысль / Заметка к цитате")) {
+                            TextEditor(text: $noteDraftText)
+                                .frame(minHeight: 120)
+                        }
+                    }
+                    .navigationTitle(currentNote.isEmpty ? "Новая заметка" : "Редактировать заметку")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Отмена") { isShowingNoteEditor = false }
+                        }
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Сохранить") {
+                                let trimmed = noteDraftText.trimmingCharacters(in: .whitespacesAndNewlines)
+                                currentNote = trimmed
+                                showNoteOnCard = !trimmed.isEmpty
+                                quotesManager.updateQuote(id: quote.id, note: trimmed.isEmpty ? nil : trimmed, clearNote: trimmed.isEmpty)
+                                isShowingNoteEditor = false
+                                generateCardImage()
+                            }
+                        }
+                    }
+                }
+                #if targetEnvironment(macCatalyst)
+                .frame(minWidth: 420, minHeight: 320)
+                #endif
+            }
             .onAppear {
                 generateCardImage()
             }
         }
         #if targetEnvironment(macCatalyst)
-        .frame(minWidth: 480, idealWidth: 520, minHeight: 620, idealHeight: 720)
+        .frame(minWidth: 500, idealWidth: 540, minHeight: 680, idealHeight: 760)
         #endif
+    }
+
+    // MARK: - Панель персонализации темы и заметки
+    private var personalizationPanel: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            // Заголовок блока
+            HStack {
+                Image(systemName: "paintpalette.fill")
+                    .foregroundColor(theme.primaryAccent)
+                Text("Тема и оформление открытки")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.secondary)
+                    .textCase(.uppercase)
+            }
+
+            // Горизонтальный скролл с палитрами тем
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(QuoteCardTheme.allCases) { cardTheme in
+                        Button(action: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                                selectedTheme = cardTheme
+                                UserDefaults.standard.set(cardTheme.rawValue, forKey: "SelectedQuoteCardTheme")
+                                generateCardImage()
+                            }
+                        }) {
+                            VStack(spacing: 6) {
+                                ZStack {
+                                    Circle()
+                                        .fill(cardTheme.cardBackground)
+                                        .frame(width: 44, height: 44)
+                                        .shadow(color: Color.black.opacity(0.12), radius: 3, x: 0, y: 1)
+
+                                    Circle()
+                                        .stroke(cardTheme.accentColor, lineWidth: selectedTheme == cardTheme ? 3 : 1)
+                                        .frame(width: 44, height: 44)
+
+                                    Image(systemName: cardTheme.icon)
+                                        .font(.system(size: 15, weight: .semibold))
+                                        .foregroundColor(cardTheme.accentColor)
+                                }
+
+                                Text(cardTheme.title)
+                                    .font(.caption2)
+                                    .fontWeight(selectedTheme == cardTheme ? .bold : .medium)
+                                    .foregroundColor(selectedTheme == cardTheme ? theme.primaryAccent : .secondary)
+                            }
+                            .padding(.vertical, 2)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 2)
+            }
+
+            Divider()
+
+            // Управление полем заметки
+            VStack(spacing: 10) {
+                HStack {
+                    Toggle(isOn: $showNoteOnCard) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "note.text")
+                                .foregroundColor(theme.primaryAccent)
+                            Text("Показывать заметку на открытке")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                        }
+                    }
+                    .tint(theme.primaryAccent)
+                    .onChange(of: showNoteOnCard) { _ in
+                        generateCardImage()
+                    }
+                }
+
+                if showNoteOnCard {
+                    if currentNote.isEmpty {
+                        // Кнопка добавления заметки к цитате
+                        Button(action: {
+                            noteDraftText = ""
+                            isShowingNoteEditor = true
+                        }) {
+                            HStack {
+                                Image(systemName: "plus.circle.fill")
+                                Text("Добавить личную заметку к цитате")
+                            }
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(theme.primaryAccent)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .background(theme.primaryAccent.opacity(0.1))
+                            .cornerRadius(8)
+                        }
+                    } else {
+                        // Заметка есть: просмотр, редактирование и удаление
+                        HStack(alignment: .top, spacing: 8) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Текст заметки:")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                Text("«\(currentNote)»")
+                                    .font(.caption)
+                                    .foregroundColor(.primary)
+                                    .italic()
+                                    .lineLimit(2)
+                            }
+
+                            Spacer()
+
+                            Button(action: {
+                                noteDraftText = currentNote
+                                isShowingNoteEditor = true
+                            }) {
+                                Image(systemName: "pencil")
+                                    .font(.caption)
+                                    .foregroundColor(theme.primaryAccent)
+                                    .padding(7)
+                                    .background(theme.primaryAccent.opacity(0.12))
+                                    .clipShape(Circle())
+                            }
+
+                            Button(action: {
+                                withAnimation {
+                                    currentNote = ""
+                                    showNoteOnCard = false
+                                    quotesManager.updateQuote(id: quote.id, clearNote: true)
+                                    generateCardImage()
+                                }
+                            }) {
+                                Image(systemName: "trash")
+                                    .font(.caption)
+                                    .foregroundColor(.red)
+                                    .padding(7)
+                                    .background(Color.red.opacity(0.1))
+                                    .clipShape(Circle())
+                            }
+                        }
+                        .padding(10)
+                        .background(Color(UIColor.tertiarySystemGroupedBackground))
+                        .cornerRadius(10)
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(16)
     }
 
     // MARK: - Дизайн открытки цитаты
@@ -152,7 +352,7 @@ public struct QuoteCardShareView: View {
             HStack(alignment: .center) {
                 Image(systemName: "quote.opening")
                     .font(.system(size: 32, weight: .bold))
-                    .foregroundColor(theme.primaryAccent)
+                    .foregroundColor(selectedTheme.accentColor)
 
                 Spacer()
 
@@ -164,10 +364,10 @@ public struct QuoteCardShareView: View {
                             .font(.caption)
                             .fontWeight(.semibold)
                     }
-                    .foregroundColor(theme.primaryAccent)
+                    .foregroundColor(selectedTheme.accentColor)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
-                    .background(theme.primaryAccent.opacity(0.1))
+                    .background(selectedTheme.accentColor.opacity(0.14))
                     .cornerRadius(8)
                 }
             }
@@ -178,34 +378,34 @@ public struct QuoteCardShareView: View {
                 .fontWeight(.regular)
                 .italic()
                 .lineSpacing(6)
-                .foregroundColor(Color(red: 0.14, green: 0.12, blue: 0.10))
+                .foregroundColor(selectedTheme.primaryText)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            // Заметка читателя (если есть)
-            if let note = quote.note, !note.isEmpty {
+            // Заметка читателя (если включена и не пустая)
+            if showNoteOnCard && !currentNote.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 4) {
                         Image(systemName: "pencil.line")
                             .font(.caption2)
-                            .foregroundColor(theme.secondaryAccent)
+                            .foregroundColor(selectedTheme.accentColor)
                         Text("Заметка:")
                             .font(.caption2)
                             .fontWeight(.bold)
-                            .foregroundColor(theme.secondaryAccent)
+                            .foregroundColor(selectedTheme.accentColor)
                     }
-                    Text(note)
+                    Text(currentNote)
                         .font(.footnote)
-                        .foregroundColor(Color(red: 0.28, green: 0.25, blue: 0.22))
+                        .foregroundColor(selectedTheme.secondaryText)
                         .italic()
                 }
                 .padding(10)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(red: 0.93, green: 0.91, blue: 0.87))
+                .background(selectedTheme.noteBackground)
                 .cornerRadius(8)
             }
 
             Divider()
-                .overlay(Color(red: 0.85, green: 0.82, blue: 0.78))
+                .overlay(selectedTheme.dividerColor)
 
             // Футер открытки: Автор, Название и брендинг «Книжный Рай»
             HStack(alignment: .bottom) {
@@ -213,13 +413,13 @@ public struct QuoteCardShareView: View {
                     Text(book.author)
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(Color(red: 0.45, green: 0.40, blue: 0.38))
+                        .foregroundColor(selectedTheme.secondaryText)
                         .textCase(.uppercase)
 
                     Text(book.title)
                         .font(.subheadline)
                         .fontWeight(.heavy)
-                        .foregroundColor(Color(red: 0.14, green: 0.12, blue: 0.10))
+                        .foregroundColor(selectedTheme.primaryText)
                 }
 
                 Spacer()
@@ -227,25 +427,25 @@ public struct QuoteCardShareView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "sparkles")
                         .font(.caption2)
-                        .foregroundColor(theme.primaryAccent)
+                        .foregroundColor(selectedTheme.accentColor)
                     Text("Книжный Рай")
                         .font(.caption2)
                         .fontWeight(.semibold)
-                        .foregroundColor(theme.primaryAccent)
+                        .foregroundColor(selectedTheme.accentColor)
                 }
             }
         }
         .padding(24)
         .background(
             RoundedRectangle(cornerRadius: 18)
-                .fill(theme.paperBackground)
+                .fill(selectedTheme.cardBackground)
                 .shadow(color: Color.black.opacity(0.08), radius: 14, x: 0, y: 6)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 18)
-                .stroke(theme.primaryAccent.opacity(0.2), lineWidth: 1)
+                .stroke(selectedTheme.borderColor, lineWidth: 1)
         )
-        .environment(\.colorScheme, .light)
+        .environment(\.colorScheme, selectedTheme.isDark ? .dark : .light)
     }
 
     // MARK: - Действия
@@ -295,8 +495,8 @@ public struct QuoteCardShareView: View {
         if let page = quote.pageNumber, page > 0 {
             formatted += " (стр. \(page))"
         }
-        if let note = quote.note, !note.isEmpty {
-            formatted += "\nЗаметка: \(note)"
+        if showNoteOnCard && !currentNote.isEmpty {
+            formatted += "\nЗаметка: \(currentNote)"
         }
         UIPasteboard.general.string = formatted
         isTextCopied = true
