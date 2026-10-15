@@ -1,4 +1,6 @@
 import SwiftUI
+import UniformTypeIdentifiers
+import QuickLook
 
 public struct BookDetailView: View {
     @ObservedObject public var viewModel: LibraryViewModel
@@ -7,12 +9,15 @@ public struct BookDetailView: View {
 
     @ObservedObject private var quotesManager = QuotesManager.shared
     @ObservedObject private var theme = ThemeManager.shared
+    @ObservedObject private var eBookStorage = EBookStorageManager.shared
 
     @State private var isShowingProgressUpdate: Bool = false
     @State private var isShowingPlanSheet: Bool = false
     @State private var isShowingQuoteScanner: Bool = false
     @State private var selectedQuoteForShare: BookQuote? = nil
     @State private var isShowingReadingSession: Bool = false
+    @State private var isShowingFileImporter: Bool = false
+    @State private var previewFileURL: URL? = nil
 
     public init(viewModel: LibraryViewModel, bookId: Int) {
         self.viewModel = viewModel
@@ -173,6 +178,9 @@ public struct BookDetailView: View {
                 .background(Color(UIColor.secondarySystemGroupedBackground))
                 .cornerRadius(16)
 
+                // Электронная книга / Файл книги (PDF, EPUB)
+                eBookSection(for: book)
+
                 // Цитаты и заметки из книги (OCR / Apple Vision)
                 quotesSection(for: book)
 
@@ -254,6 +262,123 @@ public struct BookDetailView: View {
         .sheet(isPresented: $isShowingReadingSession) {
             ReadingSessionView(viewModel: viewModel, book: book)
         }
+        .fileImporter(
+            isPresented: $isShowingFileImporter,
+            allowedContentTypes: [.pdf, .plainText, UTType(filenameExtension: "epub") ?? .data, UTType(filenameExtension: "fb2") ?? .data],
+            allowsMultipleSelection: false
+        ) { result in
+            switch result {
+            case .success(let urls):
+                if let url = urls.first {
+                    eBookStorage.saveBookFile(bookId: book.id, from: url)
+                }
+            case .failure(let error):
+                print("File import failed: \(error)")
+            }
+        }
+        .quickLookPreview($previewFileURL)
+    }
+
+    // MARK: - Секция Электронной книги / Файла (PDF / EPUB)
+    private func eBookSection(for book: Book) -> some View {
+        let hasFile = eBookStorage.hasFile(for: book.id)
+        let fileName = eBookStorage.fileDisplayName(for: book.id)
+        let fileSize = eBookStorage.fileSizeFormatted(for: book.id)
+
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "doc.text.fill")
+                    .foregroundColor(theme.primaryAccent)
+                Text("Файл книги (PDF / EPUB)")
+                    .font(.headline)
+                Spacer()
+                if hasFile {
+                    Text(fileSize ?? "")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            if hasFile, let name = fileName {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(spacing: 10) {
+                        Image(systemName: name.hasSuffix(".epub") ? "book.closed.fill" : "doc.fill")
+                            .font(.title2)
+                            .foregroundColor(theme.primaryAccent)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(name)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .lineLimit(1)
+                            Text("Файл сохранён в памяти приложения")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                    }
+                    .padding(10)
+                    .background(theme.primaryAccent.opacity(0.06))
+                    .cornerRadius(10)
+
+                    HStack(spacing: 10) {
+                        Button(action: {
+                            if let url = eBookStorage.fileURL(for: book.id) {
+                                previewFileURL = url
+                            }
+                        }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "book.fill")
+                                Text("Читать в приложении")
+                            }
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(theme.primaryAccent)
+                            .cornerRadius(10)
+                        }
+
+                        Button(role: .destructive, action: {
+                            eBookStorage.removeBookFile(bookId: book.id)
+                        }) {
+                            Image(systemName: "trash")
+                                .font(.subheadline)
+                                .foregroundColor(.red)
+                                .padding(10)
+                                .background(Color.red.opacity(0.1))
+                                .cornerRadius(10)
+                        }
+                    }
+                }
+            } else {
+                VStack(spacing: 8) {
+                    Text("Электронный файл книги не прикреплен")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Button(action: { isShowingFileImporter = true }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "arrow.down.doc.fill")
+                            Text("Прикрепить PDF / EPUB")
+                        }
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(theme.primaryAccent)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(theme.primaryAccent.opacity(0.12))
+                        .cornerRadius(8)
+                    }
+                }
+                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+            }
+        }
+        .padding()
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(16)
     }
 
     // MARK: - Секция Цитат и заметок

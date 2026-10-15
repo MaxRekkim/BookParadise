@@ -28,12 +28,14 @@ public struct LibraryView: View {
                             Image(systemName: "arrow.up.arrow.down")
                             Text(viewModel.sortOption.rawValue)
                                 .font(.caption)
+                                .fontWeight(.medium)
                         }
                         .foregroundColor(.primary)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
                         .background(Color(UIColor.secondarySystemGroupedBackground))
                         .cornerRadius(8)
+                        .contentShape(Rectangle())
                     }
                     
                     // Фильтр по жанру
@@ -48,13 +50,15 @@ public struct LibraryView: View {
                             Image(systemName: "line.3.horizontal.decrease.circle")
                             Text(viewModel.selectedGenreFilter?.rawValue ?? "Жанр")
                                 .font(.caption)
+                                .fontWeight(.medium)
                                 .lineLimit(1)
                         }
                         .foregroundColor(viewModel.selectedGenreFilter == nil ? .primary : .orange)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
                         .background(Color(UIColor.secondarySystemGroupedBackground))
                         .cornerRadius(8)
+                        .contentShape(Rectangle())
                     }
                     
                     Spacer()
@@ -143,10 +147,10 @@ public struct LibraryView: View {
         }
     }
     
-    // MARK: - Сетка обложек (3 в ряд как книжная полка)
+    // MARK: - Адаптивная сетка обложек (подстраивается под iPhone, iPad и Mac)
     private var booksGrid: some View {
         ScrollView {
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 3), spacing: 16) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 110, maximum: 180), spacing: 14)], spacing: 18) {
                 ForEach(viewModel.filteredBooks) { book in
                     NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
                         VStack(alignment: .leading, spacing: 6) {

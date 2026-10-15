@@ -193,25 +193,33 @@ public struct BingoView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                 
-                HStack(spacing: 10) {
+                HStack(spacing: 8) {
                     Button(action: {
                         viewModel.updateBingoPlanDays(item: item, newDays: item.planDays - 1)
                     }) {
                         Image(systemName: "minus.circle.fill")
+                            .font(.system(size: 20))
                             .foregroundColor(.orange)
+                            .frame(width: 36, height: 36)
+                            .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
                     
                     Text("\(item.planDays)")
                         .font(.subheadline)
                         .fontWeight(.bold)
-                        .frame(minWidth: 24)
+                        .frame(minWidth: 28)
                     
                     Button(action: {
                         viewModel.updateBingoPlanDays(item: item, newDays: item.planDays + 1)
                     }) {
                         Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 20))
                             .foregroundColor(.orange)
+                            .frame(width: 36, height: 36)
+                            .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
                 }
                 
                 Spacer()

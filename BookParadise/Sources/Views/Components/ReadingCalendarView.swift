@@ -22,25 +22,69 @@ public struct ReadingCalendarView: View {
                     .font(.headline)
                 Spacer()
                 
-                // Переключатель месяца
-                Menu {
-                    ForEach(1...12, id: \.self) { m in
-                        Button(action: { selectedMonthIndex = m }) {
-                            Text(months[m - 1])
+                // Навигация по месяцам со стрелочками и меню
+                HStack(spacing: 4) {
+                    // Кнопка Предыдущий месяц (<)
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            if selectedMonthIndex > 1 {
+                                selectedMonthIndex -= 1
+                            } else {
+                                selectedMonthIndex = 12
+                            }
                         }
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(.primary)
+                            .frame(width: 36, height: 36)
+                            .background(Color.secondary.opacity(0.12))
+                            .clipShape(Circle())
+                            .contentShape(Rectangle())
                     }
-                } label: {
-                    HStack(spacing: 4) {
-                        Text(months[selectedMonthIndex - 1])
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                        Image(systemName: "chevron.down")
-                            .font(.caption2)
+                    .buttonStyle(.plain)
+                    
+                    // Название месяца (с быстрым меню выбора)
+                    Menu {
+                        ForEach(1...12, id: \.self) { m in
+                            Button(action: { selectedMonthIndex = m }) {
+                                Text(months[m - 1])
+                            }
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text(months[selectedMonthIndex - 1])
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                            Image(systemName: "chevron.down")
+                                .font(.caption2)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 7)
+                        .background(Color.secondary.opacity(0.12))
+                        .cornerRadius(8)
+                        .contentShape(Rectangle())
                     }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 5)
-                    .background(Color.secondary.opacity(0.12))
-                    .cornerRadius(8)
+                    
+                    // Кнопка Следующий месяц (>)
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            if selectedMonthIndex < 12 {
+                                selectedMonthIndex += 1
+                            } else {
+                                selectedMonthIndex = 1
+                            }
+                        }
+                    }) {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(.primary)
+                            .frame(width: 36, height: 36)
+                            .background(Color.secondary.opacity(0.12))
+                            .clipShape(Circle())
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
                 }
             }
             

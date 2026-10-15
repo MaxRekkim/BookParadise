@@ -102,9 +102,13 @@ public struct CyclesView: View {
                     Spacer()
                     
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.caption)
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.secondary)
+                        .frame(width: 44, height: 44)
+                        .background(Color.secondary.opacity(0.08))
+                        .clipShape(Circle())
                 }
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             

@@ -18,7 +18,7 @@ on:
         description: 'Тег версии (например, v1.1.0)'
         required: false
         type: string
-        default: 'v1.1.0'
+        default: 'v2.0.0'
 
 permissions:
   contents: write
@@ -122,7 +122,7 @@ jobs:
           files: |
             BookParadise.ipa
             BookParadise-macOS.zip
-          name: "✨ Книжный Рай ${{ github.ref_name }}"
+          name: "Книжный Рай ${{ github.ref_name }}"
           generate_release_notes: true
           draft: false
           prerelease: false
@@ -137,7 +137,7 @@ jobs:
             BookParadise.ipa
             BookParadise-macOS.zip
           tag_name: ${{ github.event.inputs.version_tag }}
-          name: "✨ Книжный Рай ${{ github.event.inputs.version_tag }}"
+          name: "Книжный Рай ${{ github.event.inputs.version_tag }}"
           generate_release_notes: true
           draft: false
           prerelease: false

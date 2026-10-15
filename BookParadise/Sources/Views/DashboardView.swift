@@ -16,6 +16,10 @@ public struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
+                    // 0. Мотивация дня и прогресс годовой цели
+                    DailyMotivationBanner(viewModel: viewModel)
+                        .padding(.horizontal)
+                    
                     // 1. Блок «Читаю сейчас» (Горизонтальный свайп)
                     readingNowSection
                     
@@ -23,7 +27,7 @@ public struct DashboardView: View {
                     ReadingCalendarView(viewModel: viewModel)
                         .padding(.horizontal)
                     
-                    // 3. Карточки общей сводки (Grid 2x2)
+                    // 3. Карточки общей сводки (Адаптивная сетка)
                     summaryGridSection
                         .padding(.horizontal)
                     
@@ -36,7 +40,7 @@ public struct DashboardView: View {
                 .padding(.top, 8)
             }
             .background(Color(UIColor.systemGroupedBackground))
-            .navigationTitle("✨ Книжный Рай")
+            .navigationTitle("Книжный Рай")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { isShowingSettings = true }) {
@@ -222,9 +226,9 @@ public struct DashboardView: View {
         .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
     }
     
-    // MARK: - 3. Сводка 2x2
+    // MARK: - 3. Сводка (Адаптивная 2x2 на iPhone, 4 в ряд на Mac)
     private var summaryGridSection: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 300), spacing: 12)], spacing: 12) {
             MetricCard(
                 title: "В библиотеке",
                 value: "\(viewModel.stats.totalBooks)",
