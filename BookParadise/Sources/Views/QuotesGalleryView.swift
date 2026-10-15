@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 public struct QuotesGalleryView: View {
     @ObservedObject public var viewModel: LibraryViewModel
@@ -6,7 +7,7 @@ public struct QuotesGalleryView: View {
     @ObservedObject private var theme = ThemeManager.shared
     
     @State private var searchText: String = ""
-    @State private var selectedQuoteForShare: (quote: BookQuote, book: Book)? = nil
+    @State private var selectedQuoteForShare: QuoteShareWrapper? = nil
     @State private var quoteToDelete: BookQuote? = nil
     @State private var showDeleteConfirmation: Bool = false
     
@@ -53,10 +54,7 @@ public struct QuotesGalleryView: View {
             .background(Color(UIColor.systemGroupedBackground))
             .navigationTitle("Цитаты и заметки (\(quotesManager.quotes.count))")
             .searchable(text: $searchText, prompt: "Поиск по цитатам, авторам, книгам...")
-            .sheet(item: Binding(
-                get: { selectedQuoteForShare.map { QuoteShareWrapper(quote: $0.quote, book: $0.book) } },
-                set: { wrapper in selectedQuoteForShare = wrapper.map { ($0.quote, $0.book) } }
-            )) { wrapper in
+            .sheet(item: $selectedQuoteForShare) { wrapper in
                 QuoteCardShareView(quote: wrapper.quote, book: wrapper.book)
             }
             .confirmationDialog("Удалить цитату?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
@@ -119,7 +117,7 @@ public struct QuotesGalleryView: View {
                 
                 Menu {
                     Button(action: {
-                        selectedQuoteForShare = (quote, book)
+                        selectedQuoteForShare = QuoteShareWrapper(quote: quote, book: book)
                     }) {
                         Label("Поделиться карточкой", systemImage: "square.and.arrow.up")
                     }
@@ -180,7 +178,7 @@ public struct QuotesGalleryView: View {
                 Spacer()
                 
                 Button(action: {
-                    selectedQuoteForShare = (quote, book)
+                    selectedQuoteForShare = QuoteShareWrapper(quote: quote, book: book)
                 }) {
                     HStack(spacing: 4) {
                         Image(systemName: "sparkles")
@@ -221,8 +219,13 @@ public struct QuotesGalleryView: View {
     }
 }
 
-private struct QuoteShareWrapper: Identifiable {
-    let id = UUID()
-    let quote: BookQuote
-    let book: Book
+public struct QuoteShareWrapper: Identifiable {
+    public let id = UUID()
+    public let quote: BookQuote
+    public let book: Book
+    
+    public init(quote: BookQuote, book: Book) {
+        self.quote = quote
+        self.book = book
+    }
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 public struct DailyMotivationBanner: View {
     @ObservedObject public var viewModel: LibraryViewModel

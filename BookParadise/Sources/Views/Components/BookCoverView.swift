@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 public struct BookCoverView: View {
     public let coverURL: URL?

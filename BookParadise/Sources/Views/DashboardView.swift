@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import Charts
 
 public struct DashboardView: View {

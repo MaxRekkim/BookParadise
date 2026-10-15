@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 public enum AppTab: Int, CaseIterable, Identifiable {
     case dashboard = 0
@@ -50,29 +51,40 @@ public struct MainTabView: View {
     public init() {}
     
     public var body: some View {
-        #if targetEnvironment(macCatalyst) || os(macOS)
-        macOSLayout
-            .commonModifiers(
-                viewModel: viewModel,
-                theme: theme,
-                isShowingAddBook: $isShowingAddBook,
-                isShowingQuickPageSelector: $isShowingQuickPageSelector,
-                quickActionSheetPresented: $quickActionSheetPresented,
-                isShowingSessionPicker: $isShowingSessionPicker,
-                isShowingQuotePicker: $isShowingQuotePicker
-            )
-        #else
-        iOSLayout
-            .commonModifiers(
-                viewModel: viewModel,
-                theme: theme,
-                isShowingAddBook: $isShowingAddBook,
-                isShowingQuickPageSelector: $isShowingQuickPageSelector,
-                quickActionSheetPresented: $quickActionSheetPresented,
-                isShowingSessionPicker: $isShowingSessionPicker,
-                isShowingQuotePicker: $isShowingQuotePicker
-            )
-        #endif
+        Group {
+            #if targetEnvironment(macCatalyst) || os(macOS)
+            macOSLayout
+            #else
+            iOSLayout
+            #endif
+        }
+        .confirmationDialog("Быстрое действие", isPresented: $quickActionSheetPresented, titleVisibility: .visible) {
+            Button("Добавить новую книгу") {
+                isShowingAddBook = true
+            }
+            Button("Начать сессию чтения (Таймер)") {
+                isShowingSessionPicker = true
+            }
+            Button("Сфотографировать / Добавить цитату") {
+                isShowingQuotePicker = true
+            }
+            Button("Обновить прогресс чтения") {
+                isShowingQuickPageSelector = true
+            }
+            Button("Отмена", role: .cancel) {}
+        }
+        .sheet(isPresented: $isShowingAddBook) {
+            AddBookSheet(viewModel: viewModel)
+        }
+        .sheet(isPresented: $isShowingQuickPageSelector) {
+            QuickBookPickerSheet(viewModel: viewModel, mode: .updateProgress)
+        }
+        .sheet(isPresented: $isShowingSessionPicker) {
+            QuickBookPickerSheet(viewModel: viewModel, mode: .readingSession)
+        }
+        .sheet(isPresented: $isShowingQuotePicker) {
+            QuickBookPickerSheet(viewModel: viewModel, mode: .quoteScanner)
+        }
     }
     
     // MARK: - 1. НАСТОЛЬНЫЙ ИНТЕРФЕЙС ДЛЯ MACOS (САЙДБАР + ТУЛБАР)
@@ -276,47 +288,6 @@ public struct MainTabView: View {
     }
 }
 
-// Модификаторы для общих листов и экшенов
-private extension View {
-    func commonModifiers(
-        viewModel: LibraryViewModel,
-        theme: ThemeManager,
-        isShowingAddBook: Binding<Bool>,
-        isShowingQuickPageSelector: Binding<Bool>,
-        quickActionSheetPresented: Binding<Bool>,
-        isShowingSessionPicker: Binding<Bool>,
-        isShowingQuotePicker: Binding<Bool>
-    ) -> some View {
-        self
-            .confirmationDialog("Быстрое действие", isPresented: quickActionSheetPresented, titleVisibility: .visible) {
-                Button("Добавить новую книгу") {
-                    isShowingAddBook.wrappedValue = true
-                }
-                Button("Начать сессию чтения (Таймер)") {
-                    isShowingSessionPicker.wrappedValue = true
-                }
-                Button("Сфотографировать / Добавить цитату") {
-                    isShowingQuotePicker.wrappedValue = true
-                }
-                Button("Обновить прогресс чтения") {
-                    isShowingQuickPageSelector.wrappedValue = true
-                }
-                Button("Отмена", role: .cancel) {}
-            }
-            .sheet(isPresented: isShowingAddBook) {
-                AddBookSheet(viewModel: viewModel)
-            }
-            .sheet(isPresented: isShowingQuickPageSelector) {
-                QuickBookPickerSheet(viewModel: viewModel, mode: .updateProgress)
-            }
-            .sheet(isPresented: isShowingSessionPicker) {
-                QuickBookPickerSheet(viewModel: viewModel, mode: .readingSession)
-            }
-            .sheet(isPresented: isShowingQuotePicker) {
-                QuickBookPickerSheet(viewModel: viewModel, mode: .quoteScanner)
-            }
-    }
-}
 
 // Быстрый выбор книги для действий
 enum QuickPickerMode {

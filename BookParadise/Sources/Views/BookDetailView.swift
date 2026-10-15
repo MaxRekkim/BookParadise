@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import UniformTypeIdentifiers
 import QuickLook
 
@@ -264,14 +265,11 @@ public struct BookDetailView: View {
         }
         .fileImporter(
             isPresented: $isShowingFileImporter,
-            allowedContentTypes: [.pdf, .plainText, UTType(filenameExtension: "epub") ?? .data, UTType(filenameExtension: "fb2") ?? .data],
-            allowsMultipleSelection: false
+            allowedContentTypes: [.pdf, .plainText, UTType(filenameExtension: "epub") ?? .data, UTType(filenameExtension: "fb2") ?? .data]
         ) { result in
             switch result {
-            case .success(let urls):
-                if let url = urls.first {
-                    eBookStorage.saveBookFile(bookId: book.id, from: url)
-                }
+            case .success(let url):
+                eBookStorage.saveBookFile(bookId: book.id, from: url)
             case .failure(let error):
                 print("File import failed: \(error)")
             }

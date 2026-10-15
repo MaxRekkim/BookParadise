@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 public struct ReadingCalendarView: View {
     @ObservedObject public var viewModel: LibraryViewModel

@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 public struct ProgressUpdateSheet: View {
     @ObservedObject public var viewModel: LibraryViewModel
