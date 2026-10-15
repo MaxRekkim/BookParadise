@@ -345,21 +345,23 @@ jobs:
         shell: pwsh
         run: |
           $Version = "${{ steps.get-version.outputs.version }}"
-          $ReleaseDir = Get-ChildItem -Path "BookParadise_Multiplatform\build\windows" -Recurse -Directory -Filter "Release" | Select-Object -First 1
+          $ReleaseDir = Get-ChildItem -Path "$($env:GITHUB_WORKSPACE)\BookParadise_Multiplatform\build\windows" -Recurse -Directory -Filter "Release" | Select-Object -First 1
           if (-not $ReleaseDir) {
             Write-Error "Windows Release output directory not found!"
             exit 1
           }
           Write-Host "Found release directory: $($ReleaseDir.FullName)"
-          $ZipPath = "BookParadise-$Version-Windows-x64.zip"
+          $ZipPath = "$($env:GITHUB_WORKSPACE)\BookParadise-$Version-Windows-x64.zip"
           Compress-Archive -Path "$($ReleaseDir.FullName)\*" -DestinationPath $ZipPath -Force
           Write-Host "Created archive: $ZipPath"
+          Get-Item $ZipPath
 
       - name: Upload Windows ZIP Artifact
         uses: actions/upload-artifact@v4
         with:
           name: BookParadise-${{ steps.get-version.outputs.version }}-Windows-ZIP
           path: BookParadise-*-Windows-x64.zip
+          if-no-files-found: error
           retention-days: 14
 
   # ============================================================================
