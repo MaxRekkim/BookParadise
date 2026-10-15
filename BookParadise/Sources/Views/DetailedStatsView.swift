@@ -559,46 +559,81 @@ public struct DetailedStatsView: View {
     }
 }
 
-// MARK: - Экран отфильтрованных книг по оценке
-struct FilteredBooksView: View {
-    let title: String
-    let books: [Book]
-    @ObservedObject var viewModel: LibraryViewModel
+// MARK: - Экран отфильтрованных книг по статусу или оценке
+public struct FilteredBooksView: View {
+    public let title: String
+    public let books: [Book]
+    @ObservedObject public var viewModel: LibraryViewModel
+    @State private var searchText: String = ""
 
-    var body: some View {
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 160), spacing: 12)], spacing: 16) {
-                ForEach(books) { book in
-                    NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            BookCoverView(
-                                coverURL: book.cleanCoverURL,
-                                title: book.title,
-                                author: book.author,
-                                genre: book.genre,
-                                cornerRadius: 8
-                            )
-                            .frame(height: 150)
+    public init(title: String, books: [Book], viewModel: LibraryViewModel) {
+        self.title = title
+        self.books = books
+        self.viewModel = viewModel
+    }
 
-                            Text(book.title)
-                                .font(.caption)
-                                .fontWeight(.semibold)
-                                .lineLimit(1)
-                                .foregroundColor(Color(UIColor.label))
-
-                            Text(book.author)
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                        }
-                    }
-                    .buttonStyle(.plain)
-                }
+    private var displayedBooks: [Book] {
+        let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if trimmed.isEmpty {
+            return books
+        } else {
+            return books.filter {
+                $0.title.lowercased().contains(trimmed) ||
+                $0.author.lowercased().contains(trimmed) ||
+                $0.genre.rawValue.lowercased().contains(trimmed)
             }
-            .padding()
         }
+    }
+
+    public var body: some View {
+        ScrollView {
+            if displayedBooks.isEmpty {
+                VStack(spacing: 12) {
+                    Spacer(minLength: 60)
+                    Image(systemName: "books.vertical")
+                        .font(.system(size: 44))
+                        .foregroundColor(.secondary.opacity(0.6))
+                    Text("Книг не найдено")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding()
+            } else {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 160), spacing: 12)], spacing: 16) {
+                    ForEach(displayedBooks) { book in
+                        NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                BookCoverView(
+                                    coverURL: book.cleanCoverURL,
+                                    title: book.title,
+                                    author: book.author,
+                                    genre: book.genre,
+                                    cornerRadius: 8
+                                )
+                                .frame(height: 150)
+
+                                Text(book.title)
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .lineLimit(1)
+                                    .foregroundColor(Color(UIColor.label))
+
+                                Text(book.author)
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding()
+            }
+        }
+        .searchable(text: $searchText, prompt: "Поиск среди \(books.count) книг...")
         .background(Color(UIColor.systemGroupedBackground))
-        .navigationTitle(title)
+        .navigationTitle("\(title) (\(books.count))")
         .navigationBarTitleDisplayMode(.inline)
     }
 }

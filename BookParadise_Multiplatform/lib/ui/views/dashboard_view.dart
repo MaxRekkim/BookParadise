@@ -197,10 +197,53 @@ class DashboardView extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 1.8,
               children: [
-                _statCard(context, 'В библиотеке', '${stats.totalBooks}', Icons.shelves, Colors.blue),
-                _statCard(context, 'Прочитано', '${stats.readBooks}', Icons.check_circle, Colors.green),
-                _statCard(context, 'В очереди', '${stats.plannedBooks}', Icons.schedule, Colors.orange),
-                _statCard(context, 'Прочитано стр.', '${stats.totalPagesRead}', Icons.auto_stories, primaryAccent),
+                _statCard(
+                  context,
+                  'В библиотеке',
+                  '${stats.totalBooks}',
+                  Icons.shelves,
+                  Colors.blue,
+                  () {
+                    viewModel.clearFilters();
+                  },
+                ),
+                _statCard(
+                  context,
+                  'Прочитано',
+                  '${stats.readBooks}',
+                  Icons.check_circle,
+                  Colors.green,
+                  () {
+                    viewModel.updateFilterCriteria(
+                      viewModel.filterCriteria.copyWith(selectedStatus: ReadingStatus.read),
+                    );
+                  },
+                ),
+                _statCard(
+                  context,
+                  'В очереди',
+                  '${stats.plannedBooks}',
+                  Icons.schedule,
+                  Colors.orange,
+                  () {
+                    viewModel.updateFilterCriteria(
+                      viewModel.filterCriteria.copyWith(selectedStatus: ReadingStatus.planned),
+                    );
+                  },
+                ),
+                _statCard(
+                  context,
+                  'Темп чтения',
+                  '${stats.totalPagesRead} стр.',
+                  Icons.bolt,
+                  primaryAccent,
+                  () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ReadingChallengeView()),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -211,36 +254,50 @@ class DashboardView extends StatelessWidget {
     );
   }
 
-  Widget _statCard(BuildContext context, String title, String value, IconData icon, Color color) {
+  Widget _statCard(
+    BuildContext context,
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+    VoidCallback? onTap,
+  ) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.12),
-                shape: BoxShape.circle,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: color, size: 20),
               ),
-              child: Icon(icon, color: color, size: 20),
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  value,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      value,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      title,
+                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                  ],
                 ),
-                Text(
-                  title,
-                  style: const TextStyle(fontSize: 11, color: Colors.grey),
-                ),
-              ],
-            ),
-          ],
+              ),
+              const Icon(Icons.chevron_right, size: 16, color: Colors.grey),
+            ],
+          ),
         ),
       ),
     );

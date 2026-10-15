@@ -127,6 +127,7 @@ public struct MetricCard: View {
     public let subtitle: String
     public let icon: String
     public let color: Color
+    public var showChevron: Bool
     public var action: (() -> Void)? = nil
     
     public init(
@@ -135,6 +136,7 @@ public struct MetricCard: View {
         subtitle: String,
         icon: String,
         color: Color,
+        showChevron: Bool = true,
         action: (() -> Void)? = nil
     ) {
         self.title = title
@@ -142,6 +144,7 @@ public struct MetricCard: View {
         self.subtitle = subtitle
         self.icon = icon
         self.color = color
+        self.showChevron = showChevron
         self.action = action
     }
     
@@ -174,7 +177,7 @@ public struct MetricCard: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
-                if action != nil {
+                if showChevron || action != nil {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 10, weight: .bold))
                         .foregroundColor(.secondary.opacity(0.6))

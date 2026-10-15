@@ -260,41 +260,65 @@ public struct DashboardView: View {
     // MARK: - 3. Сводка (Адаптивная 2x2 на iPhone, 4 в ряд на Mac)
     private var summaryGridSection: some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 160, maximum: 300), spacing: 12)], spacing: 12) {
-            MetricCard(
+            // 1. Все книги в библиотеке
+            NavigationLink(destination: FilteredBooksView(
                 title: "В библиотеке",
-                value: "\(viewModel.stats.totalBooks)",
-                subtitle: "\(viewModel.stats.paperBooks) бум. / \(viewModel.stats.electronicBooks) эл.",
-                icon: "books.vertical.fill",
-                color: .blue,
-                action: { isShowingDetailedStats = true }
-            )
+                books: viewModel.books,
+                viewModel: viewModel
+            )) {
+                MetricCard(
+                    title: "В библиотеке",
+                    value: "\(viewModel.stats.totalBooks)",
+                    subtitle: "\(viewModel.stats.paperBooks) бум. / \(viewModel.stats.electronicBooks) эл.",
+                    icon: "books.vertical.fill",
+                    color: .blue
+                )
+            }
+            .buttonStyle(.plain)
             
-            MetricCard(
+            // 2. Прочитанные книги
+            NavigationLink(destination: FilteredBooksView(
                 title: "Прочитано",
-                value: "\(viewModel.stats.readBooks)",
-                subtitle: "\(String(format: "%.1f%%", viewModel.stats.percentRead)) библиотеки",
-                icon: "checkmark.seal.fill",
-                color: .green,
-                action: { isShowingDetailedStats = true }
-            )
+                books: viewModel.books.filter { $0.status == .read },
+                viewModel: viewModel
+            )) {
+                MetricCard(
+                    title: "Прочитано",
+                    value: "\(viewModel.stats.readBooks)",
+                    subtitle: "\(String(format: "%.1f%%", viewModel.stats.percentRead)) библиотеки",
+                    icon: "checkmark.seal.fill",
+                    color: .green
+                )
+            }
+            .buttonStyle(.plain)
             
-            MetricCard(
+            // 3. Книги в очереди
+            NavigationLink(destination: FilteredBooksView(
                 title: "В очереди",
-                value: "\(viewModel.stats.unreadBooks)",
-                subtitle: "Ждут своего часа",
-                icon: "clock.fill",
-                color: .orange,
-                action: { isShowingDetailedStats = true }
-            )
+                books: viewModel.books.filter { $0.status == .unread || $0.status == .planned },
+                viewModel: viewModel
+            )) {
+                MetricCard(
+                    title: "В очереди",
+                    value: "\(viewModel.stats.unreadBooks)",
+                    subtitle: "Ждут своего часа",
+                    icon: "clock.fill",
+                    color: .orange
+                )
+            }
+            .buttonStyle(.plain)
             
-            MetricCard(
-                title: "Темп чтения",
-                value: "42 стр./дн.",
-                subtitle: "\(viewModel.stats.totalPagesRead) стр. всего",
-                icon: "bolt.fill",
-                color: .purple,
-                action: { isShowingDetailedStats = true }
-            )
+            // 4. Темп чтения и годовая цель
+            NavigationLink(destination: ReadingChallengeView(viewModel: viewModel)) {
+                MetricCard(
+                    title: "Темп чтения",
+                    value: "42 стр./дн.",
+                    subtitle: "\(viewModel.stats.totalPagesRead) стр. всего",
+                    icon: "bolt.fill",
+                    color: .purple
+                )
+            }
+            .buttonStyle(.plain)
         }
     }
     
