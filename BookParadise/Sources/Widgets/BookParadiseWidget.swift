@@ -23,7 +23,7 @@ public struct BookParadiseProvider: TimelineProvider {
                 author: "Майк Омер",
                 pagesRead: 215,
                 totalPages: 416,
-                status: .readingNow
+                status: .inProgress
             )
         )
         return BookParadiseEntry(

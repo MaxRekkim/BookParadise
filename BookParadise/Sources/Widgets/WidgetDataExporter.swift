@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 #if canImport(WidgetKit)
 import WidgetKit
 #endif
@@ -53,7 +54,7 @@ public class WidgetDataExporter {
     }
 
     public func export(books: [Book]) {
-        let readingNow = books.first(where: { $0.status == .readingNow })
+        let readingNow = books.first(where: { $0.status == .inProgress })
         let readCount = books.filter { $0.status == .read }.count
 
         let snapshot = WidgetDataSnapshot(
@@ -64,7 +65,7 @@ public class WidgetDataExporter {
 
         do {
             let data = try JSONEncoder().encode(snapshot)
-            try data.write(to: sharedContainerURL, options: .atomic)
+            try data.write(to: sharedContainerURL, options: Data.WritingOptions.atomic)
             #if canImport(WidgetKit)
             WidgetCenter.shared.reloadAllTimelines()
             #endif
