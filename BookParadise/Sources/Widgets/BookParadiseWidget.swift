@@ -232,7 +232,8 @@ public struct BookParadiseMediumWidgetView: View {
     }
 }
 
-// MARK: - Конфигурация виджета
+// MARK: - Конфигурация виджета для Extension
+#if WIDGET_EXTENSION
 public struct BookParadiseWidgetEntryView: View {
     @Environment(\.widgetFamily) var family
     public var entry: BookParadiseEntry
@@ -267,4 +268,5 @@ public struct BookParadiseWidget: Widget {
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
+#endif
 #endif

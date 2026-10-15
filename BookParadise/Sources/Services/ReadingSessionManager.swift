@@ -101,7 +101,7 @@ public class ReadingSessionManager: ObservableObject {
             }
 
             if remainingSeconds == 0 {
-                // Таймер Помодоро завершен!
+                // Таймер Помодоро завершен
                 stopSession()
                 notifySessionFinished()
             }
@@ -110,8 +110,10 @@ public class ReadingSessionManager: ObservableObject {
 
     private func notifySessionFinished() {
         AudioServicesPlaySystemSound(1025)
+        #if canImport(UIKit) && !targetEnvironment(macCatalyst)
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
+        #endif
     }
 
     // MARK: - Сохранение сессии
@@ -133,7 +135,7 @@ public class ReadingSessionManager: ObservableObject {
         return record
     }
 
-    // MARK: - Звуки природы / Дождь (Синтезатор мягкого шума дождя)
+    // MARK: - Звуки природы / Дождь
     public func toggleAmbientSound() {
         isAmbientSoundActive.toggle()
         if isAmbientSoundActive && isRunning && !isPaused {
@@ -146,26 +148,28 @@ public class ReadingSessionManager: ObservableObject {
     private func startAmbientAudio() {
         stopAmbientAudio()
 
+        #if !targetEnvironment(macCatalyst)
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers])
             try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Audio session setup: \(error)")
+        }
+        #endif
 
+        do {
             let engine = AVAudioEngine()
             let format = engine.outputNode.outputFormat(forBus: 0)
 
-            var lastSample: Float = 0.0
-            // Генератор розового/коричневого шума для имитации уютного дождя
+            // Безопасный генератор мягкого шелеста дождя
             let sourceNode = AVAudioSourceNode { _, _, frameCount, audioBufferList -> OSStatus in
                 let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
-                for frame in 0..<Int(frameCount) {
-                    let white = Float.random(in: -1.0...1.0)
-                    // Low-pass filter (brown noise effect)
-                    lastSample = (lastSample * 0.94) + (white * 0.06)
-                    let sample = lastSample * 0.15 // Умеренная громкость
-
-                    for buffer in ablPointer {
-                        let buf: UnsafeMutableBufferPointer<Float> = UnsafeMutableBufferPointer(buffer)
-                        buf[frame] = sample
+                for buffer in ablPointer {
+                    guard let ptr = buffer.mData?.assumingMemoryBound(to: Float.self) else { continue }
+                    for frame in 0..<Int(frameCount) {
+                        let white = Float.random(in: -1.0...1.0)
+                        let sample = white * 0.03
+                        ptr[frame] = sample
                     }
                 }
                 return noErr

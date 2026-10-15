@@ -199,7 +199,11 @@ public struct QuoteCardShareView: View {
     @MainActor
     private func shareCardAsImage() {
         let renderer = ImageRenderer(content: quoteCard.frame(width: 360))
+        #if targetEnvironment(macCatalyst)
+        renderer.scale = 2.0
+        #else
         renderer.scale = UIScreen.main.scale
+        #endif
         if let image = renderer.uiImage {
             self.renderedImage = image
             self.isSharingImage = true

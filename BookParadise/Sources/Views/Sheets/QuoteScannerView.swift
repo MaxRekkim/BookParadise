@@ -179,39 +179,39 @@ public struct QuoteScannerView: View {
         isProcessingOCR = true
         recognizedFragments.removeAll()
 
-        DispatchQueue.global(qos: .userInitiated).async {
-            let request = VNRecognizeTextRequest { req, err in
-                defer {
-                    DispatchQueue.main.async {
-                        self.isProcessingOCR = false
-                    }
-                }
-                guard let results = req.results as? [VNRecognizedTextObservation], err == nil else { return }
-
-                var textPieces: [String] = []
-                for observation in results {
-                    if let candidate = observation.topCandidates(1).first {
-                        let text = candidate.string.trimmingCharacters(in: .whitespacesAndNewlines)
-                        if text.count > 10 {
-                            textPieces.append(text)
-                        }
-                    }
-                }
-
-                DispatchQueue.main.async {
-                    self.recognizedFragments = Array(textPieces.prefix(8))
-                    if self.quoteText.isEmpty && !textPieces.isEmpty {
-                        self.quoteText = textPieces.joined(separator: " ")
-                    }
-                }
-            }
-
+        Task.detached(priority: .userInitiated) {
+            let request = VNRecognizeTextRequest()
             request.recognitionLanguages = ["ru-RU", "en-US"]
             request.recognitionLevel = .accurate
             request.usesLanguageCorrection = true
 
             let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
             try? handler.perform([request])
+
+            guard let results = request.results else {
+                await MainActor.run {
+                    self.isProcessingOCR = false
+                }
+                return
+            }
+
+            var textPieces: [String] = []
+            for observation in results {
+                if let candidate = observation.topCandidates(1).first {
+                    let text = candidate.string.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if text.count > 10 {
+                        textPieces.append(text)
+                    }
+                }
+            }
+
+            await MainActor.run {
+                self.recognizedFragments = Array(textPieces.prefix(8))
+                if self.quoteText.isEmpty && !textPieces.isEmpty {
+                    self.quoteText = textPieces.joined(separator: " ")
+                }
+                self.isProcessingOCR = false
+            }
         }
     }
 }
@@ -223,11 +223,15 @@ struct PhotoTextCaptureSheet: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
+        #if targetEnvironment(macCatalyst)
+        picker.sourceType = .photoLibrary
+        #else
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             picker.sourceType = .camera
         } else {
             picker.sourceType = .photoLibrary
         }
+        #endif
         picker.delegate = context.coordinator
         return picker
     }
