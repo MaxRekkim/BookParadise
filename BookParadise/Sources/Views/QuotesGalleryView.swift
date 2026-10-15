@@ -171,7 +171,7 @@ public struct QuotesGalleryView: View {
             }
             
             HStack {
-                Text(quote.createdAt.formatted(date: .abbreviated, time: .omitted))
+                Text(quote.dateAdded.formatted(date: .abbreviated, time: .omitted))
                     .font(.caption2)
                     .foregroundColor(.secondary)
                 
