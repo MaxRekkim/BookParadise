@@ -136,7 +136,7 @@ public struct MetricCard: View {
         subtitle: String,
         icon: String,
         color: Color,
-        showChevron: Bool = true,
+        showChevron: Bool = false,
         action: (() -> Void)? = nil
     ) {
         self.title = title

@@ -215,7 +215,7 @@ class DashboardView extends StatelessWidget {
                   Colors.green,
                   () {
                     viewModel.updateFilterCriteria(
-                      viewModel.filterCriteria.copyWith(selectedStatus: ReadingStatus.read),
+                      viewModel.filterCriteria.copyWith(selectedStatus: ReadingStatus.completed),
                     );
                   },
                 ),

@@ -76,6 +76,7 @@ jobs:
       # --- IOS (IPHONE & IPAD) ---
       - name: Build iOS App (Release)
         run: |
+          set -o pipefail
           xcodebuild build \
             -project "${{ steps.find-project.outputs.project_path }}" \
             -scheme BookParadise \
@@ -85,7 +86,13 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            BUILD_DIR="${{ github.workspace }}/build-ios"
+            BUILD_DIR="${{ github.workspace }}/build-ios" 2>&1 | tee xcode-ios.log
+
+      - name: Report iOS Build Failure
+        if: failure()
+        run: |
+          echo "::error::iOS Build Failed:"
+          grep -E "error:|fatal error:" xcode-ios.log | head -n 25 || true
 
       - name: Package .app into .ipa for iOS
         run: |
@@ -104,6 +111,7 @@ jobs:
       # --- MACOS (CATALYST DMG & PKG) ---
       - name: Build macOS App (Mac Catalyst Release)
         run: |
+          set -o pipefail
           xcodebuild build \
             -project "${{ steps.find-project.outputs.project_path }}" \
             -scheme BookParadise \
@@ -112,7 +120,13 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            BUILD_DIR="${{ github.workspace }}/build-mac"
+            BUILD_DIR="${{ github.workspace }}/build-mac" 2>&1 | tee xcode-mac.log
+
+      - name: Report macOS Build Failure
+        if: failure()
+        run: |
+          echo "::error::macOS Build Failed:"
+          grep -E "error:|fatal error:" xcode-mac.log | head -n 25 || true
 
       - name: Package macOS App into .dmg and .pkg
         run: |
@@ -198,13 +212,14 @@ jobs:
       - name: Prepare and Build Android APK
         working-directory: BookParadise_Multiplatform
         run: |
+          set -o pipefail
           rm -rf android
           flutter create --platforms=android --org com.maxim --project-name book_paradise .
           # Ensure network access and localized app title
           sed -i 's/<application/<uses-permission android:name="android.permission.INTERNET"\/>\n    <application/' android/app/src/main/AndroidManifest.xml || true
           sed -i 's/android:label="book_paradise"/android:label="Книжный Рай"/' android/app/src/main/AndroidManifest.xml || true
           flutter pub get
-          flutter build apk --release --android-skip-build-dependency-validation --build-name=${{ steps.get-version.outputs.version }} --build-number=${{ steps.get-version.outputs.build_number }}
+          flutter build apk --release --android-skip-build-dependency-validation --build-name=${{ steps.get-version.outputs.version }} --build-number=${{ steps.get-version.outputs.build_number }} 2>&1 | tee ../android-build.log
           
           # Copy APK with clear release filename
           APK_SRC=$(find build -name "*release*.apk" | head -n 1)
@@ -213,6 +228,12 @@ jobs:
             exit 1
           fi
           cp "$APK_SRC" ../BookParadise-${{ steps.get-version.outputs.version }}-Android.apk
+
+      - name: Report Android Build Failure
+        if: failure()
+        run: |
+          echo "::error::Android Build Failed:"
+          grep -E "error|FAILURE|exception" android-build.log | head -n 25 || true
 
       - name: Upload Android APK Artifact
         uses: actions/upload-artifact@v4
@@ -259,10 +280,18 @@ jobs:
         shell: bash
         working-directory: BookParadise_Multiplatform
         run: |
+          set -o pipefail
           flutter config --enable-windows-desktop
           flutter create --platforms=windows --org com.maxim --project-name book_paradise .
           flutter pub get
-          flutter build windows --release --build-name=${{ steps.get-version.outputs.version }} --build-number=${{ steps.get-version.outputs.build_number }}
+          flutter build windows --release --build-name=${{ steps.get-version.outputs.version }} --build-number=${{ steps.get-version.outputs.build_number }} 2>&1 | tee ../windows-build.log
+
+      - name: Report Windows Build Failure
+        if: failure()
+        shell: bash
+        run: |
+          echo "::error::Windows Build Failed:"
+          grep -E "error|FAILURE|exception" windows-build.log | head -n 25 || true
 
       - name: Package Windows ZIP
         shell: pwsh

@@ -271,7 +271,8 @@ public struct DashboardView: View {
                     value: "\(viewModel.stats.totalBooks)",
                     subtitle: "\(viewModel.stats.paperBooks) бум. / \(viewModel.stats.electronicBooks) эл.",
                     icon: "books.vertical.fill",
-                    color: .blue
+                    color: .blue,
+                    showChevron: true
                 )
             }
             .buttonStyle(.plain)
@@ -287,7 +288,8 @@ public struct DashboardView: View {
                     value: "\(viewModel.stats.readBooks)",
                     subtitle: "\(String(format: "%.1f%%", viewModel.stats.percentRead)) библиотеки",
                     icon: "checkmark.seal.fill",
-                    color: .green
+                    color: .green,
+                    showChevron: true
                 )
             }
             .buttonStyle(.plain)
@@ -295,7 +297,7 @@ public struct DashboardView: View {
             // 3. Книги в очереди
             NavigationLink(destination: FilteredBooksView(
                 title: "В очереди",
-                books: viewModel.books.filter { $0.status == .unread || $0.status == .planned },
+                books: viewModel.books.filter { $0.status == .notStarted },
                 viewModel: viewModel
             )) {
                 MetricCard(
@@ -303,7 +305,8 @@ public struct DashboardView: View {
                     value: "\(viewModel.stats.unreadBooks)",
                     subtitle: "Ждут своего часа",
                     icon: "clock.fill",
-                    color: .orange
+                    color: .orange,
+                    showChevron: true
                 )
             }
             .buttonStyle(.plain)
@@ -315,7 +318,8 @@ public struct DashboardView: View {
                     value: "42 стр./дн.",
                     subtitle: "\(viewModel.stats.totalPagesRead) стр. всего",
                     icon: "bolt.fill",
-                    color: .purple
+                    color: .purple,
+                    showChevron: true
                 )
             }
             .buttonStyle(.plain)
