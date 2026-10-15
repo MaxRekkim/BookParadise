@@ -182,11 +182,11 @@ public class GoogleSheetsAPIService: ObservableObject {
     }
     
     // MARK: - POST: Обновление плана
-    public func postUpdatePlan(bookId: Int, month: String, planDays: Int) {
+    public func postUpdatePlan(bookId: Int, month: String?, planDays: Int) {
         let payload: [String: String] = [
             "action": "updatePlan",
             "id": "\(bookId)",
-            "month": month,
+            "month": month ?? "",
             "planDays": "\(planDays)"
         ]
         

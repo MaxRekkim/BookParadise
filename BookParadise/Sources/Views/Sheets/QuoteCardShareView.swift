@@ -23,8 +23,10 @@ public struct QuoteCardShareView: View {
     }
 
     private func closeSheet() {
-        onDismiss?()
-        dismiss()
+        DispatchQueue.main.async {
+            self.onDismiss?()
+            self.dismiss()
+        }
     }
 
     public var body: some View {
@@ -118,11 +120,13 @@ public struct QuoteCardShareView: View {
             .navigationTitle("Цитата из книги")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Закрыть") { closeSheet() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Готово") { closeSheet() }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Готово") {
+                        closeSheet()
+                    }
+                    .fontWeight(.semibold)
+                    .keyboardShortcut(.defaultAction)
+                    .keyboardShortcut(.cancelAction)
                 }
             }
             .confirmationDialog("Удалить эту цитату?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
@@ -174,7 +178,7 @@ public struct QuoteCardShareView: View {
                 .fontWeight(.regular)
                 .italic()
                 .lineSpacing(6)
-                .foregroundColor(Color(UIColor.label))
+                .foregroundColor(Color(red: 0.14, green: 0.12, blue: 0.10))
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             // Заметка читателя (если есть)
@@ -191,16 +195,17 @@ public struct QuoteCardShareView: View {
                     }
                     Text(note)
                         .font(.footnote)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color(red: 0.28, green: 0.25, blue: 0.22))
                         .italic()
                 }
                 .padding(10)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(UIColor.tertiarySystemFill))
+                .background(Color(red: 0.93, green: 0.91, blue: 0.87))
                 .cornerRadius(8)
             }
 
             Divider()
+                .overlay(Color(red: 0.85, green: 0.82, blue: 0.78))
 
             // Футер открытки: Автор, Название и брендинг «Книжный Рай»
             HStack(alignment: .bottom) {
@@ -208,13 +213,13 @@ public struct QuoteCardShareView: View {
                     Text(book.author)
                         .font(.caption)
                         .fontWeight(.bold)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color(red: 0.45, green: 0.40, blue: 0.38))
                         .textCase(.uppercase)
 
                     Text(book.title)
                         .font(.subheadline)
                         .fontWeight(.heavy)
-                        .foregroundColor(Color(UIColor.label))
+                        .foregroundColor(Color(red: 0.14, green: 0.12, blue: 0.10))
                 }
 
                 Spacer()
@@ -240,6 +245,7 @@ public struct QuoteCardShareView: View {
             RoundedRectangle(cornerRadius: 18)
                 .stroke(theme.primaryAccent.opacity(0.2), lineWidth: 1)
         )
+        .environment(\.colorScheme, .light)
     }
 
     // MARK: - Действия

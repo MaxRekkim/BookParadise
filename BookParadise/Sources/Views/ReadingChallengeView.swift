@@ -175,7 +175,7 @@ public struct ReadingChallengeView: View {
                 let remainingDays = max(1, daysInYear - dayOfYear)
                 let daysPerBook = remainingDays / remainingBooks
 
-                Text("Чтобы достичь цели из \(annualGoal) книг, читайте примерно по 1 книге каждые \(daysPerBook) дн. (около \(max(1, 350 / max(1, daysPerBook))) стр. в день).")
+                Text("Отставание от графика: \(behindCount) \(bookWord(for: behindCount)). Чтобы достичь цели из \(annualGoal) книг, читайте примерно по 1 книге каждые \(daysPerBook) дн. (около \(max(1, 350 / max(1, daysPerBook))) стр. в день).")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }

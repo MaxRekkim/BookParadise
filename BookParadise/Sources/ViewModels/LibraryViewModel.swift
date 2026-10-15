@@ -289,7 +289,7 @@ public class LibraryViewModel: ObservableObject {
             books[idx].planMonth = nil
         }
         persistData()
-        GoogleSheetsAPIService.shared.postUpdatePlan(bookId: item.id, month: nil, planDays: 0)
+        GoogleSheetsAPIService.shared.postUpdatePlan(bookId: item.id, month: "", planDays: 0)
     }
 
     // MARK: - Обновление рецензии/отзыва к книге
