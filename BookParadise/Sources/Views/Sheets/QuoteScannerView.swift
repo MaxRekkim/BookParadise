@@ -1,9 +1,6 @@
 import SwiftUI
 import AVFoundation
 import Vision
-#if canImport(VisionKit)
-import VisionKit
-#endif
 
 public struct QuoteScannerView: View {
     public let book: Book

@@ -1,6 +1,6 @@
 import SwiftUI
 import AVFoundation
-#if canImport(VisionKit)
+#if canImport(VisionKit) && !targetEnvironment(macCatalyst)
 import VisionKit
 #endif
 
@@ -15,7 +15,7 @@ public struct BarcodeScannerView: UIViewControllerRepresentable {
     }
     
     public func makeUIViewController(context: Context) -> UIViewController {
-        #if canImport(VisionKit)
+        #if canImport(VisionKit) && !targetEnvironment(macCatalyst)
         if DataScannerViewController.isSupported && DataScannerViewController.isAvailable {
             let scanner = DataScannerViewController(
                 recognizedDataTypes: [.barcode(symbologies: [.ean13, .ean8, .code128])],
@@ -65,7 +65,7 @@ public struct BarcodeScannerView: UIViewControllerRepresentable {
     }
 }
 
-#if canImport(VisionKit)
+#if canImport(VisionKit) && !targetEnvironment(macCatalyst)
 extension BarcodeScannerView.Coordinator: DataScannerViewControllerDelegate {
     public func dataScanner(_ dataScanner: DataScannerViewController, didAdd addedItems: [RecognizedItem], allItems: [RecognizedItem]) {
         for item in addedItems {

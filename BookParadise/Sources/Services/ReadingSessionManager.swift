@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 import AVFoundation
 import AudioToolbox
+import CoreAudio
 
 public enum SessionMode: String, CaseIterable, Identifiable {
     case pomodoro25 = "25 мин (Помодоро)"
