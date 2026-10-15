@@ -55,7 +55,9 @@ public struct QuotesGalleryView: View {
             .navigationTitle("Цитаты и заметки (\(quotesManager.quotes.count))")
             .searchable(text: $searchText, prompt: "Поиск по цитатам, авторам, книгам...")
             .sheet(item: $selectedQuoteForShare) { wrapper in
-                QuoteCardShareView(quote: wrapper.quote, book: wrapper.book)
+                QuoteCardShareView(quote: wrapper.quote, book: wrapper.book, onDismiss: {
+                    selectedQuoteForShare = nil
+                })
             }
             .confirmationDialog("Удалить цитату?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
                 Button("Удалить", role: .destructive) {

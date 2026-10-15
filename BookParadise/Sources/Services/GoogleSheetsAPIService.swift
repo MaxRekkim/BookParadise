@@ -47,7 +47,7 @@ public class GoogleSheetsAPIService: ObservableObject {
     }
     
     public var isConfigured: Bool {
-        return !apiURLString.isEmpty && (apiURLString.hasPrefix("http://") || apiURLString.hasPrefix("https://"))
+        return !apiURLString.isEmpty && apiURLString.hasPrefix("https://")
     }
     
     // MARK: - Локальный кэш (Offline First)
@@ -65,7 +65,7 @@ public class GoogleSheetsAPIService: ObservableObject {
         let wrapper = CachedDataWrapper(books: books, bingo: bingo, timestamp: Date())
         do {
             let data = try JSONEncoder().encode(wrapper)
-            try data.write(to: cacheFileURL, options: .atomic)
+            try data.write(to: cacheFileURL, options: [.atomic, .completeFileProtection])
         } catch {
             print("Failed to save local cache: \(error)")
         }
@@ -262,7 +262,7 @@ public class GoogleSheetsAPIService: ObservableObject {
     
     private func savePendingQueue() {
         if let data = try? JSONEncoder().encode(pendingQueue) {
-            try? data.write(to: queueFileURL, options: .atomic)
+            try? data.write(to: queueFileURL, options: [.atomic, .completeFileProtection])
         }
     }
     

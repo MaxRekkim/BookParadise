@@ -103,16 +103,38 @@ public struct MetricCard: View {
     public let subtitle: String
     public let icon: String
     public let color: Color
+    public var action: (() -> Void)? = nil
     
-    public init(title: String, value: String, subtitle: String, icon: String, color: Color) {
+    public init(
+        title: String,
+        value: String,
+        subtitle: String,
+        icon: String,
+        color: Color,
+        action: (() -> Void)? = nil
+    ) {
         self.title = title
         self.value = value
         self.subtitle = subtitle
         self.icon = icon
         self.color = color
+        self.action = action
     }
     
     public var body: some View {
+        Group {
+            if let action = action {
+                Button(action: action) {
+                    cardContent
+                }
+                .buttonStyle(.plain)
+            } else {
+                cardContent
+            }
+        }
+    }
+    
+    private var cardContent: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 ZStack {
@@ -128,6 +150,11 @@ public struct MetricCard: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
+                if action != nil {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundColor(.secondary.opacity(0.6))
+                }
             }
             
             Text(value)
@@ -150,5 +177,6 @@ public struct MetricCard: View {
                 .stroke(Color.primary.opacity(0.05), lineWidth: 1)
         )
         .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+        .contentShape(Rectangle())
     }
 }

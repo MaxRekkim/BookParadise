@@ -4,18 +4,27 @@ import UIKit
 public struct QuoteCardShareView: View {
     public let quote: BookQuote
     public let book: Book
+    public var onDismiss: (() -> Void)? = nil
+    
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var quotesManager = QuotesManager.shared
     @ObservedObject private var theme = ThemeManager.shared
 
-    @State private var renderedImage: UIImage? = nil
-    @State private var isSharingImage: Bool = false
-    @State private var isCopied: Bool = false
+    @State private var renderedCardImage: UIImage? = nil
+    @State private var isCardCopied: Bool = false
+    @State private var isTextCopied: Bool = false
+    @State private var isPhotoSaved: Bool = false
     @State private var showDeleteConfirmation: Bool = false
 
-    public init(quote: BookQuote, book: Book) {
+    public init(quote: BookQuote, book: Book, onDismiss: (() -> Void)? = nil) {
         self.quote = quote
         self.book = book
+        self.onDismiss = onDismiss
+    }
+
+    private func closeSheet() {
+        onDismiss?()
+        dismiss()
     }
 
     public var body: some View {
@@ -27,35 +36,69 @@ public struct QuoteCardShareView: View {
                         .padding(.horizontal, 16)
                         .padding(.top, 12)
 
-                    // Кнопки действий
+                    // Блок действий шеринга
                     VStack(spacing: 12) {
-                        Button(action: shareCardAsImage) {
+                        // 1. Быстрое копирование открытки (PNG) в буфер обмена (идеально для Mac, Telegram, Заметок)
+                        Button(action: copyCardImageToClipboard) {
                             HStack {
-                                Image(systemName: "square.and.arrow.up.fill")
-                                Text("Поделиться карточкой (Фото)")
+                                Image(systemName: isCardCopied ? "checkmark.circle.fill" : "doc.on.clipboard.fill")
+                                Text(isCardCopied ? "Открытка скопирована в буфер!" : "Скопировать открытку (PNG)")
                             }
                             .font(.headline)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
-                            .background(theme.primaryAccent)
+                            .background(isCardCopied ? Color.green : theme.primaryAccent)
                             .cornerRadius(12)
                         }
 
-                        Button(action: copyQuoteText) {
+                        // 2. Системный экспорт/поделиться (нативный ShareLink SwiftUI без блокирующих модальных окон)
+                        if let img = renderedCardImage {
+                            ShareLink(
+                                item: Image(uiImage: img),
+                                preview: SharePreview("Цитата: «\(book.title)»", image: Image(uiImage: img))
+                            ) {
+                                HStack {
+                                    Image(systemName: "square.and.arrow.up")
+                                    Text("Поделиться изображением...")
+                                }
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(theme.primaryAccent)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(theme.primaryAccent.opacity(0.12))
+                                .cornerRadius(12)
+                            }
+                        }
+
+                        // 3. Сохранить в Фотопленку (iOS)
+                        Button(action: saveCardToPhotos) {
                             HStack {
-                                Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
-                                Text(isCopied ? "Скопировано в буфер!" : "Скопировать текст цитаты")
+                                Image(systemName: isPhotoSaved ? "checkmark" : "square.and.arrow.down")
+                                Text(isPhotoSaved ? "Сохранено в Фото!" : "Сохранить фото в галерею")
                             }
                             .font(.subheadline)
                             .fontWeight(.medium)
-                            .foregroundColor(theme.primaryAccent)
+                            .foregroundColor(.primary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
-                            .background(theme.primaryAccent.opacity(0.12))
+                            .background(Color(UIColor.secondarySystemGroupedBackground))
                             .cornerRadius(12)
                         }
 
+                        // 4. Копировать текст цитаты
+                        Button(action: copyQuoteText) {
+                            HStack {
+                                Image(systemName: isTextCopied ? "checkmark" : "doc.on.doc")
+                                Text(isTextCopied ? "Текст скопирован в буфер!" : "Скопировать только текст цитаты")
+                            }
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .padding(.top, 4)
+                        }
+
+                        // 5. Удалить цитату
                         Button(role: .destructive, action: { showDeleteConfirmation = true }) {
                             HStack {
                                 Image(systemName: "trash")
@@ -75,23 +118,27 @@ public struct QuoteCardShareView: View {
             .navigationTitle("Цитата из книги")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Готово") { dismiss() }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Закрыть") { closeSheet() }
                 }
-            }
-            .sheet(isPresented: $isSharingImage) {
-                if let image = renderedImage {
-                    ActivityView(activityItems: [image])
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Готово") { closeSheet() }
                 }
             }
             .confirmationDialog("Удалить эту цитату?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
                 Button("Удалить", role: .destructive) {
                     quotesManager.deleteQuote(id: quote.id)
-                    dismiss()
+                    closeSheet()
                 }
                 Button("Отмена", role: .cancel) {}
             }
+            .onAppear {
+                generateCardImage()
+            }
         }
+        #if targetEnvironment(macCatalyst)
+        .frame(minWidth: 480, idealWidth: 520, minHeight: 620, idealHeight: 720)
+        #endif
     }
 
     // MARK: - Дизайн открытки цитаты
@@ -197,16 +244,43 @@ public struct QuoteCardShareView: View {
 
     // MARK: - Действия
     @MainActor
-    private func shareCardAsImage() {
+    private func renderCard() -> UIImage? {
         let renderer = ImageRenderer(content: quoteCard.frame(width: 360))
         #if targetEnvironment(macCatalyst)
         renderer.scale = 2.0
         #else
         renderer.scale = UIScreen.main.scale
         #endif
-        if let image = renderer.uiImage {
-            self.renderedImage = image
-            self.isSharingImage = true
+        return renderer.uiImage
+    }
+
+    @MainActor
+    private func generateCardImage() {
+        if let img = renderCard() {
+            self.renderedCardImage = img
+        }
+    }
+
+    @MainActor
+    private func copyCardImageToClipboard() {
+        let img = renderedCardImage ?? renderCard()
+        if let img = img {
+            UIPasteboard.general.image = img
+            isCardCopied = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                isCardCopied = false
+            }
+        }
+    }
+
+    @MainActor
+    private func saveCardToPhotos() {
+        let img = renderedCardImage ?? renderCard()
+        guard let img = img else { return }
+        UIImageWriteToSavedPhotosAlbum(img, nil, nil, nil)
+        isPhotoSaved = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            isPhotoSaved = false
         }
     }
 
@@ -219,21 +293,9 @@ public struct QuoteCardShareView: View {
             formatted += "\nЗаметка: \(note)"
         }
         UIPasteboard.general.string = formatted
-        isCopied = true
+        isTextCopied = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            isCopied = false
+            isTextCopied = false
         }
     }
-}
-
-// UIActivityViewController Wrapper
-struct ActivityView: UIViewControllerRepresentable {
-    let activityItems: [Any]
-    let applicationActivities: [UIActivity]? = nil
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: activityItems, applicationActivities: applicationActivities)
-    }
-
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

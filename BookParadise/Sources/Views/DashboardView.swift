@@ -8,6 +8,7 @@ public struct DashboardView: View {
     @State private var bookToUpdateProgress: Book? = nil
     @State private var bookForReadingSession: Book? = nil
     @State private var isShowingSettings: Bool = false
+    @State private var isShowingDetailedStats: Bool = false
     
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -30,6 +31,10 @@ public struct DashboardView: View {
                     
                     // 3. Карточки общей сводки (Адаптивная сетка)
                     summaryGridSection
+                        .padding(.horizontal)
+                    
+                    // 3.5. Переход к подробной аналитике
+                    detailedStatsBanner
                         .padding(.horizontal)
                     
                     // 4. Графики аналитики (SwiftCharts)
@@ -58,6 +63,11 @@ public struct DashboardView: View {
             }
             .sheet(isPresented: $isShowingSettings) {
                 SettingsView(viewModel: viewModel)
+            }
+            .sheet(isPresented: $isShowingDetailedStats) {
+                NavigationStack {
+                    DetailedStatsView(viewModel: viewModel)
+                }
             }
             .refreshable {
                 await viewModel.syncWithCloud()
@@ -237,7 +247,8 @@ public struct DashboardView: View {
                 value: "\(viewModel.stats.totalBooks)",
                 subtitle: "\(viewModel.stats.paperBooks) бум. / \(viewModel.stats.electronicBooks) эл.",
                 icon: "books.vertical.fill",
-                color: .blue
+                color: .blue,
+                action: { isShowingDetailedStats = true }
             )
             
             MetricCard(
@@ -245,7 +256,8 @@ public struct DashboardView: View {
                 value: "\(viewModel.stats.readBooks)",
                 subtitle: "\(String(format: "%.1f%%", viewModel.stats.percentRead)) библиотеки",
                 icon: "checkmark.seal.fill",
-                color: .green
+                color: .green,
+                action: { isShowingDetailedStats = true }
             )
             
             MetricCard(
@@ -253,7 +265,8 @@ public struct DashboardView: View {
                 value: "\(viewModel.stats.unreadBooks)",
                 subtitle: "Ждут своего часа",
                 icon: "clock.fill",
-                color: .orange
+                color: .orange,
+                action: { isShowingDetailedStats = true }
             )
             
             MetricCard(
@@ -261,9 +274,48 @@ public struct DashboardView: View {
                 value: "42 стр./дн.",
                 subtitle: "\(viewModel.stats.totalPagesRead) стр. всего",
                 icon: "bolt.fill",
-                color: .purple
+                color: .purple,
+                action: { isShowingDetailedStats = true }
             )
         }
+    }
+    
+    // MARK: - 3.5. Баннер перехода к подробной аналитике
+    private var detailedStatsBanner: some View {
+        Button(action: { isShowingDetailedStats = true }) {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(theme.primaryAccent.opacity(0.12))
+                        .frame(width: 36, height: 36)
+                    Image(systemName: "chart.line.uptrend.xyaxis")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(theme.primaryAccent)
+                }
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Подробная аналитика и статистика")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color(UIColor.label))
+                    Text("Прогноз цели 2026, темп чтения, форматы и история сессий")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.secondary)
+            }
+            .padding(12)
+            .background(Color(UIColor.secondarySystemGroupedBackground))
+            .cornerRadius(14)
+            .shadow(color: Color.black.opacity(0.03), radius: 6, x: 0, y: 2)
+        }
+        .buttonStyle(.plain)
     }
     
     // MARK: - 4. Графики SwiftCharts

@@ -200,7 +200,7 @@ public class ReadingSessionManager: ObservableObject {
     private func saveHistory() {
         do {
             let data = try JSONEncoder().encode(sessionHistory)
-            try data.write(to: historyFileURL, options: .atomic)
+            try data.write(to: historyFileURL, options: [.atomic, .completeFileProtection])
         } catch {
             print("Failed to save session history: \(error)")
         }

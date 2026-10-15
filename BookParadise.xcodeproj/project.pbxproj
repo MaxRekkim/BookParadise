@@ -42,6 +42,7 @@
 		A10000112345678900000011 /* EBookStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000112345678900000011 /* EBookStorageManager.swift */; };
 		A10000122345678900000012 /* QuotesGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000122345678900000012 /* QuotesGalleryView.swift */; };
 		A10000132345678900000013 /* DailyMotivationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000132345678900000013 /* DailyMotivationBanner.swift */; };
+		A10000142345678900000014 /* DetailedStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000142345678900000014 /* DetailedStatsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -82,6 +83,7 @@
 		B10000112345678900000011 /* EBookStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/EBookStorageManager.swift; sourceTree = "<group>"; };
 		B10000122345678900000012 /* QuotesGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/QuotesGalleryView.swift; sourceTree = "<group>"; };
 		B10000132345678900000013 /* DailyMotivationBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/DailyMotivationBanner.swift; sourceTree = "<group>"; };
+		B10000142345678900000014 /* DetailedStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/DetailedStatsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +144,7 @@
 				B10000112345678900000011 /* EBookStorageManager.swift */,
 				B10000122345678900000012 /* QuotesGalleryView.swift */,
 				B10000132345678900000013 /* DailyMotivationBanner.swift */,
+				B10000142345678900000014 /* DetailedStatsView.swift */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -256,6 +259,7 @@
 				A10000112345678900000011 /* EBookStorageManager.swift in Sources */,
 				A10000122345678900000012 /* QuotesGalleryView.swift in Sources */,
 				A10000132345678900000013 /* DailyMotivationBanner.swift in Sources */,
+				A10000142345678900000014 /* DetailedStatsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

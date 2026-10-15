@@ -4,10 +4,11 @@ import UIKit
 public enum AppTab: Int, CaseIterable, Identifiable {
     case dashboard = 0
     case library = 1
-    case bingo = 2
-    case cycles = 3
-    case quotes = 4
-    case settings = 5
+    case stats = 2
+    case bingo = 3
+    case cycles = 4
+    case quotes = 5
+    case settings = 6
     
     public var id: Int { rawValue }
     
@@ -15,6 +16,7 @@ public enum AppTab: Int, CaseIterable, Identifiable {
         switch self {
         case .dashboard: return "Дашборд"
         case .library: return "Библиотека"
+        case .stats: return "Аналитика"
         case .bingo: return "Планы и Бинго"
         case .cycles: return "Книжные циклы"
         case .quotes: return "Цитаты и заметки"
@@ -26,6 +28,7 @@ public enum AppTab: Int, CaseIterable, Identifiable {
         switch self {
         case .dashboard: return "square.grid.2x2.fill"
         case .library: return "books.vertical.fill"
+        case .stats: return "chart.line.uptrend.xyaxis"
         case .bingo: return "calendar.badge.clock"
         case .cycles: return "bookmark.circle.fill"
         case .quotes: return "quote.opening"
@@ -40,6 +43,7 @@ public struct MainTabView: View {
     @ObservedObject private var quotesManager = QuotesManager.shared
     
     @State private var selectedTab: AppTab = .dashboard
+    @State private var columnVisibility: NavigationSplitViewVisibility = .all
     
     // Модальные окна
     @State private var isShowingAddBook: Bool = false
@@ -90,11 +94,12 @@ public struct MainTabView: View {
     // MARK: - 1. НАСТОЛЬНЫЙ ИНТЕРФЕЙС ДЛЯ MACOS (САЙДБАР + ТУЛБАР)
     #if targetEnvironment(macCatalyst) || os(macOS)
     private var macOSLayout: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             List {
                 Section(header: Text("Книжный Рай")) {
                     sidebarItem(tab: .dashboard)
                     sidebarItem(tab: .library, badge: "\(viewModel.books.count)")
+                    sidebarItem(tab: .stats)
                     sidebarItem(tab: .bingo)
                     sidebarItem(tab: .cycles, badge: "\(viewModel.normalizedCycles.count)")
                 }
@@ -106,7 +111,25 @@ public struct MainTabView: View {
             }
             .listStyle(.sidebar)
             .navigationTitle("Книжный Рай")
+            .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 320)
             .toolbar {
+                ToolbarItem(placement: .navigation) {
+                    Button(action: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            if columnVisibility == .detailOnly {
+                                columnVisibility = .all
+                            } else {
+                                columnVisibility = .detailOnly
+                            }
+                        }
+                    }) {
+                        Image(systemName: "sidebar.leading")
+                            .font(.system(size: 15, weight: .medium))
+                    }
+                    .help("Показать/скрыть боковое меню (⌘S)")
+                    .keyboardShortcut("s", modifiers: .command)
+                }
+                
                 ToolbarItem(placement: .automatic) {
                     Button(action: { isShowingAddBook = true }) {
                         Label("Новая книга", systemImage: "plus")
@@ -126,6 +149,7 @@ public struct MainTabView: View {
         } detail: {
             contentForSelectedTab
         }
+        .navigationSplitViewStyle(.balanced)
     }
     
     private func sidebarItem(tab: AppTab, badge: String? = nil) -> some View {
@@ -173,6 +197,9 @@ public struct MainTabView: View {
                 LibraryView(viewModel: viewModel)
                     .tag(AppTab.library)
                 
+                DetailedStatsView(viewModel: viewModel)
+                    .tag(AppTab.stats)
+                
                 BingoView(viewModel: viewModel)
                     .tag(AppTab.bingo)
                 
@@ -198,6 +225,8 @@ public struct MainTabView: View {
             DashboardView(viewModel: viewModel)
         case .library:
             LibraryView(viewModel: viewModel)
+        case .stats:
+            DetailedStatsView(viewModel: viewModel)
         case .bingo:
             BingoView(viewModel: viewModel)
         case .cycles:

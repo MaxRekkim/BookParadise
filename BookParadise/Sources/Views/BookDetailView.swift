@@ -258,7 +258,9 @@ public struct BookDetailView: View {
             QuoteScannerView(book: book)
         }
         .sheet(item: $selectedQuoteForShare) { q in
-            QuoteCardShareView(quote: q, book: book)
+            QuoteCardShareView(quote: q, book: book, onDismiss: {
+                selectedQuoteForShare = nil
+            })
         }
         .sheet(isPresented: $isShowingReadingSession) {
             ReadingSessionView(viewModel: viewModel, book: book)

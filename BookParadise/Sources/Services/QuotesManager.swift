@@ -36,7 +36,7 @@ public class QuotesManager: ObservableObject {
     private func saveQuotes() {
         do {
             let data = try JSONEncoder().encode(quotes)
-            try data.write(to: fileURL, options: .atomic)
+            try data.write(to: fileURL, options: [.atomic, .completeFileProtection])
         } catch {
             print("Failed to save quotes: \(error)")
         }

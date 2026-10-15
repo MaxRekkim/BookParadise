@@ -15,7 +15,7 @@ on:
         type: boolean
         default: false
       version_tag:
-        description: 'Тег версии (например, v1.1.0)'
+        description: 'Тег версии (например, v2.0.0)'
         required: false
         type: string
         default: 'v2.0.0'
@@ -50,6 +50,20 @@ jobs:
           echo "project_path=$PROJ_PATH" >> $GITHUB_OUTPUT
           echo "Found project at: $PROJ_PATH"
 
+      - name: Determine Build Version
+        id: get-version
+        run: |
+          VERSION="2.0.0"
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            RAW_TAG="${GITHUB_REF#refs/tags/}"
+            VERSION="${RAW_TAG#v}"
+          elif [ -n "${{ github.event.inputs.version_tag }}" ]; then
+            RAW_TAG="${{ github.event.inputs.version_tag }}"
+            VERSION="${RAW_TAG#v}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Target BookParadise Version: $VERSION"
+
       # --- 1. СБОРКА ДЛЯ IOS (IPHONE & IPAD) ---
       - name: Build iOS App (Release)
         run: |
@@ -66,6 +80,7 @@ jobs:
 
       - name: Package .app into .ipa for iOS
         run: |
+          VERSION="${{ steps.get-version.outputs.version }}"
           mkdir -p Payload
           APP_PATH=$(find build-ios -name "BookParadise.app" -type d | head -n 1)
           if [ -z "$APP_PATH" ]; then
@@ -74,7 +89,8 @@ jobs:
           fi
           echo "Found iOS app at: $APP_PATH"
           cp -r "$APP_PATH" Payload/
-          zip -r BookParadise.ipa Payload
+          zip -r "BookParadise-${VERSION}.ipa" Payload
+          cp "BookParadise-${VERSION}.ipa" BookParadise.ipa
           rm -rf Payload
 
       # --- 2. СБОРКА ДЛЯ MACOS (APPLE SILICON & INTEL) ---
@@ -92,6 +108,7 @@ jobs:
 
       - name: Package macOS App into .zip, .dmg and .pkg
         run: |
+          VERSION="${{ steps.get-version.outputs.version }}"
           MAC_APP_PATH=$(find build-mac -name "BookParadise.app" -type d | head -n 1)
           if [ -z "$MAC_APP_PATH" ]; then
             echo "Error: BookParadise.app not found in build-mac!"
@@ -100,45 +117,48 @@ jobs:
           echo "Found macOS app at: $MAC_APP_PATH"
 
           # 1. Портативный ZIP
-          ditto -c -k --sequesterRsrc --keepParent "$MAC_APP_PATH" BookParadise-macOS.zip
+          ditto -c -k --sequesterRsrc --keepParent "$MAC_APP_PATH" "BookParadise-${VERSION}-macOS.zip"
+          cp "BookParadise-${VERSION}-macOS.zip" BookParadise-macOS.zip
 
           # 2. Образ диска DMG (Drag-and-Drop в /Applications)
           mkdir -p dmg_folder
           cp -R "$MAC_APP_PATH" dmg_folder/
           ln -s /Applications dmg_folder/Applications
-          hdiutil create -volname "BookParadise" -srcfolder dmg_folder -ov -format UDZO BookParadise.dmg
+          hdiutil create -volname "BookParadise" -srcfolder dmg_folder -ov -format UDZO "BookParadise-${VERSION}.dmg"
+          cp "BookParadise-${VERSION}.dmg" BookParadise.dmg
           rm -rf dmg_folder
 
           # 3. Инсталлятор PKG (установка в /Applications)
-          pkgbuild --component "$MAC_APP_PATH" --install-location /Applications BookParadise.pkg
+          pkgbuild --component "$MAC_APP_PATH" --install-location /Applications "BookParadise-${VERSION}.pkg"
+          cp "BookParadise-${VERSION}.pkg" BookParadise.pkg
 
       # --- 3. АРТИФАКТЫ И РЕЛИЗЫ ---
       - name: Upload iOS IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: BookParadise-iOS-IPA
-          path: BookParadise.ipa
+          name: BookParadise-${{ steps.get-version.outputs.version }}-iOS-IPA
+          path: BookParadise-*.ipa
           retention-days: 14
 
       - name: Upload macOS DMG Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: BookParadise-macOS-DMG
-          path: BookParadise.dmg
+          name: BookParadise-${{ steps.get-version.outputs.version }}-macOS-DMG
+          path: BookParadise-*.dmg
           retention-days: 14
 
       - name: Upload macOS PKG Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: BookParadise-macOS-PKG
-          path: BookParadise.pkg
+          name: BookParadise-${{ steps.get-version.outputs.version }}-macOS-PKG
+          path: BookParadise-*.pkg
           retention-days: 14
 
       - name: Upload macOS Zip Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: BookParadise-macOS-ZIP
-          path: BookParadise-macOS.zip
+          name: BookParadise-${{ steps.get-version.outputs.version }}-macOS-ZIP
+          path: BookParadise-*-macOS.zip
           retention-days: 14
 
       - name: Create or Update GitHub Release (on tag push)
@@ -146,12 +166,16 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
+            BookParadise-${{ steps.get-version.outputs.version }}.ipa
+            BookParadise-${{ steps.get-version.outputs.version }}.dmg
+            BookParadise-${{ steps.get-version.outputs.version }}.pkg
+            BookParadise-${{ steps.get-version.outputs.version }}-macOS.zip
             BookParadise.ipa
             BookParadise.dmg
             BookParadise.pkg
             BookParadise-macOS.zip
           name: "Книжный Рай ${{ github.ref_name }}"
-          generate_release_notes: true
+          body_path: CHANGELOG.md
           draft: false
           prerelease: false
         env:
@@ -162,13 +186,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
+            BookParadise-${{ steps.get-version.outputs.version }}.ipa
+            BookParadise-${{ steps.get-version.outputs.version }}.dmg
+            BookParadise-${{ steps.get-version.outputs.version }}.pkg
+            BookParadise-${{ steps.get-version.outputs.version }}-macOS.zip
             BookParadise.ipa
             BookParadise.dmg
             BookParadise.pkg
             BookParadise-macOS.zip
           tag_name: ${{ github.event.inputs.version_tag }}
           name: "Книжный Рай ${{ github.event.inputs.version_tag }}"
-          generate_release_notes: true
+          body_path: CHANGELOG.md
           draft: false
           prerelease: false
         env:

@@ -12,9 +12,12 @@ public class EBookStorageManager: ObservableObject {
     
     private var storageDirectoryURL: URL {
         let paths = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
-        let dir = paths[0].appendingPathComponent(storageFolderName, isDirectory: true)
+        var dir = paths[0].appendingPathComponent(storageFolderName, isDirectory: true)
         if !fileManager.fileExists(atPath: dir.path) {
             try? fileManager.createDirectory(at: dir, withIntermediateDirectories: true, attributes: nil)
+            var resourceValues = URLResourceValues()
+            resourceValues.isExcludedFromBackup = true
+            try? dir.setResourceValues(resourceValues)
         }
         return dir
     }
@@ -70,7 +73,11 @@ public class EBookStorageManager: ObservableObject {
             }
         }
         
-        let safeName = sourceURL.lastPathComponent.replacingOccurrences(of: " ", with: "_")
+        let rawFilename = sourceURL.lastPathComponent
+        // Санитизация имени файла от path traversal и спецсимволов
+        let allowedChars = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: ".-_"))
+        let filtered = rawFilename.components(separatedBy: allowedChars.inverted).joined()
+        let safeName = filtered.trimmingCharacters(in: CharacterSet(charactersIn: ".")).isEmpty ? "book_file" : filtered
         let destinationURL = storageDirectoryURL.appendingPathComponent("book_\(bookId)_\(safeName)")
         
         do {
