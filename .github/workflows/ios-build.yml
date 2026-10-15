@@ -61,8 +61,15 @@ jobs:
             RAW_TAG="${{ github.event.inputs.version_tag }}"
             VERSION="${RAW_TAG#v}"
           fi
+          
+          IS_PRERELEASE="false"
+          if [[ "$VERSION" =~ (alpha|beta|rc|dev) ]]; then
+            IS_PRERELEASE="true"
+          fi
+          
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Target BookParadise Version: $VERSION"
+          echo "is_prerelease=$IS_PRERELEASE" >> $GITHUB_OUTPUT
+          echo "Target BookParadise Version: $VERSION (Pre-release: $IS_PRERELEASE)"
 
       # --- 1. СБОРКА ДЛЯ IOS (IPHONE & IPAD) ---
       - name: Build iOS App (Release)
@@ -177,7 +184,7 @@ jobs:
           name: "Книжный Рай ${{ github.ref_name }}"
           body_path: CHANGELOG.md
           draft: false
-          prerelease: false
+          prerelease: ${{ steps.get-version.outputs.is_prerelease == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -198,6 +205,6 @@ jobs:
           name: "Книжный Рай ${{ github.event.inputs.version_tag }}"
           body_path: CHANGELOG.md
           draft: false
-          prerelease: false
+          prerelease: ${{ steps.get-version.outputs.is_prerelease == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
