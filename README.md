@@ -1,19 +1,24 @@
-# ✨📚 КНИЖНЫЙ РАЙ (BookParadise) — iOS & macOS App
+# ✨📚 КНИЖНЫЙ РАЙ (BookParadise) — Мультиплатформенная экосистема
 
-Нативное приложение для iOS и macOS (SwiftUI, SwiftCharts) с автономным режимом (Offline-First) и поддержкой облачной синхронизации.
+Нативное приложение для **iOS** и **macOS** (SwiftUI, SwiftCharts) + Кроссплатформенный клиент для **Android** и **Windows** (Flutter, Material 3) с полноценным автономным режимом (Offline-First) и облачной синхронизацией через Google Apps Script.
 
 ---
 
 ## 📱 Архитектура и ключевые особенности
 
-- **Offline-First & Optimistic UI**: Любое изменение в приложении (ввод страниц, оценка книги, добавление новой книги, планирование на месяц) мгновенно меняет интерфейс без задержек и сохраняется в локальный кэш iPhone (`BookParadiseCache.json`). Фоновый запрос в Google Apps Script отправляется в фоне, а при отсутствии интернета встает в локальную оффлайн-очередь (`BookParadiseOfflineQueue.json`) и автоматически выполняется при появлении сети.
+- **4 платформы в одном релизе**:
+  - 🍏 **iOS** (`.ipa`): нативный SwiftUI для iPhone и iPad, интерактивные виджеты рабочего стола, сканер ISBN камерой (VisionKit).
+  - 💻 **macOS** (`.dmg`, `.pkg`): Mac Catalyst приложение, виджеты в Центре уведомлений, горячие клавиши.
+  - 🤖 **Android** (`.apk`): современный адаптивный интерфейс Material 3, полный оффлайн-кэш, быстрая синхронизация.
+  - 🪟 **Windows** (`.zip`): десктопный клиент с боковой навигацией NavigationRail, портативный запуск без установки.
+- **Offline-First & Optimistic UI**: Любое изменение в приложении (ввод страниц, оценка книги, добавление новой книги, планирование на месяц, секундомер чтения) мгновенно меняет интерфейс без задержек и сохраняется в локальный кэш (`BookParadiseCache.json`). Фоновый запрос в Google Apps Script отправляется в фоне, а при отсутствии интернета встает в локальную оффлайн-очередь (`BookParadiseOfflineQueue.json`) и автоматически выполняется при появлении сети.
 - **Бережное отношение к таблице**: Google Apps Script веб-хук (`Code.gs`) обновляет исключительно целевые ячейки столбцов (например, `I`, `L`, `T`, `U`, `V`, `P`, `N`), **не затирая и не повреждая** формулы таблицы:
   - Столбец `G` (формула `=IMAGE(S{row})`)
   - Столбец `K` (формула расчета процента)
   - Столбец `R` (формула статуса цикла)
   - Лист «Книжное бинго»: столбец `K` (*Не трогать!!!* с техническими ключами)
-- **Сканер ISBN камерой + Google Books**: Наведение камеры iPhone на штрихкод книги автоматически считывает ISBN и подтягивает название, автора, количество страниц и обложку из открытой базы Google Books.
 - **Нормализация циклов**: Объединяет серии без учета регистра (например, «Королевская Элита» и «Королевская элита» объединяются в единый цикл).
+- **Дзен-секундомер и Галерея цитат**: Трекинг сессий чтения с расчетом скорости страниц в час, сохранение лучших моментов в карточки цитат с экспортом и защитой от выцветания.
 
 ---
 
@@ -23,41 +28,29 @@
 BookParadise/
 ├── .github/
 │   └── workflows/
-│       └── ios-build.yml             # Автоматическая сборка .ipa в GitHub Actions (macos-14)
+│       └── ios-build.yml             # Матричный CI/CD пайплайн сборки для 4 платформ (iOS, macOS, Android, Windows)
+├── .gemini/
+│   └── rules/
+│       └── multiplatform-release.md  # Регламент синхронных мультиплатформенных релизов
 ├── BookParadise.xcodeproj/           # Готовый проект Xcode (схемы, таргеты, настройки)
 ├── GoogleAppsScript/
 │   └── Code.gs                       # Исходный код REST API веб-хука для Google Таблицы
-└── BookParadise/
-    ├── Resources/
-    │   └── Info.plist                # Разрешения камеры (ISBN) и ATS (загрузка обложек)
-    └── Sources/
-        ├── BookParadiseApp.swift     # Точка входа SwiftUI (@main)
-        ├── Models/
-        │   ├── Enums.swift           # 9 жанров, статусы чтения, форматы, полка, оценки
-        │   ├── Book.swift            # Модель книги (23 столбца A–W)
-        │   ├── BingoAndCycle.swift   # Модели листа Книжное бинго (A–M), циклов и статистики
-        │   └── SampleData.swift      # Эталонная оффлайн-база: 327 книг (77 проч., 3 в процессе, 247 очередь)
-        ├── Services/
-        │   ├── GoogleSheetsAPIService.swift  # REST API клиент (GET/POST, оффлайн-кэш, очередь)
-        │   ├── GoogleBooksLookupService.swift# Автопоиск метаданных по ISBN
-        │   └── BarcodeScannerView.swift      # Камера VisionKit DataScanner / AVFoundation
-        ├── ViewModels/
-        │   └── LibraryViewModel.swift# Single Source of Truth, фильтры, сортировки, Optimistic UI
-        └── Views/
-            ├── MainTabView.swift     # 4 таба + плавающая кнопка «+» быстрого действия
-            ├── DashboardView.swift   # Таб 1: «Читаю сейчас», календарь 2026, сводка 2x2, SwiftCharts
-            ├── LibraryView.swift     # Таб 2: Сетка 3 в ряд (полка) / список, поиск, чипсы-фильтры
-            ├── BookDetailView.swift  # Детальная страница книги со статусом серии и датами
-            ├── BingoView.swift       # Таб 3: Планы по месяцам (ИЮНЬ...МАЙ, Заброшено), степпер дней
-            ├── CyclesView.swift      # Таб 4: 35 циклов с фильтрами и чеклистом по порядку книг
-            ├── Components/
-            │   ├── BookCoverView.swift       # Асинхронная обложка с градиентным плейсхолдером
-            │   └── ReadingCalendarView.swift # Календарная сетка активности ПН–ВСК 2026
-            └── Sheets/
-                ├── ProgressUpdateSheet.swift # Сценарий А: Обновление прочитанных страниц
-                ├── AddBookSheet.swift        # Сценарий Б: Добавление книги со сканером
-                ├── AddToPlanSheet.swift      # Сценарий В: Добавление книги в план месяца
-                └── SettingsView.swift        # Настройки приложения и статус синхронизации
+├── BookParadise/                     # Нативный клиент Apple (iOS / iPadOS / macOS)
+│   ├── Resources/
+│   │   └── Info.plist                # Разрешения камеры (ISBN) и ATS (загрузка обложек)
+│   └── Sources/
+│       ├── BookParadiseApp.swift     # Точка входа SwiftUI (@main)
+│       ├── Models/                   # Book, Bingo, Cycle, Quote, Session
+│       ├── Services/                 # Sheets API, Books Lookup, Theme, Quotes, iCloud, Barcode
+│       ├── ViewModels/               # LibraryViewModel (Single Source of Truth)
+│       ├── Views/                    # Dashboard, Library, BookDetail, Bingo, Cycles, Quotes
+│       └── Widgets/                  # Виджеты для iOS и macOS
+└── BookParadise_Multiplatform/       # Мультиплатформенный клиент (Android & Windows)
+    ├── pubspec.yaml                  # Конфигурация Flutter и зависимости
+    ├── android/                      # Android Gradle проект (SDK 21–34)
+    └── lib/
+        ├── data/                     # Модели, REST API, кэш, оффлайн-очередь, темы
+        └── ui/                       # Адаптивный UI (Material 3), виджеты, экраны
 ```
 
 ---
@@ -68,28 +61,30 @@ BookParadise/
 
 ---
 
-## 🛠 Сборка .ipa файла
+## 🛠 Сборка и релизы для всех платформ
 
-### Вариант 1: Через GitHub Actions (Рекомендуемый, без Mac/Xcode)
-1. Создайте репозиторий на GitHub и отправьте в него файлы проекта.
-2. В репозитории уже настроен workflow [`.github/workflows/ios-build.yml`](file:///Users/max/.gemini/antigravity/scratch/BookParadise/.github/workflows/ios-build.yml).
-3. Перейдите во вкладку **Actions** ➔ выберите **Build iOS IPA (BookParadise)** ➔ нажмите **Run workflow**.
-4. По завершении сборки скачайте готовый артефакт **`BookParadise.ipa`**.
-
-### Вариант 2: Локально в Xcode
-1. Откройте `BookParadise.xcodeproj` в Xcode на Mac.
-2. Выберите схему **BookParadise** и устройство **Any iOS Device (arm64)**.
-3. Выберите в меню **Product** ➔ **Archive**.
-4. Экспортируйте Development / Ad-Hoc / Custom IPA без подписи (или укажите ваш бесплатный Apple ID).
+### Вариант 1: Через GitHub Actions (Рекомендуемый, полностью автоматический)
+1. В репозитории настроен единый матричный workflow [`.github/workflows/ios-build.yml`](file:///Users/max/.gemini/antigravity/scratch/BookParadise/.github/workflows/ios-build.yml).
+2. При создании любого тега `v*` (или ручном запуске через вкладку **Actions** ➔ **Run workflow**) параллельно собираются:
+   - 🍏 `BookParadise-*.ipa` (iOS)
+   - 💻 `BookParadise-*.dmg` и `BookParadise-*.pkg` (macOS)
+   - 🤖 `BookParadise-*-Android.apk` (Android)
+   - 🪟 `BookParadise-*-Windows-x64.zip` (Windows)
+3. Все 5 файлов автоматически прикрепляются к единому релизу в разделе **Releases**.
 
 ---
 
-## 📲 Установка на iPhone
+## 📲 Установка по платформам
 
-Готовый файл `BookParadise.ipa` устанавливается на любой iPhone с iOS 16.0+ через:
-- **Sideloadly** (macOS / Windows — самый простой способ через кабель или Wi-Fi).
-- **AltStore / SideStore** (беспроводная установка с автопродлением раз в 7 дней).
-- **TrollStore** (для устройств с поддержкой TrollStore без ограничений срока действия сертификата).
+- **iPhone / iPad (`.ipa`)**:
+  - Установка через **Sideloadly**, **AltStore / SideStore** или **TrollStore**.
+- **Mac (`.dmg` или `.pkg`)**:
+  - Смонтируйте DMG и перетащите `BookParadise.app` в папку `Applications`, либо запустите PKG-инсталлятор.
+- **Android (`.apk`)**:
+  - Скачайте `BookParadise-*-Android.apk` прямо на телефон и установите (разрешив установку из неизвестных источников).
+- **Windows (`.zip`)**:
+  - Распакуйте архив `BookParadise-*-Windows-x64.zip` в любую папку и запустите `book_paradise.exe`. Приложение полностью портативное и не требует установки.
+
 
 ---
 
