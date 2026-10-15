@@ -61,7 +61,12 @@ public struct AddBookSheet: View {
                             }
                             Spacer()
                             if isLookingUpISBN {
-                                ProgressView()
+                                HStack(spacing: 8) {
+                                    ThinkingOrbView(state: .searching, size: 28, speedMultiplier: 1.2)
+                                    Text("Поиск...")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
                             } else {
                                 Image(systemName: "camera.fill")
                                     .foregroundColor(.secondary)

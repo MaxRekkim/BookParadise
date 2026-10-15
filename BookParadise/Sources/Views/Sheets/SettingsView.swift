@@ -137,9 +137,14 @@ public struct SettingsView: View {
                     Button(action: {
                         Task { await viewModel.syncWithCloud() }
                     }) {
-                        HStack {
-                            Image(systemName: "arrow.clockwise")
-                            Text("Принудительно синхронизировать сейчас")
+                        HStack(spacing: 8) {
+                            if viewModel.isSyncing {
+                                ThinkingOrbView(state: .working, size: 18)
+                                Text("Синхронизация с облаком...")
+                            } else {
+                                Image(systemName: "arrow.clockwise")
+                                Text("Принудительно синхронизировать сейчас")
+                            }
                         }
                     }
                     .disabled(viewModel.isSyncing || !GoogleSheetsAPIService.shared.isConfigured)

@@ -40,7 +40,12 @@ public struct QuoteScannerView: View {
                             }
                             Spacer()
                             if isProcessingOCR {
-                                ProgressView()
+                                HStack(spacing: 8) {
+                                    ThinkingOrbView(state: .solving, size: 28, speedMultiplier: 1.2)
+                                    Text("Скан...")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
                             } else {
                                 Image(systemName: "camera.fill")
                                     .foregroundColor(.secondary)

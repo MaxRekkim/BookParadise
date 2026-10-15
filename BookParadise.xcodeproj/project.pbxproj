@@ -45,6 +45,7 @@
 		A10000142345678900000014 /* DetailedStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000142345678900000014 /* DetailedStatsView.swift */; };
 		A10000152345678900000015 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000152345678900000015 /* ImageCacheManager.swift */; };
 		A10000162345678900000016 /* iCloudSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000162345678900000016 /* iCloudSyncManager.swift */; };
+		A10000172345678900000017 /* ThinkingOrbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000172345678900000017 /* ThinkingOrbView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -88,6 +89,7 @@
 		B10000142345678900000014 /* DetailedStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/DetailedStatsView.swift; sourceTree = "<group>"; };
 		B10000152345678900000015 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/ImageCacheManager.swift; sourceTree = "<group>"; };
 		B10000162345678900000016 /* iCloudSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/iCloudSyncManager.swift; sourceTree = "<group>"; };
+		B10000172345678900000017 /* ThinkingOrbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ThinkingOrbView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +153,7 @@
 				B10000142345678900000014 /* DetailedStatsView.swift */,
 				B10000152345678900000015 /* ImageCacheManager.swift */,
 				B10000162345678900000016 /* iCloudSyncManager.swift */,
+				B10000172345678900000017 /* ThinkingOrbView.swift */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -268,6 +271,7 @@
 				A10000142345678900000014 /* DetailedStatsView.swift in Sources */,
 				A10000152345678900000015 /* ImageCacheManager.swift in Sources */,
 				A10000162345678900000016 /* iCloudSyncManager.swift in Sources */,
+				A10000172345678900000017 /* ThinkingOrbView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,7 +338,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -343,7 +347,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -360,7 +364,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -369,7 +373,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.0;
+				MARKETING_VERSION = 2.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;

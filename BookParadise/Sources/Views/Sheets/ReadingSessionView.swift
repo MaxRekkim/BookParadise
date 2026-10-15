@@ -13,6 +13,7 @@ public struct ReadingSessionView: View {
     @State private var isShowingFinishDialog: Bool = false
     @State private var endPageInput: String = ""
     @State private var completedRecord: ReadingSessionRecord? = nil
+    @State private var isZenMode: Bool = true
 
     public init(viewModel: LibraryViewModel, book: Book) {
         self.viewModel = viewModel
@@ -139,40 +140,110 @@ public struct ReadingSessionView: View {
         .padding(.horizontal, 20)
     }
 
-    // MARK: - Круговой индикатор таймера
+    // MARK: - Круговой индикатор таймера / Дзен-сфера (Thinking Orb)
     private var timerCircle: some View {
-        ZStack {
-            // Фоновый круг
-            Circle()
-                .stroke(theme.primaryAccent.opacity(0.12), lineWidth: 14)
-                .frame(width: 250, height: 250)
+        VStack(spacing: 16) {
+            ZStack {
+                if isZenMode {
+                    // Режим «Дзен-погружение» с анимированной сферой
+                    ZStack {
+                        // Дышащая или волновая сфера в зависимости от звука дождя
+                        ThinkingOrbView(
+                            state: sessionManager.isAmbientSoundActive ? .listening : .breathing,
+                            size: 240,
+                            speedMultiplier: sessionManager.isPaused ? 0.3 : 1.0,
+                            tintColor: theme.primaryAccent,
+                            isPaused: false
+                        )
 
-            // Прогресс круг
-            Circle()
-                .trim(from: 0, to: progressValue)
-                .stroke(
-                    LinearGradient(
-                        colors: [theme.primaryAccent, theme.secondaryAccent],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    style: StrokeStyle(lineWidth: 14, lineCap: .round)
-                )
-                .rotationEffect(.degrees(-90))
-                .animation(.easeInOut(duration: 0.5), value: progressValue)
-                .frame(width: 250, height: 250)
+                        // Тонкий внешний прогресс-ободок
+                        Circle()
+                            .trim(from: 0, to: progressValue)
+                            .stroke(theme.primaryAccent.opacity(0.4), style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                            .frame(width: 250, height: 250)
+                            .animation(.easeInOut(duration: 0.5), value: progressValue)
 
-            // Текст внутри
-            VStack(spacing: 6) {
-                Text(timeString)
-                    .font(.system(size: 54, weight: .bold, design: .rounded))
-                    .foregroundColor(Color(UIColor.label))
+                        // Компактный статус и время
+                        VStack(spacing: 4) {
+                            Text(timeString)
+                                .font(.system(size: 38, weight: .bold, design: .rounded))
+                                .foregroundColor(Color(UIColor.label))
 
-                Text(sessionManager.isRunning ? (sessionManager.isPaused ? "ПАУЗА" : "ЧТЕНИЕ") : "ГОТОВ")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .tracking(2)
-                    .foregroundColor(theme.primaryAccent)
+                            Text(sessionManager.isRunning ? (sessionManager.isPaused ? "ПАУЗА" : "ПОГРУЖЕНИЕ") : "ГОТОВ")
+                                .font(.system(size: 11, weight: .bold))
+                                .tracking(2)
+                                .foregroundColor(theme.primaryAccent)
+                        }
+                    }
+                    .frame(width: 250, height: 250)
+                    .contentShape(Circle())
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            isZenMode.toggle()
+                        }
+                    }
+                } else {
+                    // Классический круговой таймер с жирным прогрессом
+                    ZStack {
+                        Circle()
+                            .stroke(theme.primaryAccent.opacity(0.12), lineWidth: 14)
+                            .frame(width: 250, height: 250)
+
+                        Circle()
+                            .trim(from: 0, to: progressValue)
+                            .stroke(
+                                LinearGradient(
+                                    colors: [theme.primaryAccent, theme.secondaryAccent],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                style: StrokeStyle(lineWidth: 14, lineCap: .round)
+                            )
+                            .rotationEffect(.degrees(-90))
+                            .animation(.easeInOut(duration: 0.5), value: progressValue)
+                            .frame(width: 250, height: 250)
+
+                        VStack(spacing: 6) {
+                            Text(timeString)
+                                .font(.system(size: 54, weight: .bold, design: .rounded))
+                                .foregroundColor(Color(UIColor.label))
+
+                            Text(sessionManager.isRunning ? (sessionManager.isPaused ? "ПАУЗА" : "ЧТЕНИЕ") : "ГОТОВ")
+                                .font(.caption)
+                                .fontWeight(.bold)
+                                .tracking(2)
+                                .foregroundColor(theme.primaryAccent)
+                        }
+                    }
+                    .frame(width: 250, height: 250)
+                    .contentShape(Circle())
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                            isZenMode.toggle()
+                        }
+                    }
+                }
+            }
+
+            // Кнопка переключения между Дзен-сферой и обычным таймером
+            Button(action: {
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                    isZenMode.toggle()
+                }
+            }) {
+                HStack(spacing: 6) {
+                    Image(systemName: isZenMode ? "sparkles" : "timer")
+                        .font(.caption2)
+                    Text(isZenMode ? "Режим: Дзен-сфера" : "Режим: Обычный таймер")
+                        .font(.caption2)
+                        .fontWeight(.semibold)
+                }
+                .foregroundColor(theme.primaryAccent)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(theme.primaryAccent.opacity(0.08))
+                .cornerRadius(12)
             }
         }
     }
