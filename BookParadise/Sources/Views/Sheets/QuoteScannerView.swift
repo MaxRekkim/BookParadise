@@ -205,10 +205,11 @@ public struct QuoteScannerView: View {
                 }
             }
 
+            let finalPieces = textPieces
             await MainActor.run {
-                self.recognizedFragments = Array(textPieces.prefix(8))
-                if self.quoteText.isEmpty && !textPieces.isEmpty {
-                    self.quoteText = textPieces.joined(separator: " ")
+                self.recognizedFragments = Array(finalPieces.prefix(8))
+                if self.quoteText.isEmpty && !finalPieces.isEmpty {
+                    self.quoteText = finalPieces.joined(separator: " ")
                 }
                 self.isProcessingOCR = false
             }

@@ -289,7 +289,6 @@ public struct ReadingSessionView: View {
 
                 if let endPage = Int(endPageInput), endPage >= book.pagesRead {
                     let read = endPage - book.pagesRead
-                    let minutes = max(1, sessionManager.elapsedSeconds / 60)
                     let speed = Double(read) / (Double(sessionManager.elapsedSeconds) / 3600.0)
 
                     Section(header: Text("Аналитика скорости")) {

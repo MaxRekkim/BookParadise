@@ -18,7 +18,7 @@ public struct WidgetBookSnapshot: Codable {
         self.id = book.id
         self.title = book.title
         self.author = book.author
-        self.coverURL = book.cleanCoverURL
+        self.coverURL = book.cleanCoverURL?.absoluteString
         self.pagesRead = book.pagesRead
         self.totalPages = book.totalPages
         self.progressPercent = book.progressPercent
