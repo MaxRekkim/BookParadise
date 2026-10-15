@@ -344,17 +344,36 @@ jobs:
       - name: Package Windows ZIP
         shell: bash
         run: |
-          VERSION="${{ steps.get-version.outputs.version }}"
-          RELEASE_DIR=$(find BookParadise_Multiplatform/build/windows -type d -name "Release" | head -n 1)
-          if [ -z "$RELEASE_DIR" ]; then
-            echo "Error: Windows Release directory not found!"
-            find BookParadise_Multiplatform/build/windows || true
-            exit 1
-          fi
-          echo "Found release directory: $RELEASE_DIR"
-          ls -la "$RELEASE_DIR"
-          7z a -tzip "BookParadise-${VERSION}-Windows-x64.zip" "./$RELEASE_DIR/*"
-          ls -lh "BookParadise-${VERSION}-Windows-x64.zip"
+          python3 -c "
+          import os, sys, zipfile
+
+          ver = sys.argv[1]
+          release_dir = None
+          for root, dirs, files in os.walk('BookParadise_Multiplatform/build/windows'):
+              if os.path.basename(root).lower() == 'release':
+                  if any(f.endswith('.exe') for f in files):
+                      release_dir = root
+                      break
+                  elif not release_dir:
+                      release_dir = root
+
+          if not release_dir:
+              print('ERROR: Windows release directory not found!')
+              sys.exit(1)
+
+          print(f'Found release directory: {release_dir}')
+          zip_name = f'BookParadise-{ver}-Windows-x64.zip'
+          with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zf:
+              for root, dirs, files in os.walk(release_dir):
+                  for file in files:
+                      p = os.path.join(root, file)
+                      arcname = os.path.relpath(p, release_dir)
+                      zf.write(p, arcname)
+
+          size_mb = os.path.getsize(zip_name) / (1024 * 1024)
+          print(f'Successfully created {zip_name} ({size_mb:.2f} MB)')
+          " "${{ steps.get-version.outputs.version }}"
+          ls -lh BookParadise-*-Windows-x64.zip
 
       - name: Upload Windows ZIP Artifact
         uses: actions/upload-artifact@v4
