@@ -1,4 +1,4 @@
-name: Build iOS IPA & Create Release (BookParadise)
+name: Build iOS IPA & macOS App & Create Release (BookParadise)
 
 on:
   push:
@@ -15,17 +15,17 @@ on:
         type: boolean
         default: false
       version_tag:
-        description: 'Тег версии (например, v1.0.0)'
+        description: 'Тег версии (например, v1.1.0)'
         required: false
         type: string
-        default: 'v1.0.0'
+        default: 'v1.1.0'
 
 permissions:
   contents: write
 
 jobs:
-  build-ipa:
-    name: Build Unsigned IPA for Sideloading
+  build-apps:
+    name: Build iOS (IPA) & macOS (App)
     runs-on: macos-14
 
     steps:
@@ -50,7 +50,8 @@ jobs:
           echo "project_path=$PROJ_PATH" >> $GITHUB_OUTPUT
           echo "Found project at: $PROJ_PATH"
 
-      - name: Build Archive (No Code Signing Required)
+      # --- 1. СБОРКА ДЛЯ IOS (IPHONE & IPAD) ---
+      - name: Build iOS App (Release)
         run: |
           xcodebuild build \
             -project "${{ steps.find-project.outputs.project_path }}" \
@@ -61,34 +62,66 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            BUILD_DIR="${{ github.workspace }}/build"
+            BUILD_DIR="${{ github.workspace }}/build-ios"
 
-      - name: Package .app into .ipa
+      - name: Package .app into .ipa for iOS
         run: |
           mkdir -p Payload
-          # Ищем скомпилированное приложение BookParadise.app во всем репозитории
-          APP_PATH=$(find . -name "BookParadise.app" -type d | head -n 1)
+          APP_PATH=$(find build-ios -name "BookParadise.app" -type d | head -n 1)
           if [ -z "$APP_PATH" ]; then
-            echo "Error: BookParadise.app not found!"
+            echo "Error: BookParadise.app not found in build-ios!"
             exit 1
           fi
-          echo "Found app at: $APP_PATH"
+          echo "Found iOS app at: $APP_PATH"
           cp -r "$APP_PATH" Payload/
           zip -r BookParadise.ipa Payload
           rm -rf Payload
 
-      - name: Upload IPA Artifact
+      # --- 2. СБОРКА ДЛЯ MACOS (APPLE SILICON & INTEL) ---
+      - name: Build macOS App (Mac Catalyst Release)
+        run: |
+          xcodebuild build \
+            -project "${{ steps.find-project.outputs.project_path }}" \
+            -scheme BookParadise \
+            -configuration Release \
+            -destination 'generic/platform=macOS,variant=Mac Catalyst' \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            BUILD_DIR="${{ github.workspace }}/build-mac"
+
+      - name: Package macOS .app into .zip
+        run: |
+          MAC_APP_PATH=$(find build-mac -name "BookParadise.app" -type d | head -n 1)
+          if [ -z "$MAC_APP_PATH" ]; then
+            echo "Error: BookParadise.app not found in build-mac!"
+            exit 1
+          fi
+          echo "Found macOS app at: $MAC_APP_PATH"
+          ditto -c -k --sequesterRsrc --keepParent "$MAC_APP_PATH" BookParadise-macOS.zip
+
+      # --- 3. АРТИФАКТЫ И РЕЛИЗЫ ---
+      - name: Upload iOS IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: BookParadise-iOS
+          name: BookParadise-iOS-IPA
           path: BookParadise.ipa
+          retention-days: 14
+
+      - name: Upload macOS App Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BookParadise-macOS-ZIP
+          path: BookParadise-macOS.zip
           retention-days: 14
 
       - name: Create or Update GitHub Release (on tag push)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          files: BookParadise.ipa
+          files: |
+            BookParadise.ipa
+            BookParadise-macOS.zip
           name: "✨ Книжный Рай ${{ github.ref_name }}"
           generate_release_notes: true
           draft: false
@@ -100,7 +133,9 @@ jobs:
         if: github.event.inputs.create_release == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          files: BookParadise.ipa
+          files: |
+            BookParadise.ipa
+            BookParadise-macOS.zip
           tag_name: ${{ github.event.inputs.version_tag }}
           name: "✨ Книжный Рай ${{ github.event.inputs.version_tag }}"
           generate_release_notes: true
