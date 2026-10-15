@@ -142,7 +142,7 @@ class ThemeService extends ChangeNotifier {
         elevation: 0,
         centerTitle: false,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: isDark ? cardBackgroundDark : cardBackgroundLight,
         elevation: 0,
         shape: RoundedRectangleBorder(

@@ -25,6 +25,9 @@
   - «В очереди» открывает список книг, ожидающих прочтения
   - «Темп чтения» открывает экран «Цель года» (`ReadingChallengeView`) с аналитикой темпа, графиком и книжной полкой
   - Добавлены шевроны перехода `>` и синхронная маршрутизация во Flutter-клиенте для Android и Windows
+- **Сборка Multiplatform в CI/CD (GitHub Actions)**:
+  - **Android (APK)**: исправлена ошибка несовместимости Android Gradle Plugin (AGP) в Flutter Gradle Plugin — устаревшие шаблоны удалены, включена чистая генерация манифеста и флаг `--android-skip-build-dependency-validation`
+  - **Windows (x64 ZIP)**: исправлена ошибка типизации `CardTheme` vs `CardThemeData` в `theme_service.dart` для Flutter 3.27+
 
 ## [2.3.1] — 2026-10-15
 

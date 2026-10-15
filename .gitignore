@@ -27,3 +27,14 @@ Package.resolved
 .DS_Store
 *.swp
 *~
+
+# Flutter & Multiplatform
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+BookParadise_Multiplatform/android/
+BookParadise_Multiplatform/windows/
+BookParadise_Multiplatform/build/
+BookParadise_Multiplatform/.dart_tool/
+BookParadise_Multiplatform/.flutter-plugins
+BookParadise_Multiplatform/.flutter-plugins-dependencies

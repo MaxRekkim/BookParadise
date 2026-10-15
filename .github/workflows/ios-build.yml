@@ -15,10 +15,10 @@ on:
         type: boolean
         default: false
       version_tag:
-        description: 'Тег версии (например, v2.3.1)'
+        description: 'Тег версии (например, v2.4.0)'
         required: false
         type: string
-        default: 'v2.3.1'
+        default: 'v2.4.0'
 
 permissions:
   contents: write
@@ -56,7 +56,7 @@ jobs:
       - name: Determine Build Version
         id: get-version
         run: |
-          VERSION="2.3.1"
+          VERSION="2.4.0"
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             RAW_TAG="${GITHUB_REF#refs/tags/}"
             VERSION="${RAW_TAG#v}"
@@ -182,8 +182,8 @@ jobs:
       - name: Determine Build Version
         id: get-version
         run: |
-          VERSION="2.3.1"
-          BUILD_NUMBER="8"
+          VERSION="2.4.0"
+          BUILD_NUMBER="9"
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             RAW_TAG="${GITHUB_REF#refs/tags/}"
             VERSION="${RAW_TAG#v}"
@@ -198,9 +198,13 @@ jobs:
       - name: Prepare and Build Android APK
         working-directory: BookParadise_Multiplatform
         run: |
-          flutter create --platforms=android --org com.maxim .
+          rm -rf android
+          flutter create --platforms=android --org com.maxim --project-name book_paradise .
+          # Ensure network access and localized app title
+          sed -i 's/<application/<uses-permission android:name="android.permission.INTERNET"\/>\n    <application/' android/app/src/main/AndroidManifest.xml || true
+          sed -i 's/android:label="book_paradise"/android:label="Книжный Рай"/' android/app/src/main/AndroidManifest.xml || true
           flutter pub get
-          flutter build apk --release --build-name=${{ steps.get-version.outputs.version }} --build-number=${{ steps.get-version.outputs.build_number }}
+          flutter build apk --release --android-skip-build-dependency-validation --build-name=${{ steps.get-version.outputs.version }} --build-number=${{ steps.get-version.outputs.build_number }}
           
           # Copy APK with clear release filename
           APK_SRC=$(find build -name "*release*.apk" | head -n 1)
@@ -238,8 +242,8 @@ jobs:
         id: get-version
         shell: bash
         run: |
-          VERSION="2.3.1"
-          BUILD_NUMBER="8"
+          VERSION="2.4.0"
+          BUILD_NUMBER="9"
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             RAW_TAG="${GITHUB_REF#refs/tags/}"
             VERSION="${RAW_TAG#v}"
@@ -256,7 +260,7 @@ jobs:
         working-directory: BookParadise_Multiplatform
         run: |
           flutter config --enable-windows-desktop
-          flutter create --platforms=windows --org com.maxim .
+          flutter create --platforms=windows --org com.maxim --project-name book_paradise .
           flutter pub get
           flutter build windows --release --build-name=${{ steps.get-version.outputs.version }} --build-number=${{ steps.get-version.outputs.build_number }}
 
