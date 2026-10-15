@@ -3,6 +3,7 @@ import UIKit
 
 public struct LibraryView: View {
     @ObservedObject public var viewModel: LibraryViewModel
+    @ObservedObject private var theme = ThemeManager.shared
     @State private var bookForProgressUpdate: Book? = nil
     @State private var bookForPlan: Book? = nil
     
@@ -13,11 +14,16 @@ public struct LibraryView: View {
     public var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Строка быстрых фильтров-чипсов
+                // Строка быстрых фильтров-чипсов с фиксацией от вертикального люфта
                 filterChipsBar
                 
-                // Сортировка и переключатель вида (Сетка / Список)
-                HStack {
+                // Активные теги фильтров (если применены)
+                if viewModel.filterCriteria.isActive {
+                    activeFiltersBar
+                }
+                
+                // Сортировка, кнопка фильтров и переключатель вида (Сетка / Список)
+                HStack(spacing: 10) {
                     Menu {
                         Picker("Сортировка", selection: $viewModel.sortOption) {
                             ForEach(SortOption.allCases) { opt in
@@ -32,31 +38,37 @@ public struct LibraryView: View {
                                 .fontWeight(.medium)
                         }
                         .foregroundColor(.primary)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 7)
                         .background(Color(UIColor.secondarySystemGroupedBackground))
                         .cornerRadius(8)
                         .contentShape(Rectangle())
                     }
                     
-                    // Фильтр по жанру
-                    Menu {
-                        Button("Все жанры") { viewModel.selectedGenreFilter = nil }
-                        Divider()
-                        ForEach(Genre.allCases) { g in
-                            Button(g.rawValue) { viewModel.selectedGenreFilter = g }
-                        }
-                    } label: {
+                    // Кнопка расширенных фильтров с бейджем активных
+                    Button(action: {
+                        viewModel.isFilterSheetPresented = true
+                    }) {
                         HStack(spacing: 4) {
-                            Image(systemName: "line.3.horizontal.decrease.circle")
-                            Text(viewModel.selectedGenreFilter?.rawValue ?? "Жанр")
+                            Image(systemName: viewModel.filterCriteria.isActive ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+                            Text("Фильтры")
                                 .font(.caption)
                                 .fontWeight(.medium)
-                                .lineLimit(1)
+                            
+                            if viewModel.filterCriteria.isActive {
+                                Text("\(viewModel.filterCriteria.activeCount)")
+                                    .font(.caption2)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 1)
+                                    .background(theme.primaryAccent)
+                                    .clipShape(Capsule())
+                            }
                         }
-                        .foregroundColor(viewModel.selectedGenreFilter == nil ? .primary : .orange)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
+                        .foregroundColor(viewModel.filterCriteria.isActive ? theme.primaryAccent : .primary)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 7)
                         .background(Color(UIColor.secondarySystemGroupedBackground))
                         .cornerRadius(8)
                         .contentShape(Rectangle())
@@ -71,15 +83,15 @@ public struct LibraryView: View {
                         }
                     }) {
                         Image(systemName: viewModel.isGridMode ? "list.bullet" : "square.grid.3x3.fill")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.orange)
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(theme.primaryAccent)
                             .padding(7)
                             .background(Color(UIColor.secondarySystemGroupedBackground))
                             .cornerRadius(8)
                     }
                 }
                 .padding(.horizontal)
-                .padding(.vertical, 8)
+                .padding(.vertical, 6)
                 
                 // Контент: Сетка или Список
                 if viewModel.isGridMode {
@@ -91,6 +103,9 @@ public struct LibraryView: View {
             .background(Color(UIColor.systemGroupedBackground))
             .navigationTitle("Библиотека (\(viewModel.filteredBooks.count))")
             .searchable(text: $viewModel.searchText, prompt: "Поиск по названию, автору, ISBN...")
+            .sheet(isPresented: $viewModel.isFilterSheetPresented) {
+                BookFilterSheet(viewModel: viewModel)
+            }
             .sheet(item: $bookForProgressUpdate) { book in
                 ProgressUpdateSheet(viewModel: viewModel, book: book)
             }
@@ -103,7 +118,7 @@ public struct LibraryView: View {
         }
     }
     
-    // MARK: - Чипсы быстрых фильтров
+    // MARK: - Чипсы быстрых фильтров (монолитные, строго горизонтальные)
     private var filterChipsBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
@@ -126,15 +141,96 @@ public struct LibraryView: View {
                         }
                         .padding(.horizontal, 12)
                         .padding(.vertical, 7)
-                        .background(isSelected ? Color.orange : Color(UIColor.secondarySystemGroupedBackground))
+                        .background(isSelected ? theme.primaryAccent : Color(UIColor.secondarySystemGroupedBackground))
                         .foregroundColor(isSelected ? .white : .primary)
                         .cornerRadius(16)
                     }
                 }
             }
             .padding(.horizontal)
-            .padding(.vertical, 6)
+            .padding(.vertical, 4)
         }
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(height: 44)
+    }
+    
+    // MARK: - Активные фильтры-теги с крестиком для быстрого сброса
+    private var activeFiltersBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(Array(viewModel.filterCriteria.genres), id: \.self) { g in
+                    removableFilterTag(title: g.rawValue) {
+                        viewModel.filterCriteria.genres.remove(g)
+                    }
+                }
+                ForEach(Array(viewModel.filterCriteria.statuses), id: \.self) { s in
+                    removableFilterTag(title: s.rawValue) {
+                        viewModel.filterCriteria.statuses.remove(s)
+                    }
+                }
+                ForEach(Array(viewModel.filterCriteria.formats), id: \.self) { f in
+                    removableFilterTag(title: f.rawValue) {
+                        viewModel.filterCriteria.formats.remove(f)
+                    }
+                }
+                ForEach(Array(viewModel.filterCriteria.ratings), id: \.self) { r in
+                    removableFilterTag(title: r.rawValue) {
+                        viewModel.filterCriteria.ratings.remove(r)
+                    }
+                }
+                if viewModel.filterCriteria.cycleMode != .all {
+                    removableFilterTag(title: viewModel.filterCriteria.cycleMode.rawValue) {
+                        viewModel.filterCriteria.cycleMode = .all
+                    }
+                }
+                if viewModel.filterCriteria.pageRange != .all {
+                    removableFilterTag(title: viewModel.filterCriteria.pageRange.rawValue) {
+                        viewModel.filterCriteria.pageRange = .all
+                    }
+                }
+                if viewModel.filterCriteria.onlyWithFiles {
+                    removableFilterTag(title: "С файлом Kindle") {
+                        viewModel.filterCriteria.onlyWithFiles = false
+                    }
+                }
+                
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        viewModel.filterCriteria.reset()
+                    }
+                }) {
+                    Text("Сбросить все ✕")
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.red)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.red.opacity(0.12))
+                        .cornerRadius(8)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 4)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(height: 34)
+    }
+    
+    private func removableFilterTag(title: String, onRemove: @escaping () -> Void) -> some View {
+        HStack(spacing: 4) {
+            Text(title)
+                .font(.caption2)
+                .fontWeight(.medium)
+            Button(action: onRemove) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 8, weight: .bold))
+            }
+        }
+        .foregroundColor(theme.primaryAccent)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(theme.primaryAccent.opacity(0.12))
+        .cornerRadius(8)
     }
     
     private func countForFilter(_ filter: StatusFilter) -> Int {
@@ -148,10 +244,10 @@ public struct LibraryView: View {
         }
     }
     
-    // MARK: - Адаптивная сетка обложек (подстраивается под iPhone, iPad и Mac)
+    // MARK: - Адаптивная книжная витрина (3 колонки на iPhone, 4-6 на iPad/Mac)
     private var booksGrid: some View {
         ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 120, maximum: 190), spacing: 16)], spacing: 20) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 160), spacing: 12)], spacing: 16) {
                 ForEach(viewModel.filteredBooks) { book in
                     NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
                         VStack(alignment: .leading, spacing: 6) {

@@ -23,6 +23,7 @@ public struct Book: Identifiable, Codable, Hashable {
     public var endDate: String?               // U: Конец чтения (YYYY-MM-DD)
     public var monthIndex: Int?               // V: Месяц по порядку (1-12)
     public var purchaseDate: String?          // W: Дата покупки (YYYY-MM-DD)
+    public var review: String?                // Отзыв и впечатления читателя
 
     public init(
         id: Int,
@@ -46,7 +47,8 @@ public struct Book: Identifiable, Codable, Hashable {
         startDate: String? = nil,
         endDate: String? = nil,
         monthIndex: Int? = nil,
-        purchaseDate: String? = nil
+        purchaseDate: String? = nil,
+        review: String? = nil
     ) {
         self.id = id
         self.title = title
@@ -84,6 +86,7 @@ public struct Book: Identifiable, Codable, Hashable {
         self.endDate = endDate
         self.monthIndex = monthIndex
         self.purchaseDate = purchaseDate
+        self.review = review
     }
     
     // MARK: - Вычисляемые свойства для удобства интерфейса
@@ -113,6 +116,7 @@ public struct Book: Identifiable, Codable, Hashable {
         case pagesRead, totalPages, progressPercent, status, shelf
         case planMonth, format, rating, cycleName, cycleStatus
         case coverURL, startDate, endDate, monthIndex, purchaseDate
+        case review
     }
     
     public init(from decoder: Decoder) throws {
@@ -156,5 +160,6 @@ public struct Book: Identifiable, Codable, Hashable {
         endDate = try container.decodeIfPresent(String.self, forKey: .endDate)
         monthIndex = try container.decodeIfPresent(Int.self, forKey: .monthIndex)
         purchaseDate = try container.decodeIfPresent(String.self, forKey: .purchaseDate)
+        review = try container.decodeIfPresent(String.self, forKey: .review)
     }
 }

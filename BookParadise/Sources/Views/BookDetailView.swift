@@ -12,6 +12,7 @@ public struct BookDetailView: View {
     @ObservedObject private var theme = ThemeManager.shared
     @ObservedObject private var eBookStorage = EBookStorageManager.shared
 
+    @AppStorage("kindleEmail") private var kindleEmail: String = ""
     @State private var isShowingProgressUpdate: Bool = false
     @State private var isShowingPlanSheet: Bool = false
     @State private var isShowingQuoteScanner: Bool = false
@@ -19,6 +20,9 @@ public struct BookDetailView: View {
     @State private var isShowingReadingSession: Bool = false
     @State private var isShowingFileImporter: Bool = false
     @State private var previewFileURL: URL? = nil
+    @State private var isEditingReview: Bool = false
+    @State private var reviewDraft: String = ""
+    @State private var isShowingKindleAlert: Bool = false
 
     public init(viewModel: LibraryViewModel, bookId: Int) {
         self.viewModel = viewModel
@@ -122,12 +126,12 @@ public struct BookDetailView: View {
                     ProgressView(value: Double(book.pagesRead), total: Double(max(1, book.totalPages)))
                         .tint(theme.primaryAccent)
 
-                    // Большая кнопка «Сессия чтения» с таймером
+                    // Большая кнопка «Сессия чтения»
                     Button(action: { isShowingReadingSession = true }) {
                         HStack(spacing: 8) {
                             Image(systemName: "timer")
                                 .font(.headline)
-                            Text("Начать сессию чтения (Таймер / Помодоро)")
+                            Text("Начать сессию чтения (Секундомер)")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
                         }
@@ -185,6 +189,9 @@ public struct BookDetailView: View {
                 // Цитаты и заметки из книги (OCR / Apple Vision)
                 quotesSection(for: book)
 
+                // Мой отзыв и рецензия
+                reviewSection(for: book)
+
                 // Серия / Цикл (если есть)
                 if book.hasCycle {
                     VStack(alignment: .leading, spacing: 8) {
@@ -220,23 +227,23 @@ public struct BookDetailView: View {
                     .cornerRadius(16)
                 }
 
-                // Детальные данные книги
+                // Детальные данные книги (Паспорт книги)
                 VStack(spacing: 12) {
-                    detailRow(title: "Номер в базе (A)", value: "#\(book.id)")
+                    detailRow(title: "Номер в каталоге", value: "#\(book.id)")
                     Divider()
-                    detailRow(title: "Издание / Серия (D)", value: book.edition.isEmpty ? "—" : book.edition)
+                    detailRow(title: "Издание и серия", value: book.edition.isEmpty ? "—" : book.edition)
                     Divider()
-                    detailRow(title: "ISBN (E)", value: book.isbn.isEmpty ? "—" : book.isbn)
+                    detailRow(title: "ISBN", value: book.isbn.isEmpty ? "—" : book.isbn)
                     Divider()
-                    detailRow(title: "На полке (M)", value: book.shelf.rawValue)
+                    detailRow(title: "Полка хранения", value: book.shelf.rawValue)
                     Divider()
-                    detailRow(title: "План чтения (N)", value: book.planMonth ?? "—")
+                    detailRow(title: "План чтения", value: book.planMonth ?? "—")
                     Divider()
-                    detailRow(title: "Начало чтения (T)", value: book.startDate ?? "—")
+                    detailRow(title: "Начало чтения", value: book.startDate ?? "—")
                     Divider()
-                    detailRow(title: "Конец чтения (U)", value: book.endDate ?? "—")
+                    detailRow(title: "Завершено", value: book.endDate ?? "—")
                     Divider()
-                    detailRow(title: "Дата покупки (W)", value: book.purchaseDate ?? "—")
+                    detailRow(title: "Дата покупки", value: book.purchaseDate ?? "—")
                 }
                 .padding()
                 .background(Color(UIColor.secondarySystemGroupedBackground))
@@ -277,6 +284,68 @@ public struct BookDetailView: View {
             }
         }
         .quickLookPreview($previewFileURL)
+        .sheet(isPresented: $isEditingReview) {
+            NavigationStack {
+                Form {
+                    Section(header: Text("Отзыв и впечатления о книге")) {
+                        TextEditor(text: $reviewDraft)
+                            .frame(minHeight: 180)
+                    }
+                }
+                .navigationTitle("Мой отзыв")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Отмена") { isEditingReview = false }
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Сохранить") {
+                            viewModel.updateReview(bookId: book.id, review: reviewDraft)
+                            isEditingReview = false
+                        }
+                        .fontWeight(.bold)
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Секция Отзыва и Рецензии
+    private func reviewSection(for book: Book) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Image(systemName: "text.quote")
+                    .foregroundColor(theme.primaryAccent)
+                Text("Мой отзыв и заметки")
+                    .font(.headline)
+                Spacer()
+                Button(action: {
+                    reviewDraft = book.review ?? ""
+                    isEditingReview = true
+                }) {
+                    Text(book.review == nil ? "+ Написать отзыв" : "Изменить")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(theme.primaryAccent)
+                }
+            }
+
+            if let rev = book.review, !rev.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                Text(rev)
+                    .font(.subheadline)
+                    .foregroundColor(Color(UIColor.label))
+                    .padding(.top, 2)
+            } else {
+                Text("Напишите свои впечатления, мысли и оценку после прочтения...")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .italic()
+                    .padding(.top, 2)
+            }
+        }
+        .padding()
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(16)
     }
 
     // MARK: - Секция Электронной книги / Файла (PDF / EPUB)
@@ -321,15 +390,15 @@ public struct BookDetailView: View {
                     .background(theme.primaryAccent.opacity(0.06))
                     .cornerRadius(10)
 
-                    HStack(spacing: 10) {
+                    HStack(spacing: 8) {
                         Button(action: {
                             if let url = eBookStorage.fileURL(for: book.id) {
                                 previewFileURL = url
                             }
                         }) {
-                            HStack(spacing: 6) {
+                            HStack(spacing: 4) {
                                 Image(systemName: "book.fill")
-                                Text("Читать в приложении")
+                                Text("Читать")
                             }
                             .font(.subheadline)
                             .fontWeight(.bold)
@@ -338,6 +407,26 @@ public struct BookDetailView: View {
                             .padding(.vertical, 10)
                             .background(theme.primaryAccent)
                             .cornerRadius(10)
+                        }
+
+                        if let fileURL = eBookStorage.fileURL(for: book.id) {
+                            ShareLink(
+                                item: fileURL,
+                                subject: Text(book.title),
+                                message: Text("Книга «\(book.title)» для отправки на Kindle: \(kindleEmail)")
+                            ) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "paperplane.fill")
+                                    Text("На Kindle")
+                                }
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(theme.primaryAccent)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .background(theme.primaryAccent.opacity(0.12))
+                                .cornerRadius(10)
+                            }
                         }
 
                         Button(role: .destructive, action: {

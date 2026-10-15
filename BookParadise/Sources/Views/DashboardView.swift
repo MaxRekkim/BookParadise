@@ -9,6 +9,7 @@ public struct DashboardView: View {
     @State private var bookForReadingSession: Book? = nil
     @State private var isShowingSettings: Bool = false
     @State private var isShowingDetailedStats: Bool = false
+    @State private var isShowingQuotes: Bool = false
     
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -49,10 +50,27 @@ public struct DashboardView: View {
             .navigationTitle("Книжный Рай")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { isShowingSettings = true }) {
-                        Image(systemName: "gearshape.fill")
-                            .foregroundColor(theme.primaryAccent)
+                    HStack(spacing: 12) {
+                        Button(action: { isShowingQuotes = true }) {
+                            Image(systemName: "quote.bubble.fill")
+                                .foregroundColor(theme.primaryAccent)
+                        }
+                        
+                        Button(action: { isShowingSettings = true }) {
+                            Image(systemName: "gearshape.fill")
+                                .foregroundColor(theme.primaryAccent)
+                        }
                     }
+                }
+            }
+            .sheet(isPresented: $isShowingQuotes) {
+                NavigationStack {
+                    QuotesGalleryView(viewModel: viewModel)
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Готово") { isShowingQuotes = false }
+                            }
+                        }
                 }
             }
             .sheet(item: $bookToUpdateProgress) { book in
@@ -380,7 +398,7 @@ public struct DashboardView: View {
             .background(Color(UIColor.secondarySystemGroupedBackground))
             .cornerRadius(16)
             
-            // Динамика покупок по месяцам (столбец W)
+            // Динамика покупок по месяцам
             VStack(alignment: .leading, spacing: 12) {
                 Text("Книжные покупки (по дате покупки)")
                     .font(.headline)
@@ -395,7 +413,7 @@ public struct DashboardView: View {
                     Chart {
                         ForEach(sortedPurchases, id: \.key) { item in
                             BarMark(
-                                x: .value("Месяц", item.key),
+                                x: .value("Месяц", formatMonthKey(item.key)),
                                 y: .value("Куплено книг", item.value)
                             )
                             .foregroundStyle(Color.teal.gradient)
@@ -408,5 +426,16 @@ public struct DashboardView: View {
             .background(Color(UIColor.secondarySystemGroupedBackground))
             .cornerRadius(16)
         }
+    }
+
+    private func formatMonthKey(_ key: String) -> String {
+        let parts = key.split(separator: "-")
+        if parts.count == 2, let year = parts.first, let monthNum = Int(parts[1]) {
+            let months = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"]
+            let mName = (monthNum >= 1 && monthNum <= 12) ? months[monthNum - 1] : String(parts[1])
+            let shortYear = year.suffix(2)
+            return "\(mName) '\(shortYear)"
+        }
+        return key
     }
 }

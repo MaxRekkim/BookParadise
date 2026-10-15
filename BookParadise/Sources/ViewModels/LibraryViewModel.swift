@@ -52,6 +52,10 @@ public class LibraryViewModel: ObservableObject {
     @Published public var sortOption: SortOption = .byNumber
     @Published public var isGridMode: Bool = true
     
+    // Расширенные фильтры
+    @Published public var filterCriteria: BookFilterCriteria = BookFilterCriteria()
+    @Published public var isFilterSheetPresented: Bool = false
+    
     // Бинго и Планы
     @Published public var selectedBingoMonth: String = "ОКТЯБРЬ"
     
@@ -278,6 +282,24 @@ public class LibraryViewModel: ObservableObject {
         GoogleSheetsAPIService.shared.postUpdatePlan(bookId: item.id, month: bingoItems[idx].planMonth, planDays: clamped)
     }
     
+    // MARK: - Удаление книги из плана бинго
+    public func removeFromBingo(item: BingoItem) {
+        bingoItems.removeAll(where: { $0.id == item.id })
+        if let idx = books.firstIndex(where: { $0.id == item.id }) {
+            books[idx].planMonth = nil
+        }
+        persistData()
+        GoogleSheetsAPIService.shared.postUpdatePlan(bookId: item.id, month: nil, planDays: 0)
+    }
+
+    // MARK: - Обновление рецензии/отзыва к книге
+    public func updateReview(bookId: Int, review: String) {
+        if let idx = books.firstIndex(where: { $0.id == bookId }) {
+            books[idx].review = review.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : review
+            persistData()
+        }
+    }
+    
     // MARK: - Отфильтрованные книги для вкладки «Библиотека»
     public var filteredBooks: [Book] {
         var list = books
@@ -317,8 +339,49 @@ public class LibraryViewModel: ObservableObject {
         if let edition = selectedEditionFilter {
             list = list.filter { $0.edition.contains(edition) }
         }
+
+        // 5. Расширенные фильтры (FilterCriteria)
+        if filterCriteria.isActive {
+            if !filterCriteria.statuses.isEmpty {
+                list = list.filter { filterCriteria.statuses.contains($0.status) }
+            }
+            if !filterCriteria.formats.isEmpty {
+                list = list.filter { filterCriteria.formats.contains($0.format) }
+            }
+            if !filterCriteria.genres.isEmpty {
+                list = list.filter { filterCriteria.genres.contains($0.genre) }
+            }
+            if !filterCriteria.ratings.isEmpty {
+                list = list.filter { book in
+                    guard let r = book.rating else { return false }
+                    return filterCriteria.ratings.contains(r)
+                }
+            }
+            if !filterCriteria.shelves.isEmpty {
+                list = list.filter { filterCriteria.shelves.contains($0.shelf) }
+            }
+            switch filterCriteria.cycleMode {
+            case .all: break
+            case .onlyCycles:
+                list = list.filter { $0.hasCycle }
+            case .onlyStandalone:
+                list = list.filter { !$0.hasCycle }
+            }
+            switch filterCriteria.pageRange {
+            case .all: break
+            case .short:
+                list = list.filter { $0.totalPages <= 300 }
+            case .medium:
+                list = list.filter { $0.totalPages > 300 && $0.totalPages <= 600 }
+            case .thick:
+                list = list.filter { $0.totalPages > 600 }
+            }
+            if filterCriteria.onlyWithFiles {
+                list = list.filter { EBookStorageManager.shared.hasFile(for: $0.id) }
+            }
+        }
         
-        // 5. Сортировка
+        // 6. Сортировка
         switch sortOption {
         case .byNumber:
             list.sort { $0.id < $1.id }

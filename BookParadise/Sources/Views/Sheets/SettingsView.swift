@@ -7,6 +7,7 @@ public struct SettingsView: View {
     @ObservedObject private var cloudSync = iCloudSyncManager.shared
     @Environment(\.dismiss) private var dismiss
     
+    @AppStorage("kindleEmail") private var kindleEmail: String = ""
     @State private var webAppURL: String = ""
     @State private var isTestingConnection: Bool = false
     @State private var testResultMessage: String? = nil
@@ -25,8 +26,8 @@ public struct SettingsView: View {
     public var body: some View {
         NavigationStack {
             Form {
-                // MARK: - Цветовая палитра и тема
-                Section(header: Text("Цветовая палитра и тема"), footer: Text(theme.selectedTheme.subtitle)) {
+                // MARK: - Оформление
+                Section(header: Text("Оформление")) {
                     ForEach(AppTheme.allCases) { item in
                         Button(action: {
                             theme.selectedTheme = item
@@ -56,6 +57,25 @@ public struct SettingsView: View {
                             }
                         }
                         .buttonStyle(.plain)
+                    }
+                }
+
+                // MARK: - Отправка на Kindle
+                Section(header: Text("Отправка на Kindle"), footer: Text("Укажите email вашей читалки (например, имя@kindle.com). Не забудьте добавить вашу личную почту в доверенный список на Amazon.")) {
+                    HStack {
+                        Image(systemName: "paperplane.fill")
+                            .foregroundColor(theme.primaryAccent)
+                        TextField("имя@kindle.com", text: $kindleEmail)
+                            .keyboardType(.emailAddress)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                        
+                        if !kindleEmail.isEmpty {
+                            Button(action: { kindleEmail = "" }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(.secondary)
+                            }
+                        }
                     }
                 }
 

@@ -184,6 +184,21 @@ public struct BingoView: View {
                 }
                 
                 Spacer()
+
+                // Кнопка быстрого удаления из плана месяца
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        viewModel.removeFromBingo(item: item)
+                    }
+                }) {
+                    Image(systemName: "trash")
+                        .font(.caption)
+                        .foregroundColor(.red.opacity(0.8))
+                        .padding(8)
+                        .background(Color.red.opacity(0.08))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
             }
             
             Divider()

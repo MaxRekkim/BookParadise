@@ -5,80 +5,54 @@ public struct ReadingSessionView: View {
     @ObservedObject public var viewModel: LibraryViewModel
     public let book: Book
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
 
     @ObservedObject private var sessionManager = ReadingSessionManager.shared
     @ObservedObject private var theme = ThemeManager.shared
 
-    @State private var selectedMode: SessionMode = .pomodoro25
     @State private var isShowingFinishDialog: Bool = false
     @State private var endPageInput: String = ""
     @State private var completedRecord: ReadingSessionRecord? = nil
-    @State private var isZenMode: Bool = true
 
     public init(viewModel: LibraryViewModel, book: Book) {
         self.viewModel = viewModel
         self.book = book
     }
 
-    private var displaySeconds: Int {
-        if sessionManager.currentMode == .stopwatch {
-            return sessionManager.elapsedSeconds
-        } else {
-            return sessionManager.remainingSeconds
-        }
-    }
-
     private var timeString: String {
-        let minutes = displaySeconds / 60
-        let seconds = displaySeconds % 60
-        return String(format: "%02d:%02d", minutes, seconds)
-    }
+        let hours = sessionManager.elapsedSeconds / 3600
+        let minutes = (sessionManager.elapsedSeconds % 3600) / 60
+        let seconds = sessionManager.elapsedSeconds % 60
 
-    private var progressValue: Double {
-        if sessionManager.currentMode == .stopwatch {
-            return 1.0
+        if hours > 0 {
+            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
+        } else {
+            return String(format: "%02d:%02d", minutes, seconds)
         }
-        let total = Double(max(1, sessionManager.currentMode.initialSeconds))
-        let remaining = Double(sessionManager.remainingSeconds)
-        return (total - remaining) / total
     }
 
     public var body: some View {
         NavigationStack {
             ZStack {
-                theme.paperBackground
+                theme.paperBackground(for: colorScheme)
                     .ignoresSafeArea()
 
                 VStack(spacing: 24) {
-                    // Верхний блок с информацией о книге
+                    // Верхний блок книги
                     bookHeader
-                        .padding(.top, 10)
-
-                    // Выбор режима (если таймер не запущен)
-                    if !sessionManager.isRunning {
-                        Picker("Режим", selection: $selectedMode) {
-                            ForEach(SessionMode.allCases) { mode in
-                                Text(mode.rawValue).tag(mode)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                        .padding(.horizontal, 24)
-                    }
+                        .padding(.top, 12)
 
                     Spacer()
 
-                    // Главный круговой таймер
-                    timerCircle
+                    // Центральная часть: сфера Thinking Orb и время сессии
+                    zenReadingOrb
 
                     Spacer()
 
-                    // Кнопка включения фонового звука дождя для концентрации
-                    ambientSoundToggle
-
-                    // Панель управления (Старт / Пауза / Завершить)
+                    // Панель управления (Начать чтение / Пауза / Завершить)
                     controlButtons
                         .padding(.horizontal, 24)
-                        .padding(.bottom, 20)
+                        .padding(.bottom, 24)
                 }
             }
             .navigationTitle("Сессия чтения")
@@ -109,12 +83,13 @@ public struct ReadingSessionView: View {
                 genre: book.genre,
                 cornerRadius: 8
             )
-            .frame(width: 50, height: 75)
+            .frame(width: 48, height: 72)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(book.title)
                     .font(.headline)
                     .fontWeight(.bold)
+                    .foregroundColor(Color(UIColor.label))
                     .lineLimit(1)
 
                 Text(book.author)
@@ -125,7 +100,7 @@ public struct ReadingSessionView: View {
                     Image(systemName: "bookmark.fill")
                         .font(.caption2)
                         .foregroundColor(theme.primaryAccent)
-                    Text("Начало: \(book.pagesRead) стр. из \(book.totalPages)")
+                    Text("Начало: \(book.pagesRead) из \(book.totalPages) стр.")
                         .font(.caption2)
                         .fontWeight(.semibold)
                         .foregroundColor(theme.primaryAccent)
@@ -133,150 +108,75 @@ public struct ReadingSessionView: View {
             }
             Spacer()
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .background(theme.cardBackground(for: colorScheme))
         .cornerRadius(14)
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(theme.cardBorder(for: colorScheme), lineWidth: 1)
+        )
         .padding(.horizontal, 20)
     }
 
-    // MARK: - Круговой индикатор таймера / Дзен-сфера (Thinking Orb)
-    private var timerCircle: some View {
-        VStack(spacing: 16) {
+    // MARK: - Дзен-сфера и секундомер чтения
+    private var zenReadingOrb: some View {
+        VStack(spacing: 20) {
             ZStack {
-                if isZenMode {
-                    // Режим «Дзен-погружение» с анимированной сферой
-                    ZStack {
-                        // Дышащая или волновая сфера в зависимости от звука дождя
-                        ThinkingOrbView(
-                            state: sessionManager.isAmbientSoundActive ? .listening : .breathing,
-                            size: 240,
-                            speedMultiplier: sessionManager.isPaused ? 0.3 : 1.0,
-                            tintColor: theme.primaryAccent,
-                            isPaused: false
+                // Анимированная сфера ThinkingOrb
+                ThinkingOrbView(
+                    state: sessionManager.isRunning ? (sessionManager.isPaused ? .searching : .listening) : .breathing,
+                    size: 250,
+                    speedMultiplier: sessionManager.isPaused ? 0.35 : (sessionManager.isRunning ? 1.0 : 0.6),
+                    tintColor: theme.primaryAccent,
+                    isPaused: false
+                )
+
+                // Тонкое кольцо концентрации
+                Circle()
+                    .stroke(theme.primaryAccent.opacity(sessionManager.isRunning ? 0.35 : 0.15), lineWidth: 2)
+                    .frame(width: 256, height: 256)
+
+                // Счётчик времени чтения по центру сферы
+                VStack(spacing: 6) {
+                    Text(timeString)
+                        .font(.system(size: 46, weight: .bold, design: .rounded))
+                        .foregroundColor(Color(UIColor.label))
+                        .shadow(color: colorScheme == .dark ? Color.black.opacity(0.8) : Color.white.opacity(0.8), radius: 4)
+
+                    Text(sessionManager.isRunning ? (sessionManager.isPaused ? "ПАУЗА" : "ЧТЕНИЕ") : "СВОБОДНЫЙ ТЕМП")
+                        .font(.system(size: 11, weight: .heavy))
+                        .tracking(2.5)
+                        .foregroundColor(theme.primaryAccent)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(theme.cardBackground(for: colorScheme).opacity(0.85))
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(theme.cardBorder(for: colorScheme), lineWidth: 0.5)
                         )
-
-                        // Тонкий внешний прогресс-ободок
-                        Circle()
-                            .trim(from: 0, to: progressValue)
-                            .stroke(theme.primaryAccent.opacity(0.4), style: StrokeStyle(lineWidth: 3, lineCap: .round))
-                            .rotationEffect(.degrees(-90))
-                            .frame(width: 250, height: 250)
-                            .animation(.easeInOut(duration: 0.5), value: progressValue)
-
-                        // Компактный статус и время
-                        VStack(spacing: 4) {
-                            Text(timeString)
-                                .font(.system(size: 38, weight: .bold, design: .rounded))
-                                .foregroundColor(Color(UIColor.label))
-
-                            Text(sessionManager.isRunning ? (sessionManager.isPaused ? "ПАУЗА" : "ПОГРУЖЕНИЕ") : "ГОТОВ")
-                                .font(.system(size: 11, weight: .bold))
-                                .tracking(2)
-                                .foregroundColor(theme.primaryAccent)
-                        }
-                    }
-                    .frame(width: 250, height: 250)
-                    .contentShape(Circle())
-                    .onTapGesture {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                            isZenMode.toggle()
-                        }
-                    }
-                } else {
-                    // Классический круговой таймер с жирным прогрессом
-                    ZStack {
-                        Circle()
-                            .stroke(theme.primaryAccent.opacity(0.12), lineWidth: 14)
-                            .frame(width: 250, height: 250)
-
-                        Circle()
-                            .trim(from: 0, to: progressValue)
-                            .stroke(
-                                LinearGradient(
-                                    colors: [theme.primaryAccent, theme.secondaryAccent],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                style: StrokeStyle(lineWidth: 14, lineCap: .round)
-                            )
-                            .rotationEffect(.degrees(-90))
-                            .animation(.easeInOut(duration: 0.5), value: progressValue)
-                            .frame(width: 250, height: 250)
-
-                        VStack(spacing: 6) {
-                            Text(timeString)
-                                .font(.system(size: 54, weight: .bold, design: .rounded))
-                                .foregroundColor(Color(UIColor.label))
-
-                            Text(sessionManager.isRunning ? (sessionManager.isPaused ? "ПАУЗА" : "ЧТЕНИЕ") : "ГОТОВ")
-                                .font(.caption)
-                                .fontWeight(.bold)
-                                .tracking(2)
-                                .foregroundColor(theme.primaryAccent)
-                        }
-                    }
-                    .frame(width: 250, height: 250)
-                    .contentShape(Circle())
-                    .onTapGesture {
-                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                            isZenMode.toggle()
-                        }
-                    }
                 }
             }
+            .frame(width: 260, height: 260)
 
-            // Кнопка переключения между Дзен-сферой и обычным таймером
-            Button(action: {
-                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                    isZenMode.toggle()
-                }
-            }) {
-                HStack(spacing: 6) {
-                    Image(systemName: isZenMode ? "sparkles" : "timer")
-                        .font(.caption2)
-                    Text(isZenMode ? "Режим: Дзен-сфера" : "Режим: Обычный таймер")
-                        .font(.caption2)
-                        .fontWeight(.semibold)
-                }
-                .foregroundColor(theme.primaryAccent)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(theme.primaryAccent.opacity(0.08))
-                .cornerRadius(12)
-            }
+            Text("Никакого давления таймеров — читайте в своём ритме")
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
     }
 
-    // MARK: - Переключатель звука дождя
-    private var ambientSoundToggle: some View {
-        Button(action: {
-            sessionManager.toggleAmbientSound()
-        }) {
-            HStack(spacing: 8) {
-                Image(systemName: sessionManager.isAmbientSoundActive ? "cloud.rain.fill" : "cloud.rain")
-                    .font(.subheadline)
-                Text(sessionManager.isAmbientSoundActive ? "Звук дождя включён" : "Включить шум дождя (концентрация)")
-                    .font(.caption)
-                    .fontWeight(.medium)
-            }
-            .foregroundColor(sessionManager.isAmbientSoundActive ? .white : theme.primaryAccent)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(sessionManager.isAmbientSoundActive ? theme.primaryAccent : theme.primaryAccent.opacity(0.12))
-            .cornerRadius(20)
-        }
-    }
-
-    // MARK: - Кнопки управления
+    // MARK: - Кнопки управления сессией
     private var controlButtons: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 14) {
             if !sessionManager.isRunning {
                 // Старт
                 Button(action: {
-                    sessionManager.startSession(book: book, mode: selectedMode)
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                        sessionManager.startSession(book: book)
+                    }
                 }) {
-                    HStack {
+                    HStack(spacing: 8) {
                         Image(systemName: "play.fill")
                         Text("Начать чтение")
                     }
@@ -284,19 +184,28 @@ public struct ReadingSessionView: View {
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(theme.primaryAccent)
+                    .background(
+                        LinearGradient(
+                            colors: [theme.primaryAccent, theme.secondaryAccent],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
                     .cornerRadius(14)
+                    .shadow(color: theme.primaryAccent.opacity(0.35), radius: 8, x: 0, y: 4)
                 }
             } else {
-                // Пауза / Продолжить
+                // Пауза / Возобновить
                 Button(action: {
-                    if sessionManager.isPaused {
-                        sessionManager.resumeSession()
-                    } else {
-                        sessionManager.pauseSession()
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        if sessionManager.isPaused {
+                            sessionManager.resumeSession()
+                        } else {
+                            sessionManager.pauseSession()
+                        }
                     }
                 }) {
-                    HStack {
+                    HStack(spacing: 6) {
                         Image(systemName: sessionManager.isPaused ? "play.fill" : "pause.fill")
                         Text(sessionManager.isPaused ? "Продолжить" : "Пауза")
                     }
@@ -304,8 +213,12 @@ public struct ReadingSessionView: View {
                     .foregroundColor(theme.primaryAccent)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 16)
-                    .background(theme.primaryAccent.opacity(0.15))
+                    .background(theme.cardBackground(for: colorScheme))
                     .cornerRadius(14)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(theme.primaryAccent.opacity(0.4), lineWidth: 1.5)
+                    )
                 }
 
                 // Завершить сессию
@@ -314,7 +227,7 @@ public struct ReadingSessionView: View {
                     endPageInput = "\(book.pagesRead)"
                     isShowingFinishDialog = true
                 }) {
-                    HStack {
+                    HStack(spacing: 6) {
                         Image(systemName: "checkmark.circle.fill")
                         Text("Закончить")
                     }
@@ -324,12 +237,13 @@ public struct ReadingSessionView: View {
                     .padding(.vertical, 16)
                     .background(Color.green)
                     .cornerRadius(14)
+                    .shadow(color: Color.green.opacity(0.35), radius: 6, x: 0, y: 3)
                 }
             }
         }
     }
 
-    // MARK: - Окно фиксации результата сессии
+    // MARK: - Диалог фиксации прочитанных страниц
     private var finishSessionSheet: some View {
         NavigationStack {
             Form {
@@ -337,7 +251,8 @@ public struct ReadingSessionView: View {
                     HStack {
                         Text("Время чтения:")
                         Spacer()
-                        Text("\(max(1, sessionManager.elapsedSeconds / 60)) мин")
+                        let mins = max(1, sessionManager.elapsedSeconds / 60)
+                        Text("\(mins) мин")
                             .fontWeight(.bold)
                     }
 
@@ -349,9 +264,9 @@ public struct ReadingSessionView: View {
                     }
 
                     HStack {
-                        Text("Новая страница:")
+                        Text("Текущая страница:")
                         Spacer()
-                        TextField("например, \(book.pagesRead + 15)", text: $endPageInput)
+                        TextField("например, \(book.pagesRead + 20)", text: $endPageInput)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.trailing)
                             .frame(width: 120)
@@ -361,9 +276,10 @@ public struct ReadingSessionView: View {
 
                 if let endPage = Int(endPageInput), endPage >= book.pagesRead {
                     let read = endPage - book.pagesRead
-                    let speed = Double(read) / (Double(sessionManager.elapsedSeconds) / 3600.0)
+                    let hours = max(0.01, Double(sessionManager.elapsedSeconds) / 3600.0)
+                    let speed = Double(read) / hours
 
-                    Section(header: Text("Аналитика скорости")) {
+                    Section(header: Text("Темп сессии")) {
                         HStack {
                             Text("Прочитано за сессию:")
                             Spacer()
@@ -382,7 +298,7 @@ public struct ReadingSessionView: View {
                     }
                 }
             }
-            .navigationTitle("Сохранить результат")
+            .navigationTitle("Сохранить прогресс")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

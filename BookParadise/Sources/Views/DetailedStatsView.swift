@@ -86,13 +86,11 @@ public struct DetailedStatsView: View {
         }
         .background(Color(UIColor.systemGroupedBackground))
         .navigationTitle("Аналитика и статистика")
-        #if targetEnvironment(macCatalyst)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Готово") { dismiss() }
             }
         }
-        #endif
     }
 
     // MARK: - 1. Годовая цель и математический прогноз
@@ -419,12 +417,49 @@ public struct DetailedStatsView: View {
                     }
                 }
             }
+
+            Divider()
+
+            // Интерактивный список оценок: клик открывает книги с этой оценкой
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Книги по оценкам (нажмите для просмотра):")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
+
+                ForEach(BookRating.allCases.reversed()) { rating in
+                    let booksWithRating = viewModel.books.filter { $0.rating == rating }
+                    if !booksWithRating.isEmpty {
+                        NavigationLink(destination: FilteredBooksView(title: "Оценка: \(rating.rawValue)", books: booksWithRating, viewModel: viewModel)) {
+                            HStack {
+                                Text(rating.rawValue)
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.orange)
+                                    .frame(minWidth: 80, alignment: .leading)
+
+                                Spacer()
+
+                                Text("\(booksWithRating.count) \(pluralBooks(booksWithRating.count))")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+
+                                Image(systemName: "chevron.right")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                }
+            }
         }
         .padding(18)
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(18)
         .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 3)
     }
+
 
     // MARK: - 6. История сессий чтения
     private var sessionHistoryCard: some View {
@@ -523,3 +558,48 @@ public struct DetailedStatsView: View {
         return "книг"
     }
 }
+
+// MARK: - Экран отфильтрованных книг по оценке
+struct FilteredBooksView: View {
+    let title: String
+    let books: [Book]
+    @ObservedObject var viewModel: LibraryViewModel
+
+    var body: some View {
+        ScrollView {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 160), spacing: 12)], spacing: 16) {
+                ForEach(books) { book in
+                    NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            BookCoverView(
+                                coverURL: book.cleanCoverURL,
+                                title: book.title,
+                                author: book.author,
+                                genre: book.genre,
+                                cornerRadius: 8
+                            )
+                            .frame(height: 150)
+
+                            Text(book.title)
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .lineLimit(1)
+                                .foregroundColor(Color(UIColor.label))
+
+                            Text(book.author)
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding()
+        }
+        .background(Color(UIColor.systemGroupedBackground))
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+

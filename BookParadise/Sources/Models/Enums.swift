@@ -114,3 +114,61 @@ public enum BookRating: String, CaseIterable, Codable, Identifiable {
         }
     }
 }
+
+// MARK: - Расширенные фильтры библиотеки
+public enum CycleFilterMode: String, CaseIterable, Identifiable {
+    case all = "Все"
+    case onlyCycles = "В цикле"
+    case onlyStandalone = "Одиночные"
+    public var id: String { rawValue }
+}
+
+public enum PageRangeFilter: String, CaseIterable, Identifiable {
+    case all = "Любой объём"
+    case short = "До 300 стр."
+    case medium = "300–600 стр."
+    case thick = "Более 600 стр."
+    public var id: String { rawValue }
+}
+
+public struct BookFilterCriteria: Equatable {
+    public var statuses: Set<ReadingStatus> = []
+    public var formats: Set<BookFormat> = []
+    public var genres: Set<Genre> = []
+    public var ratings: Set<BookRating> = []
+    public var shelves: Set<ShelfStatus> = []
+    public var cycleMode: CycleFilterMode = .all
+    public var pageRange: PageRangeFilter = .all
+    public var onlyWithFiles: Bool = false
+
+    public init() {}
+
+    public var isActive: Bool {
+        !statuses.isEmpty || !formats.isEmpty || !genres.isEmpty || !ratings.isEmpty || !shelves.isEmpty || cycleMode != .all || pageRange != .all || onlyWithFiles
+    }
+
+    public var activeCount: Int {
+        var count = 0
+        if !statuses.isEmpty { count += statuses.count }
+        if !formats.isEmpty { count += formats.count }
+        if !genres.isEmpty { count += genres.count }
+        if !ratings.isEmpty { count += ratings.count }
+        if !shelves.isEmpty { count += shelves.count }
+        if cycleMode != .all { count += 1 }
+        if pageRange != .all { count += 1 }
+        if onlyWithFiles { count += 1 }
+        return count
+    }
+
+    public mutating func reset() {
+        statuses.removeAll()
+        formats.removeAll()
+        genres.removeAll()
+        ratings.removeAll()
+        shelves.removeAll()
+        cycleMode = .all
+        pageRange = .all
+        onlyWithFiles = false
+    }
+}
+

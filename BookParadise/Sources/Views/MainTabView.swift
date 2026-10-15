@@ -66,7 +66,7 @@ public struct MainTabView: View {
             Button("Добавить новую книгу") {
                 isShowingAddBook = true
             }
-            Button("Начать сессию чтения (Таймер)") {
+            Button("Начать сессию чтения (Секундомер)") {
                 isShowingSessionPicker = true
             }
             Button("Сфотографировать / Добавить цитату") {
@@ -74,6 +74,12 @@ public struct MainTabView: View {
             }
             Button("Обновить прогресс чтения") {
                 isShowingQuickPageSelector = true
+            }
+            Button("Все цитаты") {
+                selectedTab = .quotes
+            }
+            Button("Циклы и книжные серии") {
+                selectedTab = .cycles
             }
             Button("Отмена", role: .cancel) {}
         }
@@ -113,23 +119,6 @@ public struct MainTabView: View {
             .navigationTitle("Книжный Рай")
             .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 320)
             .toolbar {
-                ToolbarItem(placement: .navigation) {
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            if columnVisibility == .detailOnly {
-                                columnVisibility = .all
-                            } else {
-                                columnVisibility = .detailOnly
-                            }
-                        }
-                    }) {
-                        Image(systemName: "sidebar.leading")
-                            .font(.system(size: 15, weight: .medium))
-                    }
-                    .help("Показать/скрыть боковое меню (⌘S)")
-                    .keyboardShortcut("s", modifiers: .command)
-                }
-                
                 ToolbarItem(placement: .automatic) {
                     Button(action: { isShowingAddBook = true }) {
                         Label("Новая книга", systemImage: "plus")
@@ -268,7 +257,7 @@ public struct MainTabView: View {
             .padding(.horizontal, 6)
             
             tabButton(tab: .bingo)
-            tabButton(tab: .cycles)
+            tabButton(tab: .quotes)
         }
         .padding(.horizontal, 16)
         .padding(.top, 8)
