@@ -388,7 +388,7 @@ public struct DetailedStatsView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
                             ForEach(masterpieceBooks) { book in
-                                NavigationLink(destination: BookDetailView(viewModel: viewModel, book: book)) {
+                                NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
                                     VStack(alignment: .leading, spacing: 6) {
                                         BookCoverView(
                                             coverURL: book.cleanCoverURL,
