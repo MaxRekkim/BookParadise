@@ -342,19 +342,19 @@ jobs:
           path: windows-build.log
 
       - name: Package Windows ZIP
-        shell: pwsh
+        shell: bash
         run: |
-          $Version = "${{ steps.get-version.outputs.version }}"
-          $ReleaseDir = Get-ChildItem -Path "$($env:GITHUB_WORKSPACE)\BookParadise_Multiplatform\build\windows" -Recurse -Directory -Filter "Release" | Select-Object -First 1
-          if (-not $ReleaseDir) {
-            Write-Error "Windows Release output directory not found!"
+          VERSION="${{ steps.get-version.outputs.version }}"
+          RELEASE_DIR=$(find BookParadise_Multiplatform/build/windows -type d -name "Release" | head -n 1)
+          if [ -z "$RELEASE_DIR" ]; then
+            echo "Error: Windows Release directory not found!"
+            find BookParadise_Multiplatform/build/windows || true
             exit 1
-          }
-          Write-Host "Found release directory: $($ReleaseDir.FullName)"
-          $ZipPath = "$($env:GITHUB_WORKSPACE)\BookParadise-$Version-Windows-x64.zip"
-          Compress-Archive -Path "$($ReleaseDir.FullName)\*" -DestinationPath $ZipPath -Force
-          Write-Host "Created archive: $ZipPath"
-          Get-Item $ZipPath
+          fi
+          echo "Found release directory: $RELEASE_DIR"
+          ls -la "$RELEASE_DIR"
+          7z a -tzip "BookParadise-${VERSION}-Windows-x64.zip" "./$RELEASE_DIR/*"
+          ls -lh "BookParadise-${VERSION}-Windows-x64.zip"
 
       - name: Upload Windows ZIP Artifact
         uses: actions/upload-artifact@v4
