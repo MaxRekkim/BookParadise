@@ -91,68 +91,17 @@ public struct MainTabView: View {
     #if targetEnvironment(macCatalyst) || os(macOS)
     private var macOSLayout: some View {
         NavigationSplitView {
-            List(selection: $selectedTab) {
+            List {
                 Section(header: Text("Книжный Рай")) {
-                    NavigationLink(value: AppTab.dashboard) {
-                        Label(AppTab.dashboard.title, systemImage: AppTab.dashboard.icon)
-                    }
-                    
-                    NavigationLink(value: AppTab.library) {
-                        HStack {
-                            Label(AppTab.library.title, systemImage: AppTab.library.icon)
-                            Spacer()
-                            Text("\(viewModel.books.count)")
-                                .font(.caption2)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color.secondary.opacity(0.12))
-                                .cornerRadius(6)
-                        }
-                    }
-                    
-                    NavigationLink(value: AppTab.bingo) {
-                        Label(AppTab.bingo.title, systemImage: AppTab.bingo.icon)
-                    }
-                    
-                    NavigationLink(value: AppTab.cycles) {
-                        HStack {
-                            Label(AppTab.cycles.title, systemImage: AppTab.cycles.icon)
-                            Spacer()
-                            Text("\(viewModel.normalizedCycles.count)")
-                                .font(.caption2)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color.secondary.opacity(0.12))
-                                .cornerRadius(6)
-                        }
-                    }
+                    sidebarItem(tab: .dashboard)
+                    sidebarItem(tab: .library, badge: "\(viewModel.books.count)")
+                    sidebarItem(tab: .bingo)
+                    sidebarItem(tab: .cycles, badge: "\(viewModel.normalizedCycles.count)")
                 }
                 
                 Section(header: Text("Инструменты")) {
-                    NavigationLink(value: AppTab.quotes) {
-                        HStack {
-                            Label(AppTab.quotes.title, systemImage: AppTab.quotes.icon)
-                            Spacer()
-                            if !quotesManager.quotes.isEmpty {
-                                Text("\(quotesManager.quotes.count)")
-                                    .font(.caption2)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(theme.primaryAccent)
-                                    .padding(.horizontal, 6)
-                                    .padding(.vertical, 2)
-                                    .background(theme.primaryAccent.opacity(0.12))
-                                    .cornerRadius(6)
-                            }
-                        }
-                    }
-                    
-                    NavigationLink(value: AppTab.settings) {
-                        Label(AppTab.settings.title, systemImage: AppTab.settings.icon)
-                    }
+                    sidebarItem(tab: .quotes, badge: quotesManager.quotes.isEmpty ? nil : "\(quotesManager.quotes.count)")
+                    sidebarItem(tab: .settings)
                 }
             }
             .listStyle(.sidebar)
@@ -177,6 +126,40 @@ public struct MainTabView: View {
         } detail: {
             contentForSelectedTab
         }
+    }
+    
+    private func sidebarItem(tab: AppTab, badge: String? = nil) -> some View {
+        Button(action: {
+            withAnimation(.easeInOut(duration: 0.15)) {
+                selectedTab = tab
+            }
+        }) {
+            HStack {
+                Label(tab.title, systemImage: tab.icon)
+                    .fontWeight(selectedTab == tab ? .semibold : .regular)
+                Spacer()
+                if let badge = badge {
+                    Text(badge)
+                        .font(.caption2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(selectedTab == tab ? theme.primaryAccent : .secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(
+                            (selectedTab == tab ? theme.primaryAccent : Color.secondary)
+                                .opacity(0.12)
+                        )
+                        .cornerRadius(6)
+                }
+            }
+            .padding(.vertical, 4)
+            .padding(.horizontal, 6)
+            .background(selectedTab == tab ? theme.primaryAccent.opacity(0.12) : Color.clear)
+            .cornerRadius(8)
+            .foregroundColor(selectedTab == tab ? theme.primaryAccent : .primary)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
     #endif
     
