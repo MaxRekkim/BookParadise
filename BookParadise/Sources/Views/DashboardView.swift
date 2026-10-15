@@ -202,6 +202,7 @@ public struct DashboardView: View {
                     .background(theme.primaryAccent)
                     .cornerRadius(10)
                 }
+                .buttonStyle(.plain)
                 
                 Button(action: {
                     bookToUpdateProgress = book
@@ -218,6 +219,7 @@ public struct DashboardView: View {
                     .background(theme.primaryAccent.opacity(0.12))
                     .cornerRadius(10)
                 }
+                .buttonStyle(.plain)
             }
         }
         .padding(12)

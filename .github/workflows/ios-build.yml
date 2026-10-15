@@ -90,7 +90,7 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             BUILD_DIR="${{ github.workspace }}/build-mac"
 
-      - name: Package macOS .app into .zip
+      - name: Package macOS App into .zip, .dmg and .pkg
         run: |
           MAC_APP_PATH=$(find build-mac -name "BookParadise.app" -type d | head -n 1)
           if [ -z "$MAC_APP_PATH" ]; then
@@ -98,7 +98,19 @@ jobs:
             exit 1
           fi
           echo "Found macOS app at: $MAC_APP_PATH"
+
+          # 1. Портативный ZIP
           ditto -c -k --sequesterRsrc --keepParent "$MAC_APP_PATH" BookParadise-macOS.zip
+
+          # 2. Образ диска DMG (Drag-and-Drop в /Applications)
+          mkdir -p dmg_folder
+          cp -R "$MAC_APP_PATH" dmg_folder/
+          ln -s /Applications dmg_folder/Applications
+          hdiutil create -volname "BookParadise" -srcfolder dmg_folder -ov -format UDZO BookParadise.dmg
+          rm -rf dmg_folder
+
+          # 3. Инсталлятор PKG (установка в /Applications)
+          pkgbuild --component "$MAC_APP_PATH" --install-location /Applications BookParadise.pkg
 
       # --- 3. АРТИФАКТЫ И РЕЛИЗЫ ---
       - name: Upload iOS IPA Artifact
@@ -108,7 +120,21 @@ jobs:
           path: BookParadise.ipa
           retention-days: 14
 
-      - name: Upload macOS App Artifact
+      - name: Upload macOS DMG Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BookParadise-macOS-DMG
+          path: BookParadise.dmg
+          retention-days: 14
+
+      - name: Upload macOS PKG Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BookParadise-macOS-PKG
+          path: BookParadise.pkg
+          retention-days: 14
+
+      - name: Upload macOS Zip Artifact
         uses: actions/upload-artifact@v4
         with:
           name: BookParadise-macOS-ZIP
@@ -121,6 +147,8 @@ jobs:
         with:
           files: |
             BookParadise.ipa
+            BookParadise.dmg
+            BookParadise.pkg
             BookParadise-macOS.zip
           name: "Книжный Рай ${{ github.ref_name }}"
           generate_release_notes: true
@@ -135,6 +163,8 @@ jobs:
         with:
           files: |
             BookParadise.ipa
+            BookParadise.dmg
+            BookParadise.pkg
             BookParadise-macOS.zip
           tag_name: ${{ github.event.inputs.version_tag }}
           name: "Книжный Рай ${{ github.event.inputs.version_tag }}"

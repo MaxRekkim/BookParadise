@@ -151,7 +151,7 @@ public struct LibraryView: View {
     // MARK: - Адаптивная сетка обложек (подстраивается под iPhone, iPad и Mac)
     private var booksGrid: some View {
         ScrollView {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 110, maximum: 180), spacing: 14)], spacing: 18) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 120, maximum: 190), spacing: 16)], spacing: 20) {
                 ForEach(viewModel.filteredBooks) { book in
                     NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
                         VStack(alignment: .leading, spacing: 6) {
@@ -193,7 +193,9 @@ public struct LibraryView: View {
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
                         }
+                        .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
                     .contextMenu {
                         Button(action: { bookForProgressUpdate = book }) {
                             Label("Обновить прогресс", systemImage: "pencil")
@@ -205,7 +207,7 @@ public struct LibraryView: View {
                 }
             }
             .padding(.horizontal)
-            .padding(.vertical, 8)
+            .padding(.vertical, 12)
         }
     }
     
@@ -222,7 +224,7 @@ public struct LibraryView: View {
                             genre: book.genre,
                             cornerRadius: 6
                         )
-                        .frame(width: 44, height: 66)
+                        .frame(width: 50, height: 75)
                         
                         VStack(alignment: .leading, spacing: 4) {
                             Text(book.title)

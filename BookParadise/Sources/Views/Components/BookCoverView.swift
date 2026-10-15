@@ -51,34 +51,48 @@ public struct BookCoverView: View {
     }
     
     private var placeholderView: some View {
-        ZStack {
-            LinearGradient(
-                colors: [genre.accentColor.opacity(0.85), genre.accentColor.opacity(0.55)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            
-            VStack(spacing: 6) {
-                Image(systemName: genre.iconName)
-                    .font(.system(size: 24, weight: .semibold))
-                    .foregroundColor(.white)
+        GeometryReader { geo in
+            ZStack {
+                LinearGradient(
+                    colors: [genre.accentColor.opacity(0.85), genre.accentColor.opacity(0.55)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
                 
-                Text(title)
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(3)
-                    .padding(.horizontal, 6)
+                let isCompact = geo.size.width < 60
                 
-                if !author.isEmpty {
-                    Text(author)
-                        .font(.system(size: 9, weight: .medium))
-                        .foregroundColor(.white.opacity(0.85))
-                        .lineLimit(1)
-                        .padding(.horizontal, 4)
+                VStack(spacing: isCompact ? 2 : 6) {
+                    Image(systemName: genre.iconName)
+                        .font(.system(size: isCompact ? 16 : 24, weight: .semibold))
+                        .foregroundColor(.white)
+                    
+                    if !isCompact {
+                        Text(title)
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(3)
+                            .padding(.horizontal, 6)
+                        
+                        if !author.isEmpty {
+                            Text(author)
+                                .font(.system(size: 9, weight: .medium))
+                                .foregroundColor(.white.opacity(0.85))
+                                .lineLimit(1)
+                                .padding(.horizontal, 4)
+                        }
+                    } else {
+                        Text(title)
+                            .font(.system(size: 8, weight: .bold))
+                            .foregroundColor(.white)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
+                            .padding(.horizontal, 2)
+                    }
                 }
+                .padding(2)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .padding(4)
         }
     }
 }
