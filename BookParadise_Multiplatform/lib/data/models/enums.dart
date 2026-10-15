@@ -177,4 +177,29 @@ class BookFilterCriteria {
     pageRange = PageRangeFilter.all;
     shelf = null;
   }
+
+  BookFilterCriteria copyWith({
+    ReadingStatus? selectedStatus,
+    ReadingStatus? status,
+    BookFormat? format,
+    bool? onlyWithKindleFile,
+    Set<BookGenre>? genres,
+    int? rating,
+    CycleFilterMode? cycleMode,
+    String? selectedCycle,
+    PageRangeFilter? pageRange,
+    ShelfLocation? shelf,
+  }) {
+    return BookFilterCriteria(
+      status: selectedStatus ?? status ?? this.status,
+      format: format ?? this.format,
+      onlyWithKindleFile: onlyWithKindleFile ?? this.onlyWithKindleFile,
+      genres: genres ?? Set<BookGenre>.from(this.genres),
+      rating: rating ?? this.rating,
+      cycleMode: cycleMode ?? this.cycleMode,
+      selectedCycle: selectedCycle ?? this.selectedCycle,
+      pageRange: pageRange ?? this.pageRange,
+      shelf: shelf ?? this.shelf,
+    );
+  }
 }

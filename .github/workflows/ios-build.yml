@@ -260,10 +260,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android-build-log
-          path: |
-            android-build.log
-            ../android-build.log
-            BookParadise_Multiplatform/android-build.log
+          path: android-build.log
 
       - name: Upload Android APK Artifact
         uses: actions/upload-artifact@v4
@@ -342,10 +339,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-build-log
-          path: |
-            windows-build.log
-            ../windows-build.log
-            BookParadise_Multiplatform/windows-build.log
+          path: windows-build.log
 
       - name: Package Windows ZIP
         shell: pwsh

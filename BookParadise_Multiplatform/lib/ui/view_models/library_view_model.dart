@@ -80,6 +80,34 @@ class LibraryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearFilters() {
+    filterCriteria.reset();
+    _searchQuery = '';
+    _selectedGenre = null;
+    notifyListeners();
+  }
+
+  void setStatusFilter(ReadingStatus? status) {
+    filterCriteria.reset();
+    filterCriteria.status = status;
+    _searchQuery = '';
+    _selectedGenre = null;
+    notifyListeners();
+  }
+
+  void updateFilterCriteria(BookFilterCriteria criteria) {
+    filterCriteria.status = criteria.status;
+    filterCriteria.format = criteria.format;
+    filterCriteria.onlyWithKindleFile = criteria.onlyWithKindleFile;
+    filterCriteria.genres = Set<BookGenre>.from(criteria.genres);
+    filterCriteria.rating = criteria.rating;
+    filterCriteria.cycleMode = criteria.cycleMode;
+    filterCriteria.selectedCycle = criteria.selectedCycle;
+    filterCriteria.pageRange = criteria.pageRange;
+    filterCriteria.shelf = criteria.shelf;
+    notifyListeners();
+  }
+
   Future<void> setAnnualGoal(int newGoal) async {
     _annualGoal = newGoal.clamp(5, 500);
     final prefs = await SharedPreferences.getInstance();

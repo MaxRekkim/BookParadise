@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../view_models/library_view_model.dart';
+import '../../data/models/enums.dart';
 import '../../data/services/reading_session_service.dart';
 import '../widgets/daily_motivation_banner.dart';
 import '../widgets/book_cover_widget.dart';
 import 'book_detail_view.dart';
 import 'reading_session_screen.dart';
 import 'reading_challenge_view.dart';
+import 'library_view.dart';
 import 'quotes_view.dart';
 import 'settings_dialog.dart';
 
@@ -205,6 +207,10 @@ class DashboardView extends StatelessWidget {
                   Colors.blue,
                   () {
                     viewModel.clearFilters();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LibraryView()),
+                    );
                   },
                 ),
                 _statCard(
@@ -214,8 +220,10 @@ class DashboardView extends StatelessWidget {
                   Icons.check_circle,
                   Colors.green,
                   () {
-                    viewModel.updateFilterCriteria(
-                      viewModel.filterCriteria.copyWith(selectedStatus: ReadingStatus.completed),
+                    viewModel.setStatusFilter(ReadingStatus.completed);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LibraryView()),
                     );
                   },
                 ),
@@ -226,8 +234,10 @@ class DashboardView extends StatelessWidget {
                   Icons.schedule,
                   Colors.orange,
                   () {
-                    viewModel.updateFilterCriteria(
-                      viewModel.filterCriteria.copyWith(selectedStatus: ReadingStatus.planned),
+                    viewModel.setStatusFilter(ReadingStatus.planned);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LibraryView()),
                     );
                   },
                 ),
