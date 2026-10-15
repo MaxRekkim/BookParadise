@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import '../../data/models/book.dart';
 import '../../data/services/reading_session_service.dart';
 import '../view_models/library_view_model.dart';
@@ -33,7 +33,12 @@ class _BookDetailViewState extends State<BookDetailView> {
             icon: const Icon(Icons.send_to_mobile),
             tooltip: 'Отправить на Kindle',
             onPressed: () {
-              Share.share('Книга «${book.title}» (${book.author}) готова к отправке на Kindle.');
+              Clipboard.setData(ClipboardData(
+                text: 'Книга «${book.title}» (${book.author})',
+              ));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Данные книги скопированы для отправки на Kindle')),
+              );
             },
           ),
         ],

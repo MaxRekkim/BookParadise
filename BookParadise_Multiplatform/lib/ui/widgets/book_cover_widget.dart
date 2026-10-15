@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class BookCoverWidget extends StatelessWidget {
   final String? coverURL;
@@ -30,11 +29,10 @@ class BookCoverWidget extends StatelessWidget {
         height: height,
         color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
         child: validUrl
-            ? CachedNetworkImage(
-                imageUrl: coverURL!,
+            ? Image.network(
+                coverURL!,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => _placeholder(context),
-                errorWidget: (context, url, error) => _placeholder(context),
+                errorBuilder: (context, error, stackTrace) => _placeholder(context),
               )
             : _placeholder(context),
       ),

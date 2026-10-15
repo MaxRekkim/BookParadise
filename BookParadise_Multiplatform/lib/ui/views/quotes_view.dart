@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import '../../data/models/quote.dart';
 import '../../data/services/quotes_service.dart';
 import '../view_models/library_view_model.dart';
@@ -432,7 +431,10 @@ class _QuotePostcardSheetState extends State<_QuotePostcardSheet> {
                       if (_showNote && widget.quote.note != null && widget.quote.note!.isNotEmpty) {
                         text += '\nЗаметка: ${widget.quote.note}';
                       }
-                      Share.share(text);
+                      Clipboard.setData(ClipboardData(text: text));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Текст цитаты скопирован для отправки')),
+                      );
                     },
                   ),
                 ),

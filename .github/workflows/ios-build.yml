@@ -215,9 +215,15 @@ jobs:
           set -o pipefail
           rm -rf android
           flutter create --platforms=android --org com.maxim --project-name book_paradise .
-          # Ensure network access and localized app title
-          sed -i 's/<application/<uses-permission android:name="android.permission.INTERNET"\/>\n    <application/' android/app/src/main/AndroidManifest.xml || true
-          sed -i 's/android:label="book_paradise"/android:label="Книжный Рай"/' android/app/src/main/AndroidManifest.xml || true
+          python3 -c "
+          p = 'android/app/src/main/AndroidManifest.xml'
+          with open(p, 'r') as f:
+              c = f.read()
+          c = c.replace('<application', '<uses-permission android:name=\"android.permission.INTERNET\"/>\n    <application', 1)
+          c = c.replace('android:label=\"book_paradise\"', 'android:label=\"Книжный Рай\"', 1)
+          with open(p, 'w') as f:
+              f.write(c)
+          "
           flutter pub get
           flutter build apk --release --android-skip-build-dependency-validation --build-name=${{ steps.get-version.outputs.version }} --build-number=${{ steps.get-version.outputs.build_number }} 2>&1 | tee ../android-build.log
           
@@ -232,8 +238,32 @@ jobs:
       - name: Report Android Build Failure
         if: failure()
         run: |
-          echo "::error::Android Build Failed:"
-          grep -E "error|FAILURE|exception" android-build.log | head -n 25 || true
+          python3 -c "
+          import os
+          for p in ['android-build.log', '../android-build.log', 'BookParadise_Multiplatform/android-build.log']:
+              if os.path.exists(p):
+                  with open(p, 'r', errors='replace') as f:
+                      lines = f.readlines()
+                  errs = [l.strip() for l in lines if any(k in l.lower() for k in ['error:', 'failure', 'exception', 'fatal:'])]
+                  tail = errs[-20:] if errs else [l.strip() for l in lines[-25:] if l.strip()]
+                  msg = '%0A'.join(tail).replace('%', '%25').replace('\r', '')
+                  print(f'::error title=Android Build Error::{msg}')
+                  break
+          "
+          echo "### Android Build Failure Log" >> $GITHUB_STEP_SUMMARY
+          echo '```text' >> $GITHUB_STEP_SUMMARY
+          tail -n 50 android-build.log >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Android Failure Log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-build-log
+          path: |
+            android-build.log
+            ../android-build.log
+            BookParadise_Multiplatform/android-build.log
 
       - name: Upload Android APK Artifact
         uses: actions/upload-artifact@v4
@@ -290,8 +320,32 @@ jobs:
         if: failure()
         shell: bash
         run: |
-          echo "::error::Windows Build Failed:"
-          grep -E "error|FAILURE|exception" windows-build.log | head -n 25 || true
+          python3 -c "
+          import os
+          for p in ['windows-build.log', '../windows-build.log', 'BookParadise_Multiplatform/windows-build.log']:
+              if os.path.exists(p):
+                  with open(p, 'r', errors='replace') as f:
+                      lines = f.readlines()
+                  errs = [l.strip() for l in lines if any(k in l.lower() for k in ['error', 'failure', 'exception', 'fatal'])]
+                  tail = errs[-20:] if errs else [l.strip() for l in lines[-25:] if l.strip()]
+                  msg = '%0A'.join(tail).replace('%', '%25').replace('\r', '')
+                  print(f'::error title=Windows Build Error::{msg}')
+                  break
+          "
+          echo "### Windows Build Failure Log" >> $GITHUB_STEP_SUMMARY
+          echo '```text' >> $GITHUB_STEP_SUMMARY
+          tail -n 50 windows-build.log >> $GITHUB_STEP_SUMMARY || true
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Windows Failure Log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build-log
+          path: |
+            windows-build.log
+            ../windows-build.log
+            BookParadise_Multiplatform/windows-build.log
 
       - name: Package Windows ZIP
         shell: pwsh
