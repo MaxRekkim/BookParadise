@@ -51,8 +51,8 @@ public struct SettingsView: View {
                     }
                 }
 
-                // MARK: - Google Apps Script Таблица
-                Section(header: Text("Google Таблица («✨📚КНИЖНЫЙ РАЙ📚✨»)"), footer: Text("Вставьте URL веб-приложения Google Apps Script (заканчивается на /exec).")) {
+                // MARK: - Облачная синхронизация
+                Section(header: Text("Облачная синхронизация"), footer: Text("Вставьте URL веб-приложения для синхронизации (заканчивается на /exec).")) {
                     HStack {
                         TextField("https://script.google.com/macros/s/.../exec", text: $webAppURL)
                             .keyboardType(.URL)
@@ -137,22 +137,19 @@ public struct SettingsView: View {
                     .disabled(viewModel.isSyncing || !GoogleSheetsAPIService.shared.isConfigured)
                 }
                 
-                Section(header: Text("Инструкция по настройке Google Таблицы")) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("1. Откройте таблицу «✨📚КНИЖНЫЙ РАЙ📚✨» в Google Chrome.")
-                            .font(.caption)
-                        Text("2. Меню: Расширения -> Apps Script.")
-                            .font(.caption)
-                        Text("3. Вставьте готовый код из файла Code.gs.")
-                            .font(.caption)
-                        Text("4. Нажмите «Развернуть» -> «Новое развертывание» -> тип «Веб-приложение».")
-                            .font(.caption)
-                        Text("5. Доступ: «Все» (Anyone), выполнить от имени: «Я».")
-                            .font(.caption)
-                        Text("6. Скопируйте полученную ссылку и вставьте в поле выше.")
-                            .font(.caption)
+                Section(header: Text("О приложении")) {
+                    HStack {
+                        Text("Версия")
+                        Spacer()
+                        Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "2.0.1")
+                            .foregroundColor(.secondary)
                     }
-                    .padding(.vertical, 4)
+                    HStack {
+                        Text("Сборка")
+                        Spacer()
+                        Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1")
+                            .foregroundColor(.secondary)
+                    }
                 }
                 
                 Section(header: Text("Локальные данные")) {
