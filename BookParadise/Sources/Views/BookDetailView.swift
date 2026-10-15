@@ -4,19 +4,25 @@ public struct BookDetailView: View {
     @ObservedObject public var viewModel: LibraryViewModel
     public let bookId: Int
     @Environment(\.dismiss) private var dismiss
-    
+
+    @ObservedObject private var quotesManager = QuotesManager.shared
+    @ObservedObject private var theme = ThemeManager.shared
+
     @State private var isShowingProgressUpdate: Bool = false
     @State private var isShowingPlanSheet: Bool = false
-    
+    @State private var isShowingQuoteScanner: Bool = false
+    @State private var selectedQuoteForShare: BookQuote? = nil
+    @State private var isShowingReadingSession: Bool = false
+
     public init(viewModel: LibraryViewModel, bookId: Int) {
         self.viewModel = viewModel
         self.bookId = bookId
     }
-    
+
     private var book: Book? {
         viewModel.books.first(where: { $0.id == bookId })
     }
-    
+
     public var body: some View {
         Group {
             if let book = book {
@@ -28,7 +34,7 @@ public struct BookDetailView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
     }
-    
+
     private func content(for book: Book) -> some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -42,7 +48,7 @@ public struct BookDetailView: View {
                         cornerRadius: 12
                     )
                     .frame(width: 125, height: 185)
-                    
+
                     VStack(alignment: .leading, spacing: 6) {
                         Text(book.genre.rawValue)
                             .font(.caption2)
@@ -52,25 +58,25 @@ public struct BookDetailView: View {
                             .padding(.vertical, 4)
                             .background(book.genre.accentColor.opacity(0.12))
                             .cornerRadius(6)
-                        
+
                         Text(book.title)
                             .font(.title3)
                             .fontWeight(.bold)
                             .lineLimit(3)
-                        
+
                         Text(book.author)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
-                        
+
                         if let r = book.rating {
                             Text(r.rawValue)
                                 .font(.headline)
                                 .foregroundColor(.orange)
                                 .padding(.top, 2)
                         }
-                        
+
                         Spacer()
-                        
+
                         HStack(spacing: 8) {
                             Text(book.status.rawValue)
                                 .font(.caption)
@@ -80,7 +86,7 @@ public struct BookDetailView: View {
                                 .padding(.vertical, 4)
                                 .background(book.status.color)
                                 .cornerRadius(8)
-                            
+
                             Text(book.format.rawValue)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
@@ -94,9 +100,9 @@ public struct BookDetailView: View {
                 .padding()
                 .background(Color(UIColor.secondarySystemGroupedBackground))
                 .cornerRadius(16)
-                
-                // Прогресс чтения
-                VStack(spacing: 10) {
+
+                // Прогресс чтения и запуск таймера
+                VStack(spacing: 12) {
                     HStack {
                         Text("Прогресс чтения:")
                             .font(.subheadline)
@@ -106,10 +112,33 @@ public struct BookDetailView: View {
                             .font(.subheadline)
                             .fontWeight(.bold)
                     }
-                    
+
                     ProgressView(value: Double(book.pagesRead), total: Double(max(1, book.totalPages)))
-                        .tint(.orange)
-                    
+                        .tint(theme.primaryAccent)
+
+                    // Большая кнопка «Сессия чтения» с таймером
+                    Button(action: { isShowingReadingSession = true }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "timer")
+                                .font(.headline)
+                            Text("Начать сессию чтения (Таймер / Помодоро)")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(
+                            LinearGradient(
+                                colors: [theme.primaryAccent, theme.secondaryAccent],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .cornerRadius(12)
+                        .shadow(color: theme.primaryAccent.opacity(0.3), radius: 6, x: 0, y: 3)
+                    }
+
                     HStack(spacing: 12) {
                         Button(action: { isShowingProgressUpdate = true }) {
                             HStack {
@@ -118,13 +147,13 @@ public struct BookDetailView: View {
                             }
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .foregroundColor(theme.primaryAccent)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(Color.orange)
+                            .background(theme.primaryAccent.opacity(0.12))
                             .cornerRadius(10)
                         }
-                        
+
                         Button(action: { isShowingPlanSheet = true }) {
                             HStack {
                                 Image(systemName: "calendar.badge.plus")
@@ -132,10 +161,10 @@ public struct BookDetailView: View {
                             }
                             .font(.subheadline)
                             .fontWeight(.semibold)
-                            .foregroundColor(.orange)
+                            .foregroundColor(theme.primaryAccent)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 10)
-                            .background(Color.orange.opacity(0.15))
+                            .background(theme.primaryAccent.opacity(0.12))
                             .cornerRadius(10)
                         }
                     }
@@ -143,13 +172,16 @@ public struct BookDetailView: View {
                 .padding()
                 .background(Color(UIColor.secondarySystemGroupedBackground))
                 .cornerRadius(16)
-                
+
+                // Цитаты и заметки из книги (OCR / Apple Vision)
+                quotesSection(for: book)
+
                 // Серия / Цикл (если есть)
                 if book.hasCycle {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             Image(systemName: "bookmark.circle.fill")
-                                .foregroundColor(.orange)
+                                .foregroundColor(theme.primaryAccent)
                             Text("Серия: \(book.cycleName)")
                                 .font(.headline)
                             Spacer()
@@ -158,7 +190,7 @@ public struct BookDetailView: View {
                                 .fontWeight(.bold)
                                 .foregroundColor(.secondary)
                         }
-                        
+
                         if let percent = book.cycleStatus {
                             HStack {
                                 Text("Прогресс серии:")
@@ -168,17 +200,17 @@ public struct BookDetailView: View {
                                 Text(String(format: "%.1f%%", percent))
                                     .font(.caption)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.orange)
+                                    .foregroundColor(theme.primaryAccent)
                             }
                             ProgressView(value: percent, total: 100.0)
-                                .tint(.orange)
+                                .tint(theme.primaryAccent)
                         }
                     }
                     .padding()
                     .background(Color(UIColor.secondarySystemGroupedBackground))
                     .cornerRadius(16)
                 }
-                
+
                 // Детальные данные книги
                 VStack(spacing: 12) {
                     detailRow(title: "Номер в базе (A)", value: "#\(book.id)")
@@ -200,7 +232,7 @@ public struct BookDetailView: View {
                 .padding()
                 .background(Color(UIColor.secondarySystemGroupedBackground))
                 .cornerRadius(16)
-                
+
                 Spacer(minLength: 30)
             }
             .padding()
@@ -213,8 +245,106 @@ public struct BookDetailView: View {
         .sheet(isPresented: $isShowingPlanSheet) {
             AddToPlanSheet(viewModel: viewModel, book: book)
         }
+        .sheet(isPresented: $isShowingQuoteScanner) {
+            QuoteScannerView(book: book)
+        }
+        .sheet(item: $selectedQuoteForShare) { q in
+            QuoteCardShareView(quote: q, book: book)
+        }
+        .sheet(isPresented: $isShowingReadingSession) {
+            ReadingSessionView(viewModel: viewModel, book: book)
+        }
     }
-    
+
+    // MARK: - Секция Цитат и заметок
+    private func quotesSection(for book: Book) -> some View {
+        let bookQuotes = quotesManager.quotes(for: book.id)
+
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "quote.opening")
+                    .foregroundColor(theme.primaryAccent)
+                Text("Цитаты и заметки (\(bookQuotes.count))")
+                    .font(.headline)
+                Spacer()
+                Button(action: { isShowingQuoteScanner = true }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "camera.viewfinder")
+                        Text("Добавить")
+                    }
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(theme.primaryAccent)
+                    .cornerRadius(8)
+                }
+            }
+
+            if bookQuotes.isEmpty {
+                VStack(spacing: 8) {
+                    Text("Цитат пока нет")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    Text("Нажмите «Добавить», чтобы сфотографировать страницу книги и распознать текст через камеру или записать вручную.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.vertical, 14)
+                .frame(maxWidth: .infinity)
+            } else {
+                VStack(spacing: 10) {
+                    ForEach(bookQuotes) { q in
+                        Button(action: { selectedQuoteForShare = q }) {
+                            VStack(alignment: .leading, spacing: 6) {
+                                HStack {
+                                    if let page = q.pageNumber, page > 0 {
+                                        Text("Стр. \(page)")
+                                            .font(.caption2)
+                                            .fontWeight(.bold)
+                                            .foregroundColor(theme.primaryAccent)
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 2)
+                                            .background(theme.primaryAccent.opacity(0.1))
+                                            .cornerRadius(4)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "square.and.arrow.up")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+
+                                Text("«\(q.text)»")
+                                    .font(.system(.subheadline, design: .serif))
+                                    .italic()
+                                    .lineLimit(3)
+                                    .foregroundColor(.primary)
+                                    .multilineTextAlignment(.leading)
+
+                                if let note = q.note, !note.isEmpty {
+                                    Text("Заметка: \(note)")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                        .lineLimit(1)
+                                }
+                            }
+                            .padding(12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color(UIColor.tertiarySystemGroupedBackground))
+                            .cornerRadius(10)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(16)
+    }
+
     private func detailRow(title: String, value: String) -> some View {
         HStack {
             Text(title)

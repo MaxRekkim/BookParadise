@@ -3,7 +3,9 @@ import Charts
 
 public struct DashboardView: View {
     @ObservedObject public var viewModel: LibraryViewModel
+    @ObservedObject private var theme = ThemeManager.shared
     @State private var bookToUpdateProgress: Book? = nil
+    @State private var bookForReadingSession: Book? = nil
     @State private var isShowingSettings: Bool = false
     
     public init(viewModel: LibraryViewModel) {
@@ -39,12 +41,15 @@ public struct DashboardView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { isShowingSettings = true }) {
                         Image(systemName: "gearshape.fill")
-                            .foregroundColor(.orange)
+                            .foregroundColor(theme.primaryAccent)
                     }
                 }
             }
             .sheet(item: $bookToUpdateProgress) { book in
                 ProgressUpdateSheet(viewModel: viewModel, book: book)
+            }
+            .sheet(item: $bookForReadingSession) { book in
+                ReadingSessionView(viewModel: viewModel, book: book)
             }
             .sheet(isPresented: $isShowingSettings) {
                 SettingsView(viewModel: viewModel)
@@ -168,28 +173,46 @@ public struct DashboardView: View {
                             .frame(height: 7)
                         
                         Capsule()
-                            .fill(LinearGradient(colors: [.orange, .yellow], startPoint: .leading, endPoint: .trailing))
+                            .fill(LinearGradient(colors: [theme.primaryAccent, theme.secondaryAccent], startPoint: .leading, endPoint: .trailing))
                             .frame(width: geo.size.width * CGFloat(min(1.0, Double(book.pagesRead) / Double(max(1, book.totalPages)))), height: 7)
                     }
                 }
                 .frame(height: 7)
             }
             
-            // Кнопка быстрого ввода страницы прямо на карточке
-            Button(action: {
-                bookToUpdateProgress = book
-            }) {
-                HStack {
-                    Image(systemName: "pencil.and.outline")
-                    Text("Обновить страницу")
+            // Кнопки управления: Чтение с таймером и Быстрый ввод страниц
+            HStack(spacing: 8) {
+                Button(action: {
+                    bookForReadingSession = book
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "timer")
+                        Text("Сессия")
+                    }
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(theme.primaryAccent)
+                    .cornerRadius(10)
                 }
-                .font(.caption)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 8)
-                .background(Color.orange)
-                .cornerRadius(10)
+                
+                Button(action: {
+                    bookToUpdateProgress = book
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "pencil")
+                        Text("Страница")
+                    }
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(theme.primaryAccent)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(theme.primaryAccent.opacity(0.12))
+                    .cornerRadius(10)
+                }
             }
         }
         .padding(12)

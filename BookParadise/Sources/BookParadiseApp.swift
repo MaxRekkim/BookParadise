@@ -2,12 +2,14 @@ import SwiftUI
 
 @main
 public struct BookParadiseApp: App {
+    @ObservedObject private var theme = ThemeManager.shared
+
     public init() {}
     
     public var body: some Scene {
         WindowGroup {
             MainTabView()
-                .accentColor(.orange)
+                .tint(theme.primaryAccent)
         }
     }
 }

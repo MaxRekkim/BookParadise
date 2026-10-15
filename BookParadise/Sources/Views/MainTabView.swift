@@ -27,12 +27,17 @@ public enum AppTab: Int, CaseIterable {
 
 public struct MainTabView: View {
     @StateObject private var viewModel = LibraryViewModel.shared
+    @ObservedObject private var theme = ThemeManager.shared
     @State private var selectedTab: AppTab = .dashboard
     
     // Модальные окна
     @State private var isShowingAddBook: Bool = false
     @State private var isShowingQuickPageSelector: Bool = false
     @State private var quickActionSheetPresented: Bool = false
+    @State private var bookForReadingSession: Book? = nil
+    @State private var bookForQuoteScanner: Book? = nil
+    @State private var isShowingSessionPicker: Bool = false
+    @State private var isShowingQuotePicker: Bool = false
     
     public init() {}
     
@@ -65,6 +70,12 @@ public struct MainTabView: View {
             Button("Добавить новую книгу") {
                 isShowingAddBook = true
             }
+            Button("Начать сессию чтения (Таймер)") {
+                isShowingSessionPicker = true
+            }
+            Button("Сфотографировать / Добавить цитату") {
+                isShowingQuotePicker = true
+            }
             Button("Обновить прогресс чтения") {
                 isShowingQuickPageSelector = true
             }
@@ -74,7 +85,13 @@ public struct MainTabView: View {
             AddBookSheet(viewModel: viewModel)
         }
         .sheet(isPresented: $isShowingQuickPageSelector) {
-            QuickBookPickerSheet(viewModel: viewModel)
+            QuickBookPickerSheet(viewModel: viewModel, mode: .updateProgress)
+        }
+        .sheet(isPresented: $isShowingSessionPicker) {
+            QuickBookPickerSheet(viewModel: viewModel, mode: .readingSession)
+        }
+        .sheet(isPresented: $isShowingQuotePicker) {
+            QuickBookPickerSheet(viewModel: viewModel, mode: .quoteScanner)
         }
     }
     
@@ -95,13 +112,13 @@ public struct MainTabView: View {
                     Circle()
                         .fill(
                             LinearGradient(
-                                colors: [Color.orange, Color(red: 0.95, green: 0.45, blue: 0.1)],
+                                colors: [theme.primaryAccent, theme.secondaryAccent],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
                         .frame(width: 52, height: 52)
-                        .shadow(color: Color.orange.opacity(0.35), radius: 8, x: 0, y: 4)
+                        .shadow(color: theme.primaryAccent.opacity(0.35), radius: 8, x: 0, y: 4)
                     
                     Image(systemName: "plus")
                         .font(.system(size: 22, weight: .bold))
@@ -139,58 +156,42 @@ public struct MainTabView: View {
                 Text(tab.title)
                     .font(.system(size: 10, weight: .medium))
             }
-            .foregroundColor(selectedTab == tab ? .orange : .secondary)
+            .foregroundColor(selectedTab == tab ? theme.primaryAccent : .secondary)
             .frame(maxWidth: .infinity)
         }
     }
 }
 
-// Быстрый выбор книги для обновления страницы из плавающей кнопки `+`
+// Быстрый выбор книги для действий из плавающей кнопки `+`
+enum QuickPickerMode {
+    case updateProgress
+    case readingSession
+    case quoteScanner
+}
+
 struct QuickBookPickerSheet: View {
     @ObservedObject var viewModel: LibraryViewModel
+    var mode: QuickPickerMode = .updateProgress
     @Environment(\.dismiss) private var dismiss
+    
     @State private var selectedBookForUpdate: Book? = nil
+    @State private var selectedBookForSession: Book? = nil
+    @State private var selectedBookForQuote: Book? = nil
     
     var body: some View {
         NavigationStack {
             List {
                 Section(header: Text("Читаю сейчас")) {
                     ForEach(viewModel.readingNowBooks) { book in
-                        Button(action: {
-                            selectedBookForUpdate = book
-                        }) {
-                            HStack {
-                                BookCoverView(
-                                    coverURL: book.cleanCoverURL,
-                                    title: book.title,
-                                    author: book.author,
-                                    cornerRadius: 6
-                                )
-                                .frame(width: 36, height: 54)
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(book.title)
-                                        .font(.subheadline)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.primary)
-                                    Text("\(book.pagesRead) из \(book.totalPages) стр.")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
+                        Button(action: { handleSelection(book) }) {
+                            bookRow(book)
                         }
                     }
                 }
                 
                 Section(header: Text("Все книги")) {
                     ForEach(viewModel.books.prefix(50)) { book in
-                        Button(action: {
-                            selectedBookForUpdate = book
-                        }) {
+                        Button(action: { handleSelection(book) }) {
                             HStack {
                                 Text(book.title)
                                     .font(.subheadline)
@@ -205,7 +206,7 @@ struct QuickBookPickerSheet: View {
                     }
                 }
             }
-            .navigationTitle("Выберите книгу")
+            .navigationTitle(titleForMode)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -215,6 +216,57 @@ struct QuickBookPickerSheet: View {
             .sheet(item: $selectedBookForUpdate) { book in
                 ProgressUpdateSheet(viewModel: viewModel, book: book)
             }
+            .sheet(item: $selectedBookForSession) { book in
+                ReadingSessionView(viewModel: viewModel, book: book)
+            }
+            .sheet(item: $selectedBookForQuote) { book in
+                QuoteScannerView(book: book)
+            }
+        }
+    }
+    
+    private var titleForMode: String {
+        switch mode {
+        case .updateProgress: return "Обновить прогресс"
+        case .readingSession: return "Начать чтение"
+        case .quoteScanner: return "Добавить цитату"
+        }
+    }
+    
+    private func handleSelection(_ book: Book) {
+        switch mode {
+        case .updateProgress:
+            selectedBookForUpdate = book
+        case .readingSession:
+            selectedBookForSession = book
+        case .quoteScanner:
+            selectedBookForQuote = book
+        }
+    }
+    
+    private func bookRow(_ book: Book) -> some View {
+        HStack {
+            BookCoverView(
+                coverURL: book.cleanCoverURL,
+                title: book.title,
+                author: book.author,
+                cornerRadius: 6
+            )
+            .frame(width: 36, height: 54)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(book.title)
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                Text("\(book.pagesRead) из \(book.totalPages) стр.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
     }
 }

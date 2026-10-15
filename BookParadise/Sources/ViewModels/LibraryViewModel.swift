@@ -476,6 +476,14 @@ public class LibraryViewModel: ObservableObject {
             ratingCounts: ratings,
             monthlyPurchases: purchases
         )
+        
+        WidgetDataExporter.shared.export(books: books)
+    }
+    
+    public func updateBookProgress(bookId: Int, pagesRead: Int) {
+        if let book = books.first(where: { $0.id == bookId }) {
+            updateProgress(for: book, newPages: pagesRead)
+        }
     }
     
     private func updateMetadataLists() {

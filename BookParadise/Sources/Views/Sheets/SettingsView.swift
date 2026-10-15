@@ -2,6 +2,7 @@ import SwiftUI
 
 public struct SettingsView: View {
     @ObservedObject public var viewModel: LibraryViewModel
+    @ObservedObject private var theme = ThemeManager.shared
     @Environment(\.dismiss) private var dismiss
     
     @State private var webAppURL: String = ""
@@ -16,6 +17,41 @@ public struct SettingsView: View {
     public var body: some View {
         NavigationStack {
             Form {
+                // MARK: - Цветовая палитра и тема
+                Section(header: Text("Цветовая палитра и тема"), footer: Text(theme.selectedTheme.subtitle)) {
+                    ForEach(AppTheme.allCases) { item in
+                        Button(action: {
+                            theme.selectedTheme = item
+                        }) {
+                            HStack(spacing: 12) {
+                                // Превью цвета
+                                themeColorCircle(for: item)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(item.title)
+                                        .font(.subheadline)
+                                        .foregroundColor(.primary)
+                                    if item == .autoDayNight {
+                                        Text("Сейчас активно: \(theme.currentEffectiveTheme == .wineVelvet ? "Дневной (Бордо)" : "Ночной (Индиго)")")
+                                            .font(.caption2)
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                                
+                                Spacer()
+                                
+                                if theme.selectedTheme == item {
+                                    Image(systemName: "checkmark")
+                                        .foregroundColor(theme.primaryAccent)
+                                        .fontWeight(.bold)
+                                }
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
+                // MARK: - Google Apps Script Таблица
                 Section(header: Text("Google Таблица («✨📚КНИЖНЫЙ РАЙ📚✨»)"), footer: Text("Вставьте URL веб-приложения Google Apps Script (заканчивается на /exec).")) {
                     HStack {
                         TextField("https://script.google.com/macros/s/.../exec", text: $webAppURL)
@@ -56,6 +92,7 @@ public struct SettingsView: View {
                     }
                 }
                 
+                // MARK: - Синхронизация
                 Section(header: Text("Синхронизация")) {
                     HStack {
                         Text("Статус:")
@@ -65,7 +102,7 @@ public struct SettingsView: View {
                                 ProgressView()
                                 Text("Синхронизация...")
                                     .font(.caption)
-                                    .foregroundColor(.orange)
+                                    .foregroundColor(theme.primaryAccent)
                             }
                         } else if GoogleSheetsAPIService.shared.isConfigured {
                             Text("Подключено")
@@ -137,6 +174,38 @@ public struct SettingsView: View {
             .onAppear {
                 webAppURL = GoogleSheetsAPIService.shared.apiURLString
             }
+        }
+    }
+    
+    @ViewBuilder
+    private func themeColorCircle(for item: AppTheme) -> some View {
+        switch item {
+        case .autoDayNight:
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [Color(red: 0.52, green: 0.14, blue: 0.20), Color(red: 0.16, green: 0.25, blue: 0.44)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 24, height: 24)
+        case .wineVelvet:
+            Circle()
+                .fill(Color(red: 0.52, green: 0.14, blue: 0.20))
+                .frame(width: 24, height: 24)
+        case .midnightOxford:
+            Circle()
+                .fill(Color(red: 0.16, green: 0.25, blue: 0.44))
+                .frame(width: 24, height: 24)
+        case .warmAmber:
+            Circle()
+                .fill(Color(red: 0.88, green: 0.35, blue: 0.12))
+                .frame(width: 24, height: 24)
+        case .emerald:
+            Circle()
+                .fill(Color(red: 0.11, green: 0.33, blue: 0.24))
+                .frame(width: 24, height: 24)
         }
     }
     

@@ -29,6 +29,16 @@
 		39591E8E58B37EA6B50D827E /* BarcodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C7F3D0439FBAE61ACE5C4A /* BarcodeScannerView.swift */; };
 		5BFFAEEBBCB8538A58AEA921 /* GoogleBooksLookupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34E6BC062DCA6DF3BB2E0B0 /* GoogleBooksLookupService.swift */; };
 		5D7A6CE5A3A37FD00163E6F6 /* GoogleSheetsAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A03507AC84488FA4E573A0B /* GoogleSheetsAPIService.swift */; };
+		A10000012345678900000001 /* BookQuote.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000012345678900000001 /* BookQuote.swift */; };
+		A10000022345678900000002 /* ReadingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000022345678900000002 /* ReadingSession.swift */; };
+		A10000032345678900000003 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000032345678900000003 /* ThemeManager.swift */; };
+		A10000042345678900000004 /* QuotesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000042345678900000004 /* QuotesManager.swift */; };
+		A10000052345678900000005 /* ReadingSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000052345678900000005 /* ReadingSessionManager.swift */; };
+		A10000062345678900000006 /* QuoteScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000062345678900000006 /* QuoteScannerView.swift */; };
+		A10000072345678900000007 /* QuoteCardShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000072345678900000007 /* QuoteCardShareView.swift */; };
+		A10000082345678900000008 /* ReadingSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000082345678900000008 /* ReadingSessionView.swift */; };
+		A10000092345678900000009 /* WidgetDataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000092345678900000009 /* WidgetDataExporter.swift */; };
+		A10000102345678900000010 /* BookParadiseWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000102345678900000010 /* BookParadiseWidget.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +66,16 @@
 		00C7F3D0439FBAE61ACE5C4A /* BarcodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/BarcodeScannerView.swift; sourceTree = "<group>"; };
 		E34E6BC062DCA6DF3BB2E0B0 /* GoogleBooksLookupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/GoogleBooksLookupService.swift; sourceTree = "<group>"; };
 		8A03507AC84488FA4E573A0B /* GoogleSheetsAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/GoogleSheetsAPIService.swift; sourceTree = "<group>"; };
+		B10000012345678900000001 /* BookQuote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BookQuote.swift; sourceTree = "<group>"; };
+		B10000022345678900000002 /* ReadingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/ReadingSession.swift; sourceTree = "<group>"; };
+		B10000032345678900000003 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/ThemeManager.swift; sourceTree = "<group>"; };
+		B10000042345678900000004 /* QuotesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/QuotesManager.swift; sourceTree = "<group>"; };
+		B10000052345678900000005 /* ReadingSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/ReadingSessionManager.swift; sourceTree = "<group>"; };
+		B10000062345678900000006 /* QuoteScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/QuoteScannerView.swift; sourceTree = "<group>"; };
+		B10000072345678900000007 /* QuoteCardShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/QuoteCardShareView.swift; sourceTree = "<group>"; };
+		B10000082345678900000008 /* ReadingSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/ReadingSessionView.swift; sourceTree = "<group>"; };
+		B10000092345678900000009 /* WidgetDataExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Widgets/WidgetDataExporter.swift; sourceTree = "<group>"; };
+		B10000102345678900000010 /* BookParadiseWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Widgets/BookParadiseWidget.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +123,16 @@
 				00C7F3D0439FBAE61ACE5C4A /* BarcodeScannerView.swift */,
 				E34E6BC062DCA6DF3BB2E0B0 /* GoogleBooksLookupService.swift */,
 				8A03507AC84488FA4E573A0B /* GoogleSheetsAPIService.swift */,
+				B10000012345678900000001 /* BookQuote.swift */,
+				B10000022345678900000002 /* ReadingSession.swift */,
+				B10000032345678900000003 /* ThemeManager.swift */,
+				B10000042345678900000004 /* QuotesManager.swift */,
+				B10000052345678900000005 /* ReadingSessionManager.swift */,
+				B10000062345678900000006 /* QuoteScannerView.swift */,
+				B10000072345678900000007 /* QuoteCardShareView.swift */,
+				B10000082345678900000008 /* ReadingSessionView.swift */,
+				B10000092345678900000009 /* WidgetDataExporter.swift */,
+				B10000102345678900000010 /* BookParadiseWidget.swift */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -204,6 +234,16 @@
 				39591E8E58B37EA6B50D827E /* BarcodeScannerView.swift in Sources */,
 				5BFFAEEBBCB8538A58AEA921 /* GoogleBooksLookupService.swift in Sources */,
 				5D7A6CE5A3A37FD00163E6F6 /* GoogleSheetsAPIService.swift in Sources */,
+				A10000012345678900000001 /* BookQuote.swift in Sources */,
+				A10000022345678900000002 /* ReadingSession.swift in Sources */,
+				A10000032345678900000003 /* ThemeManager.swift in Sources */,
+				A10000042345678900000004 /* QuotesManager.swift in Sources */,
+				A10000052345678900000005 /* ReadingSessionManager.swift in Sources */,
+				A10000062345678900000006 /* QuoteScannerView.swift in Sources */,
+				A10000072345678900000007 /* QuoteCardShareView.swift in Sources */,
+				A10000082345678900000008 /* ReadingSessionView.swift in Sources */,
+				A10000092345678900000009 /* WidgetDataExporter.swift in Sources */,
+				A10000102345678900000010 /* BookParadiseWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
