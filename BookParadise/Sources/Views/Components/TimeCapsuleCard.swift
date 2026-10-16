@@ -28,7 +28,7 @@ public struct TimeCapsuleCard: View {
 
         // 1. Поиск в сохраненных цитатах читателя
         for q in quotesManager.quotes {
-            let qComponents = calendar.dateComponents([.year, .month, .day], from: q.date)
+            let qComponents = calendar.dateComponents([.year, .month, .day], from: q.dateAdded)
             let currentYear = calendar.component(.year, from: Date())
             let diffYear = currentYear - (qComponents.year ?? currentYear)
 

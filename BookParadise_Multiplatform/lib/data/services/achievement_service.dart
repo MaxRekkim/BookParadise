@@ -5,7 +5,7 @@ import '../models/achievement.dart';
 import '../models/book.dart';
 import '../models/enums.dart';
 import '../models/quote.dart';
-import '../models/session_record.dart';
+import '../models/session.dart';
 
 class AchievementService extends ChangeNotifier {
   static final AchievementService instance = AchievementService._internal();
@@ -105,14 +105,14 @@ class AchievementService extends ChangeNotifier {
   }
 
   void recalculateAll({
-    required List<ReadingSessionRecord> history,
+    required List<ReadingSession> history,
     required List<Book> books,
     required List<BookQuote> quotes,
   }) {
     _calculateStreakAndShields(history);
 
     // Night Owl
-    final hasNight = history.any((r) => r.date.hour >= 0 && r.date.hour < 4);
+    final hasNight = history.any((r) => r.startTime.hour >= 0 && r.startTime.hour < 4);
     _updateStatus('night_owl', hasNight, hasNight ? 1.0 : 0.0, hasNight ? 'Получено!' : '0/1');
 
     // Sprint
@@ -154,13 +154,13 @@ class AchievementService extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _calculateStreakAndShields(List<ReadingSessionRecord> history) {
+  void _calculateStreakAndShields(List<ReadingSession> history) {
     if (history.isEmpty) {
       _currentStreak = 0;
       return;
     }
 
-    final dates = history.map((r) => DateTime(r.date.year, r.date.month, r.date.day)).toSet().toList()
+    final dates = history.map((r) => DateTime(r.startTime.year, r.startTime.month, r.startTime.day)).toSet().toList()
       ..sort((a, b) => b.compareTo(a));
 
     final now = DateTime.now();

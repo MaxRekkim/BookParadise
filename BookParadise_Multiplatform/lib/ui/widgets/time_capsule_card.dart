@@ -19,7 +19,7 @@ class TimeCapsuleCard extends StatelessWidget {
 
     // Ищем подходящее воспоминание
     final now = DateTime.now();
-    var match = quotesService.quotes.where((q) => q.date.month == now.month && q.date.day == now.day).firstOrNull;
+    var match = quotesService.quotes.where((q) => q.dateAdded.month == now.month && q.dateAdded.day == now.day).firstOrNull;
     match ??= quotesService.quotes.first;
 
     final book = libraryVM.books.firstWhere((b) => b.id == match!.bookId, orElse: () => libraryVM.books.first);

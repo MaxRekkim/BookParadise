@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../data/models/achievement.dart';
 import '../../data/services/achievement_service.dart';
 import '../view_models/library_view_model.dart';
-import '../../data/services/session_service.dart';
+import '../../data/services/reading_session_service.dart';
 import '../../data/services/quotes_service.dart';
 
 class AchievementsScreen extends StatefulWidget {
