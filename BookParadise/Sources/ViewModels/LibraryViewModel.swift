@@ -31,6 +31,22 @@ public enum CycleFilter: String, CaseIterable, Identifiable {
     public var id: String { rawValue }
 }
 
+public enum LibraryLayoutMode: String, CaseIterable, Identifiable {
+    case grid = "Сетка"
+    case list = "Список"
+    case bookshelf = "Полка"
+    
+    public var id: String { rawValue }
+    
+    public var iconName: String {
+        switch self {
+        case .grid: return "square.grid.2x2"
+        case .list: return "list.bullet"
+        case .bookshelf: return "books.vertical.fill"
+        }
+    }
+}
+
 @MainActor
 public class LibraryViewModel: ObservableObject {
     public static let shared = LibraryViewModel()
@@ -51,6 +67,7 @@ public class LibraryViewModel: ObservableObject {
     @Published public var selectedEditionFilter: String? = nil
     @Published public var sortOption: SortOption = .byNumber
     @Published public var isGridMode: Bool = true
+    @Published public var layoutMode: LibraryLayoutMode = .grid
     
     // Расширенные фильтры
     @Published public var filterCriteria: BookFilterCriteria = BookFilterCriteria()

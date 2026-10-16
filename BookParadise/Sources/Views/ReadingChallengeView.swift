@@ -41,6 +41,61 @@ public struct ReadingChallengeView: View {
         viewModel.books.filter { $0.status == .read }
     }
 
+    @AppStorage("monthlySprintPagesGoal") private var monthlySprintPagesGoal: Int = 400
+    @ObservedObject private var sessionManager = ReadingSessionManager.shared
+
+    private var currentMonthName: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateFormat = "LLLL"
+        return formatter.string(from: Date()).capitalized
+    }
+
+    private var currentMonthPagesRead: Int {
+        let cal = Calendar.current
+        let now = Date()
+        let currentMonth = cal.component(.month, from: now)
+        let currentYear = cal.component(.year, from: now)
+
+        let sessionPages = sessionManager.sessionHistory.filter { session in
+            let m = cal.component(.month, from: session.date)
+            let y = cal.component(.year, from: session.date)
+            return m == currentMonth && y == currentYear
+        }.reduce(0) { $0 + $1.pagesRead }
+
+        let bookPages = viewModel.books.filter { b in
+            b.status == .read && b.monthIndex == currentMonth
+        }.reduce(0) { $0 + $1.totalPages }
+
+        return max(sessionPages, bookPages)
+    }
+
+    private var sprintRatio: Double {
+        guard monthlySprintPagesGoal > 0 else { return 0.0 }
+        return min(1.0, Double(currentMonthPagesRead) / Double(monthlySprintPagesGoal))
+    }
+
+    private var currentDayOfMonth: Int {
+        Calendar.current.component(.day, from: Date())
+    }
+
+    private var totalDaysInCurrentMonth: Int {
+        Calendar.current.range(of: .day, in: .month, for: Date())?.count ?? 30
+    }
+
+    private var daysLeftInMonth: Int {
+        max(1, totalDaysInCurrentMonth - currentDayOfMonth)
+    }
+
+    private var expectedMonthPagesByNow: Double {
+        Double(monthlySprintPagesGoal) * (Double(currentDayOfMonth) / Double(totalDaysInCurrentMonth))
+    }
+
+    private var neededPagesPerDay: Int {
+        let remaining = max(0, monthlySprintPagesGoal - currentMonthPagesRead)
+        return Int(ceil(Double(remaining) / Double(daysLeftInMonth)))
+    }
+
     public var body: some View {
         NavigationStack {
             ScrollView {
@@ -50,6 +105,9 @@ public struct ReadingChallengeView: View {
 
                     // 2. Умная аналитика темпа
                     paceAnalyticsCard
+
+                    // 2.5. Марафон текущего месяца (Спринт)
+                    monthlySprintCard
 
                     // 3. Быстрая настройка персональной цели
                     goalSettingCard
@@ -178,6 +236,127 @@ public struct ReadingChallengeView: View {
                 Text("Отставание от графика: \(behindCount) \(bookWord(for: behindCount)). Чтобы достичь цели из \(annualGoal) книг, читайте примерно по 1 книге каждые \(daysPerBook) дн. (около \(max(1, 350 / max(1, daysPerBook))) стр. в день).")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(theme.cardBackground(for: colorScheme))
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(theme.cardBorder(for: colorScheme), lineWidth: 1)
+        )
+    }
+
+    // MARK: - 2.5. Марафон месяца (Спринт)
+    private var monthlySprintCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                HStack(spacing: 8) {
+                    Image(systemName: "flame.fill")
+                        .foregroundColor(.orange)
+                        .font(.title3)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Марафон месяца: \(currentMonthName)")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                        Text("Персональный спринт по страницам")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                Spacer()
+                Text("\(Int(sprintRatio * 100))%")
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundColor(sprintRatio >= 1.0 ? .green : .orange)
+            }
+
+            // Дорожка спринта с бегуном
+            VStack(spacing: 6) {
+                GeometryReader { geo in
+                    let w = geo.size.width
+                    let runnerX = max(10, min(w - 20, CGFloat(sprintRatio) * w))
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Color.orange.opacity(0.15))
+                            .frame(height: 10)
+
+                        Capsule()
+                            .fill(
+                                LinearGradient(
+                                    colors: [.orange, .red],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(width: max(10, CGFloat(sprintRatio) * w), height: 10)
+
+                        Text(sprintRatio >= 1.0 ? "🏆" : "🏃‍♂️")
+                            .font(.system(size: 16))
+                            .offset(x: runnerX - 10, y: -14)
+
+                        Text("🏁")
+                            .font(.system(size: 14))
+                            .offset(x: w - 16, y: -14)
+                    }
+                }
+                .frame(height: 24)
+
+                HStack {
+                    Text("\(currentMonthPagesRead) стр. прочитано")
+                        .font(.caption2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text("Цель: \(monthlySprintPagesGoal) стр.")
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+                }
+            }
+
+            // Статус и прогноз спринта
+            HStack(spacing: 8) {
+                if sprintRatio >= 1.0 {
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundColor(.green)
+                    Text("Ура! Цель спринта на \(currentMonthName) выполнена!")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.green)
+                } else if Double(currentMonthPagesRead) >= expectedMonthPagesByNow {
+                    Image(systemName: "bolt.fill")
+                        .foregroundColor(.orange)
+                    Text("Отличный темп! Опережаешь график на \(Int(Double(currentMonthPagesRead) - expectedMonthPagesByNow)) стр.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                } else {
+                    Image(systemName: "target")
+                        .foregroundColor(.orange)
+                    Text("Чтобы успеть за \(daysLeftInMonth) дн., читай по ~\(neededPagesPerDay) стр./день")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .padding(.top, 4)
+
+            // Быстрый выбор планки спринта
+            HStack(spacing: 8) {
+                ForEach([250, 400, 600, 1000], id: \.self) { goal in
+                    Button(action: {
+                        withAnimation { monthlySprintPagesGoal = goal }
+                    }) {
+                        Text("\(goal) стр")
+                            .font(.caption2)
+                            .fontWeight(.medium)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(monthlySprintPagesGoal == goal ? Color.orange : Color(UIColor.tertiarySystemGroupedBackground))
+                            .foregroundColor(monthlySprintPagesGoal == goal ? .white : .primary)
+                            .cornerRadius(8)
+                    }
+                }
             }
         }
         .padding(16)

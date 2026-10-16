@@ -76,28 +76,40 @@ public struct LibraryView: View {
                     
                     Spacer()
                     
-                    // Переключатель Сетка / Список
-                    Button(action: {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            viewModel.isGridMode.toggle()
+                    // Переключатель вида (Сетка / Список / Книжная полка)
+                    HStack(spacing: 2) {
+                        ForEach(LibraryLayoutMode.allCases) { mode in
+                            Button(action: {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    viewModel.layoutMode = mode
+                                    viewModel.isGridMode = (mode == .grid)
+                                }
+                            }) {
+                                Image(systemName: mode.iconName)
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(viewModel.layoutMode == mode ? .white : .secondary)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 6)
+                                    .background(viewModel.layoutMode == mode ? theme.primaryAccent : Color.clear)
+                                    .cornerRadius(6)
+                            }
                         }
-                    }) {
-                        Image(systemName: viewModel.isGridMode ? "list.bullet" : "square.grid.3x3.fill")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(theme.primaryAccent)
-                            .padding(7)
-                            .background(Color(UIColor.secondarySystemGroupedBackground))
-                            .cornerRadius(8)
                     }
+                    .padding(2)
+                    .background(Color(UIColor.secondarySystemGroupedBackground))
+                    .cornerRadius(8)
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 6)
                 
-                // Контент: Сетка или Список
-                if viewModel.isGridMode {
+                // Контент: Сетка, Список или Книжная полка
+                switch viewModel.layoutMode {
+                case .grid:
                     booksGrid
-                } else {
+                case .list:
                     booksList
+                case .bookshelf:
+                    bookshelfSpineView
                 }
             }
             .background(Color(UIColor.systemGroupedBackground))
@@ -374,5 +386,96 @@ public struct LibraryView: View {
             }
         }
         .listStyle(.plain)
+    }
+
+    // MARK: - 3. Виртуальная книжная полка с корешками
+    private var bookshelfSpineView: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                let books = viewModel.filteredBooks
+                if books.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "books.vertical")
+                            .font(.system(size: 44))
+                            .foregroundColor(.secondary)
+                        Text("На полке пока нет книг")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.top, 60)
+                } else {
+                    let chunks = chunkBooks(books, size: 8)
+                    ForEach(Array(chunks.enumerated()), id: \.offset) { index, shelfBooks in
+                        VStack(spacing: 0) {
+                            // Книги на полке
+                            HStack(alignment: .bottom, spacing: 3) {
+                                ForEach(shelfBooks) { book in
+                                    NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
+                                        BookSpineView(book: book)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .contextMenu {
+                                        Button(action: { bookForProgressUpdate = book }) {
+                                            Label("Обновить прогресс", systemImage: "pencil")
+                                        }
+                                        Button(action: { bookForPlan = book }) {
+                                            Label("Добавить в план", systemImage: "calendar.badge.plus")
+                                        }
+                                    }
+                                }
+                                Spacer(minLength: 0)
+                            }
+                            .padding(.horizontal, 16)
+
+                            // Деревянная полочная балка
+                            shelfBeam
+                        }
+                    }
+                }
+            }
+            .padding(.vertical, 16)
+        }
+    }
+
+    private var shelfBeam: some View {
+        VStack(spacing: 0) {
+            LinearGradient(
+                colors: [
+                    Color(red: 0.72, green: 0.52, blue: 0.36),
+                    Color(red: 0.48, green: 0.32, blue: 0.18)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 14)
+            .cornerRadius(2)
+            .shadow(color: .black.opacity(0.25), radius: 3, y: 3)
+
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [.black.opacity(0.18), .clear],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .frame(height: 6)
+        }
+    }
+
+    private func chunkBooks(_ books: [Book], size: Int) -> [[Book]] {
+        var chunks: [[Book]] = []
+        var current: [Book] = []
+        for b in books {
+            current.append(b)
+            if current.count == size {
+                chunks.append(current)
+                current = []
+            }
+        }
+        if !current.isEmpty {
+            chunks.append(current)
+        }
+        return chunks
     }
 }

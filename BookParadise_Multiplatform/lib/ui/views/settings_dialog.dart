@@ -117,6 +117,41 @@ class _SettingsDialogState extends State<SettingsDialog> {
             ),
             const Divider(height: 28),
 
+            // 3.5. Резервная копия (JSON Backup & Restore)
+            const Text(
+              'РЕЗЕРВНАЯ КОПИЯ И ВОССТАНОВЛЕНИЕ (JSON)',
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.tonalIcon(
+                    icon: const Icon(Icons.file_download_outlined, size: 18),
+                    label: const Text('Экспорт JSON', style: TextStyle(fontSize: 12)),
+                    onPressed: () {
+                      final jsonString = libraryVM.exportJsonBackup();
+                      Clipboard.setData(ClipboardData(text: jsonString));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Резервная копия всей библиотеки скопирована в буфер обмена!')),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.file_upload_outlined, size: 18),
+                    label: const Text('Импорт JSON', style: TextStyle(fontSize: 12)),
+                    onPressed: () {
+                      _showImportJsonDialog(context, libraryVM);
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const Divider(height: 28),
+
             // 4. Google Таблица API
             const Text(
               'СИНХРОНИЗАЦИЯ С GOOGLE ТАБЛИЦЕЙ',
@@ -152,7 +187,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
             // 6. Версия
             Center(
               child: Text(
-                'Книжный Рай • Версия 2.5.0 (Сборка 10)',
+                'Книжный Рай • Версия 2.8.0 (Сборка 13)',
                 style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
             ),
@@ -177,6 +212,74 @@ class _SettingsDialogState extends State<SettingsDialog> {
           child: const Text('Сохранить'),
         ),
       ],
+    );
+  }
+
+  void _showImportJsonDialog(BuildContext context, LibraryViewModel libraryVM) {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Импорт из JSON'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Вставьте содержимое резервной копии в формате JSON. Существующая библиотека будет заменена данными из бэкапа.',
+              style: TextStyle(fontSize: 13),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              maxLines: 8,
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+              decoration: const InputDecoration(
+                hintText: '{\n  "version": "2.8.0",\n  "books": [...]\n}',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Отмена'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              final raw = controller.text.trim();
+              if (raw.isEmpty) return;
+              try {
+                final count = await libraryVM.importJsonBackup(raw);
+                if (ctx.mounted) Navigator.pop(ctx);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Успешно восстановлено книг: $count')),
+                  );
+                }
+              } catch (e) {
+                if (ctx.mounted) {
+                  showDialog(
+                    context: ctx,
+                    builder: (_) => AlertDialog(
+                      title: const Text('Ошибка импорта'),
+                      content: Text('$e'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(_),
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              }
+            },
+            child: const Text('Восстановить'),
+          ),
+        ],
+      ),
     );
   }
 }

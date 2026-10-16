@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/models/book.dart';
@@ -5,6 +6,12 @@ import '../../data/models/bingo_and_cycle.dart';
 import '../../data/models/enums.dart';
 import '../../data/models/sample_data.dart';
 import '../../data/services/google_sheets_service.dart';
+
+enum LibraryLayoutMode {
+  grid,
+  list,
+  bookshelf,
+}
 
 class LibraryViewModel extends ChangeNotifier {
   final GoogleSheetsService _api = GoogleSheetsService.instance;
@@ -25,6 +32,9 @@ class LibraryViewModel extends ChangeNotifier {
 
   int _annualGoal = 30;
   int get annualGoal => _annualGoal;
+
+  LibraryLayoutMode _layoutMode = LibraryLayoutMode.grid;
+  LibraryLayoutMode get layoutMode => _layoutMode;
 
   static const String _prefsKeyAnnualGoal = 'bp_annual_goal_count';
 
@@ -108,11 +118,58 @@ class LibraryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setLayoutMode(LibraryLayoutMode mode) {
+    if (_layoutMode != mode) {
+      _layoutMode = mode;
+      notifyListeners();
+    }
+  }
+
   Future<void> setAnnualGoal(int newGoal) async {
     _annualGoal = newGoal.clamp(5, 500);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_prefsKeyAnnualGoal, _annualGoal);
     notifyListeners();
+  }
+
+  // MARK: - JSON Backup & Restore
+  String exportJsonBackup() {
+    final list = _books.map((b) => b.toJson()).toList();
+    final data = {
+      'version': '2.8.0',
+      'exportDate': DateTime.now().toIso8601String(),
+      'annualGoal': _annualGoal,
+      'booksCount': list.length,
+      'books': list,
+    };
+    return const JsonEncoder.withIndent('  ').convert(data);
+  }
+
+  Future<int> importJsonBackup(String jsonStr) async {
+    final decoded = json.decode(jsonStr);
+    List<dynamic> list;
+    if (decoded is List) {
+      list = decoded;
+    } else if (decoded is Map && decoded['books'] is List) {
+      list = decoded['books'] as List;
+      if (decoded['annualGoal'] is int) {
+        await setAnnualGoal(decoded['annualGoal'] as int);
+      }
+    } else {
+      throw const FormatException('Неверный формат файла резервной копии');
+    }
+
+    final newBooks = list
+        .map((item) => Book.fromJson(Map<String, dynamic>.from(item as Map)))
+        .toList();
+    if (newBooks.isEmpty) {
+      throw const FormatException('В файле резервной копии не найдено книг');
+    }
+
+    _books = newBooks;
+    await _api.saveCachedBooks(_books);
+    notifyListeners();
+    return newBooks.length;
   }
 
   // MARK: - Filtered Books (Multi-parameter Filtering)
