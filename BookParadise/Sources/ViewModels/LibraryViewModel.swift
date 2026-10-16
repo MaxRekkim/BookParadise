@@ -185,6 +185,16 @@ public class LibraryViewModel: ObservableObject {
             rating: updated.rating
         )
     }
+
+    public func updateBook(_ book: Book) {
+        guard let index = books.firstIndex(where: { $0.id == book.id }) else { return }
+        books[index] = book
+        if book.hasCycle {
+            recalculateCyclePercent(for: book.cycleName)
+        }
+        recalculateStats()
+        persistData()
+    }
     
     // MARK: - Сценарий Б: Добавление новой книги
     public func addNewBook(

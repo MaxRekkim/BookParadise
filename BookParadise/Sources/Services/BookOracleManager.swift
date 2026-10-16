@@ -95,6 +95,7 @@ public struct BookRecommendation: Identifiable {
     public let estimatedTimeToFinish: String
 }
 
+@MainActor
 public class BookOracleManager: ObservableObject {
     public static let shared = BookOracleManager()
 
