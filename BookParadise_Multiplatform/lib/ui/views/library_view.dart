@@ -611,28 +611,22 @@ class _BookSpineWidget extends StatelessWidget {
     switch (genre) {
       case BookGenre.prose:
         return [const Color(0xFF5E1924), const Color(0xFF8B2635)];
-      case BookGenre.fantasy:
-        return [const Color(0xFF281845), const Color(0xFF4A2574)];
-      case BookGenre.scifi:
-        return [const Color(0xFF0F324C), const Color(0xFF1E5B82)];
-      case BookGenre.nonFiction:
-        return [const Color(0xFF1B3B2B), const Color(0xFF2D5A43)];
       case BookGenre.detective:
         return [const Color(0xFF24272D), const Color(0xFF3E434D)];
-      case BookGenre.classic:
-        return [const Color(0xFF4E2C14), const Color(0xFF7A4521)];
-      case BookGenre.poetry:
-        return [const Color(0xFF5C2344), const Color(0xFF8A3B69)];
-      case BookGenre.business:
-        return [const Color(0xFF1A334B), const Color(0xFF2C557D)];
-      case BookGenre.biography:
-        return [const Color(0xFF3D2E1E), const Color(0xFF6B5135)];
+      case BookGenre.thriller:
+        return [const Color(0xFF4A141A), const Color(0xFF7A1B24)];
       case BookGenre.psychology:
         return [const Color(0xFF2E1C38), const Color(0xFF4E3060)];
-      case BookGenre.history:
-        return [const Color(0xFF4A1A1A), const Color(0xFF752C2C)];
-      case BookGenre.philosophy:
-        return [const Color(0xFF282828), const Color(0xFF424242)];
+      case BookGenre.fantasy:
+        return [const Color(0xFF143828), const Color(0xFF245740)];
+      case BookGenre.ya:
+        return [const Color(0xFF5C2344), const Color(0xFF8A3B69)];
+      case BookGenre.classic:
+        return [const Color(0xFF4E2C14), const Color(0xFF7A4521)];
+      case BookGenre.nonfiction:
+        return [const Color(0xFF0F324C), const Color(0xFF1E5B82)];
+      case BookGenre.comics:
+        return [const Color(0xFF6B3E14), const Color(0xFF9E5C1E)];
     }
   }
 }

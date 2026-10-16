@@ -422,7 +422,7 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
           else
             GridView.builder(
               shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics),
+              physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 childAspectRatio: 0.65,
