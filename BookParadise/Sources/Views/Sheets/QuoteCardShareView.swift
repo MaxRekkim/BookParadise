@@ -40,10 +40,8 @@ public struct QuoteCardShareView: View {
     }
 
     private func closeSheet() {
-        DispatchQueue.main.async {
-            self.onDismiss?()
-            self.dismiss()
-        }
+        onDismiss?()
+        dismiss()
     }
 
     public var body: some View {
@@ -141,13 +139,14 @@ public struct QuoteCardShareView: View {
             .navigationTitle("Цитата из книги")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Готово") {
                         closeSheet()
                     }
                     .fontWeight(.semibold)
+                    #if targetEnvironment(macCatalyst) || os(macOS)
                     .keyboardShortcut(.defaultAction)
-                    .keyboardShortcut(.cancelAction)
+                    #endif
                 }
             }
             .confirmationDialog("Удалить эту цитату?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {

@@ -55,6 +55,10 @@
 		A10000242345678900000024 /* SoundscapeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000242345678900000024 /* SoundscapeManager.swift */; };
 		A10000252345678900000025 /* LendBookSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000252345678900000025 /* LendBookSheet.swift */; };
 		A10000262345678900000026 /* LendingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000262345678900000026 /* LendingListView.swift */; };
+		A10000272345678900000027 /* ReadingAchievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000272345678900000027 /* ReadingAchievement.swift */; };
+		A10000282345678900000028 /* AchievementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000282345678900000028 /* AchievementManager.swift */; };
+		A10000292345678900000029 /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000292345678900000029 /* AchievementsView.swift */; };
+		A10000302345678900000030 /* TimeCapsuleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000302345678900000030 /* TimeCapsuleCard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -108,6 +112,10 @@
 		B10000242345678900000024 /* SoundscapeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/SoundscapeManager.swift; sourceTree = "<group>"; };
 		B10000252345678900000025 /* LendBookSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/LendBookSheet.swift; sourceTree = "<group>"; };
 		B10000262345678900000026 /* LendingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/LendingListView.swift; sourceTree = "<group>"; };
+		B10000272345678900000027 /* ReadingAchievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/ReadingAchievement.swift; sourceTree = "<group>"; };
+		B10000282345678900000028 /* AchievementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/AchievementManager.swift; sourceTree = "<group>"; };
+		B10000292345678900000029 /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/AchievementsView.swift; sourceTree = "<group>"; };
+		B10000302345678900000030 /* TimeCapsuleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/TimeCapsuleCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +189,10 @@
 				B10000242345678900000024 /* SoundscapeManager.swift */,
 				B10000252345678900000025 /* LendBookSheet.swift */,
 				B10000262345678900000026 /* LendingListView.swift */,
+				B10000272345678900000027 /* ReadingAchievement.swift */,
+				B10000282345678900000028 /* AchievementManager.swift */,
+				B10000292345678900000029 /* AchievementsView.swift */,
+				B10000302345678900000030 /* TimeCapsuleCard.swift */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -308,6 +320,10 @@
 				A10000242345678900000024 /* SoundscapeManager.swift in Sources */,
 				A10000252345678900000025 /* LendBookSheet.swift in Sources */,
 				A10000262345678900000026 /* LendingListView.swift in Sources */,
+				A10000272345678900000027 /* ReadingAchievement.swift in Sources */,
+				A10000282345678900000028 /* AchievementManager.swift in Sources */,
+				A10000292345678900000029 /* AchievementsView.swift in Sources */,
+				A10000302345678900000030 /* TimeCapsuleCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,7 +390,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -383,7 +399,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.5.0;
+				MARKETING_VERSION = 2.6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -400,7 +416,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -409,7 +425,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.5.0;
+				MARKETING_VERSION = 2.6.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;

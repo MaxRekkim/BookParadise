@@ -6,12 +6,14 @@ public struct DashboardView: View {
     @ObservedObject public var viewModel: LibraryViewModel
     @ObservedObject private var theme = ThemeManager.shared
     @ObservedObject private var lendingManager = LendingManager.shared
+    @ObservedObject private var achievementManager = AchievementManager.shared
     @State private var bookToUpdateProgress: Book? = nil
     @State private var bookForReadingSession: Book? = nil
     @State private var isShowingSettings: Bool = false
     @State private var isShowingDetailedStats: Bool = false
     @State private var isShowingQuotes: Bool = false
     @State private var isShowingLending: Bool = false
+    @State private var isShowingAchievements: Bool = false
     
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -30,6 +32,12 @@ public struct DashboardView: View {
                         lendingBanner
                             .padding(.horizontal)
                     }
+
+                    // 0.7. Капсула Времени (Литературные воспоминания)
+                    TimeCapsuleCard(viewModel: viewModel) { book in
+                        bookForReadingSession = book
+                    }
+                    .padding(.horizontal)
                     
                     // 1. Блок «Читаю сейчас» (Горизонтальный свайп)
                     readingNowSection
@@ -59,6 +67,19 @@ public struct DashboardView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack(spacing: 12) {
+                        Button(action: { isShowingAchievements = true }) {
+                            HStack(spacing: 3) {
+                                Image(systemName: "trophy.fill")
+                                    .foregroundColor(.orange)
+                                if achievementManager.unlockedCount > 0 {
+                                    Text("\(achievementManager.unlockedCount)")
+                                        .font(.caption2)
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.orange)
+                                }
+                            }
+                        }
+
                         Button(action: { isShowingQuotes = true }) {
                             Image(systemName: "quote.bubble.fill")
                                 .foregroundColor(theme.primaryAccent)
@@ -71,15 +92,13 @@ public struct DashboardView: View {
                     }
                 }
             }
+            .sheet(isPresented: $isShowingAchievements) {
+                AchievementsView()
+            }
             .sheet(isPresented: $isShowingQuotes) {
-                NavigationStack {
-                    QuotesGalleryView(viewModel: viewModel)
-                        .toolbar {
-                            ToolbarItem(placement: .confirmationAction) {
-                                Button("Готово") { isShowingQuotes = false }
-                            }
-                        }
-                }
+                QuotesGalleryView(viewModel: viewModel, onDismiss: {
+                    isShowingQuotes = false
+                })
             }
             .sheet(item: $bookToUpdateProgress) { book in
                 ProgressUpdateSheet(viewModel: viewModel, book: book)

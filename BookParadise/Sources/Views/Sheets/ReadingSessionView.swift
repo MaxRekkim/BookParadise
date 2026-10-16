@@ -386,6 +386,10 @@ public struct ReadingSessionView: View {
                             let rec = sessionManager.completeSession(endPage: endPage)
                             self.completedRecord = rec
                             viewModel.updateBookProgress(bookId: book.id, pagesRead: endPage)
+                            if soundscapeManager.currentMode != .none {
+                                AchievementManager.shared.markSoundscapeUsed()
+                            }
+                            AchievementManager.shared.recalculateAll()
                         }
                         soundscapeManager.stop()
                         isShowingFinishDialog = false

@@ -26,11 +26,13 @@ public class QuotesManager: ObservableObject {
         let newQuote = BookQuote(bookId: bookId, text: text, pageNumber: pageNumber, dateAdded: Date(), note: note)
         quotes.insert(newQuote, at: 0)
         saveQuotes()
+        AchievementManager.shared.recalculateAll()
     }
 
     public func deleteQuote(id: UUID) {
         quotes.removeAll { $0.id == id }
         saveQuotes()
+        AchievementManager.shared.recalculateAll()
     }
 
     public func updateQuote(id: UUID, text: String? = nil, pageNumber: Int? = nil, note: String? = nil, clearNote: Bool = false) {

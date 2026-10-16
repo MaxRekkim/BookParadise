@@ -34,8 +34,9 @@ public enum AppTheme: String, CaseIterable, Identifiable {
 public class ThemeManager: ObservableObject {
     public static let shared = ThemeManager()
 
-    @AppStorage("selectedAppTheme") public var selectedTheme: AppTheme = .autoDayNight {
+    @Published public var selectedTheme: AppTheme {
         didSet {
+            UserDefaults.standard.set(selectedTheme.rawValue, forKey: "selectedAppTheme")
             updateActiveColors()
         }
     }
@@ -49,6 +50,12 @@ public class ThemeManager: ObservableObject {
     private var timer: Timer?
 
     private init() {
+        if let saved = UserDefaults.standard.string(forKey: "selectedAppTheme"),
+           let theme = AppTheme(rawValue: saved) {
+            self.selectedTheme = theme
+        } else {
+            self.selectedTheme = .wineVelvet
+        }
         updateActiveColors()
         // Таймер для проверки времени суток каждые 5 минут в авто-режиме
         timer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { [weak self] _ in

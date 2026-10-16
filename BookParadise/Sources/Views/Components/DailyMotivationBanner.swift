@@ -179,14 +179,9 @@ public struct DailyMotivationBanner: View {
             ReadingChallengeView(viewModel: viewModel)
         }
         .sheet(isPresented: $isShowingQuotesGallery) {
-            NavigationStack {
-                QuotesGalleryView(viewModel: viewModel)
-                    .toolbar {
-                        ToolbarItem(placement: .confirmationAction) {
-                            Button("Готово") { isShowingQuotesGallery = false }
-                        }
-                    }
-            }
+            QuotesGalleryView(viewModel: viewModel, onDismiss: {
+                isShowingQuotesGallery = false
+            })
         }
     }
 }

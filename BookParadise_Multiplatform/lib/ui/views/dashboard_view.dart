@@ -13,6 +13,8 @@ import 'library_view.dart';
 import 'quotes_view.dart';
 import 'settings_dialog.dart';
 import 'lending_list_screen.dart';
+import 'achievements_screen.dart';
+import '../widgets/time_capsule_card.dart';
 
 class DashboardView extends StatelessWidget {
   const DashboardView({super.key});
@@ -31,6 +33,13 @@ class DashboardView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Книжный Рай'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.emoji_events_outlined, color: Colors.amber),
+            tooltip: 'Трофеи и стрики',
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const AchievementsScreen()));
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.format_quote),
             tooltip: 'Цитаты',
@@ -51,6 +60,12 @@ class DashboardView extends StatelessWidget {
         children: [
           // 1. Мотивационный баннер цитаты дня и прогресса цели года
           const DailyMotivationBanner(),
+
+          // 1.2. Капсула Времени (Литературные воспоминания)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            child: TimeCapsuleCard(),
+          ),
 
           // 1.5. Баннер книг у друзей (если есть активные записи)
           if (lendingService.activeRecords.isNotEmpty)

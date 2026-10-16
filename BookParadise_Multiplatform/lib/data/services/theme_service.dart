@@ -20,7 +20,7 @@ class ThemeService extends ChangeNotifier {
     _startTimer();
   }
 
-  AppTheme _selectedTheme = AppTheme.autoDayNight;
+  AppTheme _selectedTheme = AppTheme.wineVelvet;
   AppTheme get selectedTheme => _selectedTheme;
 
   AppTheme _effectiveTheme = AppTheme.wineVelvet;
@@ -111,7 +111,7 @@ class ThemeService extends ChangeNotifier {
 
   Future<void> _loadFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    final savedIndex = prefs.getInt('selectedThemeIndex') ?? AppTheme.autoDayNight.index;
+    final savedIndex = prefs.getInt('selectedThemeIndex') ?? AppTheme.wineVelvet.index;
     if (savedIndex >= 0 && savedIndex < AppTheme.values.length) {
       _selectedTheme = AppTheme.values[savedIndex];
     }

@@ -3,6 +3,8 @@ import UIKit
 
 public struct QuotesGalleryView: View {
     @ObservedObject public var viewModel: LibraryViewModel
+    public var onDismiss: (() -> Void)? = nil
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject private var quotesManager = QuotesManager.shared
     @ObservedObject private var theme = ThemeManager.shared
     
@@ -11,8 +13,9 @@ public struct QuotesGalleryView: View {
     @State private var quoteToDelete: BookQuote? = nil
     @State private var showDeleteConfirmation: Bool = false
     
-    public init(viewModel: LibraryViewModel) {
+    public init(viewModel: LibraryViewModel, onDismiss: (() -> Void)? = nil) {
         self.viewModel = viewModel
+        self.onDismiss = onDismiss
     }
     
     private var filteredQuotes: [(quote: BookQuote, book: Book)] {
@@ -54,6 +57,17 @@ public struct QuotesGalleryView: View {
             .background(Color(UIColor.systemGroupedBackground))
             .navigationTitle("Цитаты и заметки (\(quotesManager.quotes.count))")
             .searchable(text: $searchText, prompt: "Поиск по цитатам, авторам, книгам...")
+            .toolbar {
+                if onDismiss != nil {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Готово") {
+                            onDismiss?()
+                            dismiss()
+                        }
+                        .fontWeight(.semibold)
+                    }
+                }
+            }
             .sheet(item: $selectedQuoteForShare) { wrapper in
                 QuoteCardShareView(quote: wrapper.quote, book: wrapper.book, onDismiss: {
                     selectedQuoteForShare = nil
