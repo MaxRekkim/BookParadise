@@ -227,21 +227,10 @@ jobs:
           c = c.replace('android:label=\"book_paradise\"', 'android:label=\"Книжный Рай\"', 1)
           with open(p, 'w', encoding='utf-8') as f:
               f.write(c)
-
-          p_gradle = 'android/app/build.gradle'
-          with open(p_gradle, 'r', encoding='utf-8') as f:
-              g = f.read()
-          if 'lintOptions' not in g and 'lint {' not in g:
-              g = g.replace('android {', 'android {\n    lintOptions {\n        checkReleaseBuilds false\n        abortOnError false\n    }\n', 1)
-          with open(p_gradle, 'w', encoding='utf-8') as f:
-              f.write(g)
-
-          p_props = 'android/gradle.properties'
-          with open(p_props, 'a', encoding='utf-8') as f:
-              f.write('\norg.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m\nandroid.useAndroidX=true\nandroid.enableJetifier=true\n')
           "
           flutter pub get
-          flutter build apk --release --no-tree-shake-icons --android-skip-build-dependency-validation --build-name=${{ steps.get-version.outputs.version }} --build-number=${{ steps.get-version.outputs.build_number }} 2>&1 | tee ../android-build.log
+          flutter build apk --release --android-skip-build-dependency-validation --build-name=${{ steps.get-version.outputs.version }} --build-number=${{ steps.get-version.outputs.build_number }} 2>&1 | tee ../android-build.log || \
+          (echo 'Retrying build once...' && sleep 10 && flutter build apk --release --android-skip-build-dependency-validation --build-name=${{ steps.get-version.outputs.version }} --build-number=${{ steps.get-version.outputs.build_number }} 2>&1 | tee ../android-build.log)
           
           # Copy APK with clear release filename
           APK_SRC=$(find build -name "*release*.apk" | head -n 1)
