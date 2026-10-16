@@ -15,10 +15,10 @@ on:
         type: boolean
         default: false
       version_tag:
-        description: 'Тег версии (например, v2.4.0)'
+        description: 'Тег версии (например, v2.5.0)'
         required: false
         type: string
-        default: 'v2.4.0'
+        default: 'v2.5.0'
 
 permissions:
   contents: write
@@ -56,7 +56,7 @@ jobs:
       - name: Determine Build Version
         id: get-version
         run: |
-          VERSION="2.4.0"
+          VERSION="2.5.0"
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             RAW_TAG="${GITHUB_REF#refs/tags/}"
             VERSION="${RAW_TAG#v}"
@@ -196,8 +196,8 @@ jobs:
       - name: Determine Build Version
         id: get-version
         run: |
-          VERSION="2.4.0"
-          BUILD_NUMBER="9"
+          VERSION="2.5.0"
+          BUILD_NUMBER="10"
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             RAW_TAG="${GITHUB_REF#refs/tags/}"
             VERSION="${RAW_TAG#v}"
@@ -290,8 +290,8 @@ jobs:
         id: get-version
         shell: bash
         run: |
-          VERSION="2.4.0"
-          BUILD_NUMBER="9"
+          VERSION="2.5.0"
+          BUILD_NUMBER="10"
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             RAW_TAG="${GITHUB_REF#refs/tags/}"
             VERSION="${RAW_TAG#v}"

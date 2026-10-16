@@ -18,6 +18,7 @@ public struct SettingsView: View {
     @State private var isShowingImporter: Bool = false
     @State private var importAlertMessage: String? = nil
     @State private var isShowingImportAlert: Bool = false
+    @State private var isShowingLending: Bool = false
     
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -222,6 +223,46 @@ public struct SettingsView: View {
                         }
                     }
                 }
+
+                // MARK: - Книги у друзей
+                Section(header: Text("Книги у друзей"), footer: Text("Контролируйте книги, которые вы одолжили друзьям или взяли почитать.")) {
+                    Button(action: { isShowingLending = true }) {
+                        HStack {
+                            Image(systemName: "person.2.fill")
+                                .foregroundColor(theme.primaryAccent)
+                            Text("Управление отданными книгами")
+                                .foregroundColor(.primary)
+                            Spacer()
+                            let activeCount = LendingManager.shared.activeRecords.count
+                            if activeCount > 0 {
+                                Text("\(activeCount)")
+                                    .font(.caption)
+                                    .fontWeight(.bold)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 2)
+                                    .background(theme.primaryAccent.opacity(0.15))
+                                    .foregroundColor(theme.primaryAccent)
+                                    .clipShape(Capsule())
+                            }
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
+
+                // MARK: - Экспорт в Markdown (Obsidian / Notion)
+                Section(header: Text("Экспорт в Markdown (Obsidian / Notion)"), footer: Text("Экспортирует весь каталог ваших книг и цитаты в сводный файл Markdown для вашей персональной базы знаний (PKM).")) {
+                    if let catalogFile = generateCatalogMarkdownFile() {
+                        ShareLink(item: catalogFile, preview: SharePreview("Каталог_Книжный_Рай.md", image: Image(systemName: "books.vertical.fill"))) {
+                            HStack {
+                                Image(systemName: "doc.text.fill")
+                                Text("Экспортировать каталог в Markdown (.md)")
+                            }
+                            .foregroundColor(theme.primaryAccent)
+                        }
+                    }
+                }
                 
                 Section(header: Text("Локальные данные и кэш")) {
                     HStack {
@@ -253,6 +294,9 @@ public struct SettingsView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Готово") { dismiss() }
                 }
+            }
+            .sheet(isPresented: $isShowingLending) {
+                LendingListView()
             }
             .fileImporter(
                 isPresented: $isShowingImporter,
@@ -368,5 +412,10 @@ public struct SettingsView: View {
         viewModel.bingoItems = SampleData.generateInitialBingo()
         GoogleSheetsAPIService.shared.saveToLocalCache(books: viewModel.books, bingo: viewModel.bingoItems)
         viewModel.loadInitialData()
+    }
+
+    private func generateCatalogMarkdownFile() -> URL? {
+        let md = MarkdownExportService.shared.exportCatalogToMarkdown(books: viewModel.books, quotes: QuotesManager.shared.quotes)
+        return MarkdownExportService.shared.createTemporaryMarkdownFile(content: md, filename: "Каталог_Книжный_Рай")
     }
 }

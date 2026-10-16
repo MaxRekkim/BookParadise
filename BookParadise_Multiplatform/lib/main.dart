@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'data/services/theme_service.dart';
 import 'data/services/quotes_service.dart';
 import 'data/services/reading_session_service.dart';
+import 'data/services/lending_service.dart';
+import 'data/services/soundscape_service.dart';
 import 'ui/view_models/library_view_model.dart';
 import 'ui/views/main_navigation_shell.dart';
 
@@ -15,6 +17,8 @@ void main() async {
         ChangeNotifierProvider.value(value: ThemeService.instance),
         ChangeNotifierProvider.value(value: QuotesService.instance),
         ChangeNotifierProvider.value(value: ReadingSessionService.instance),
+        ChangeNotifierProvider.value(value: LendingService.instance),
+        ChangeNotifierProvider.value(value: SoundscapeService.instance),
         ChangeNotifierProvider(create: (_) => LibraryViewModel()),
       ],
       child: const BookParadiseApp(),

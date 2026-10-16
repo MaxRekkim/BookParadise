@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/book.dart';
+import '../../data/models/lending_record.dart';
 import '../../data/services/reading_session_service.dart';
+import '../../data/services/lending_service.dart';
+import '../../data/services/quotes_service.dart';
+import '../../data/services/markdown_export_service.dart';
 import '../view_models/library_view_model.dart';
 import '../widgets/book_cover_widget.dart';
 import 'reading_session_screen.dart';
+import 'lend_book_dialog.dart';
 
 class BookDetailView extends StatefulWidget {
   final Book book;
@@ -208,6 +213,14 @@ class _BookDetailViewState extends State<BookDetailView> {
               ),
             ),
           ),
+          const SizedBox(height: 16),
+
+          // 5. Книга у друзей (Трекер долгов)
+          _buildLendingSection(context, book),
+          const SizedBox(height: 16),
+
+          // 6. Экспорт в Markdown (Obsidian / Notion)
+          _buildMarkdownExportSection(context, book),
         ],
       ),
     );
@@ -279,6 +292,129 @@ class _BookDetailViewState extends State<BookDetailView> {
             child: const Text('Сохранить'),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLendingSection(BuildContext context, Book book) {
+    final lendingService = context.watch<LendingService>();
+    final active = lendingService.activeLendingForBook(book.id.toString());
+    final primaryAccent = Theme.of(context).colorScheme.primary;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.people_alt, color: primaryAccent, size: 20),
+                const SizedBox(width: 8),
+                const Text(
+                  'Книга у друзей (Трекер долгов)',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (active != null) ...[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        active.type == LendingType.lent ? 'Одолжена другу:' : 'Взята у:',
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                      Text(
+                        active.personName,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  if (active.daysRemaining != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: active.isOverdue ? Colors.red.withOpacity(0.15) : Colors.orange.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        active.isOverdue ? 'Просрочено ${active.daysRemaining!.abs()} дн.' : 'Осталось ${active.daysRemaining} дн.',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: active.isOverdue ? Colors.red : Colors.orange,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              if (active.contact != null && active.contact!.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Text('Контакт: ${active.contact}', style: const TextStyle(fontSize: 12, color: Colors.blue)),
+              ],
+              const SizedBox(height: 12),
+              FilledButton.tonalIcon(
+                icon: const Icon(Icons.check_circle_outline, size: 16),
+                label: const Text('Отметить возврат книги'),
+                onPressed: () => lendingService.markReturned(active.id),
+              ),
+            ] else ...[
+              OutlinedButton.icon(
+                icon: const Icon(Icons.person_add_alt_1, size: 16),
+                label: const Text('Одолжить книгу другу / Записать в долг'),
+                onPressed: () => LendBookDialog.show(context, book),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMarkdownExportSection(BuildContext context, Book book) {
+    final primaryAccent = Theme.of(context).colorScheme.primary;
+    final quotesService = context.watch<QuotesService>();
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.description, color: primaryAccent, size: 20),
+                const SizedBox(width: 8),
+                const Text(
+                  'Экспорт для заметок (Obsidian / Notion)',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Создаёт готовую Markdown-заметку с YAML frontmatter, оценкой, статусом и сохраненными цитатами книги.',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+            const SizedBox(height: 12),
+            FilledButton.icon(
+              icon: const Icon(Icons.copy, size: 16),
+              label: const Text('Скопировать Markdown (.md)'),
+              onPressed: () {
+                final md = MarkdownExportService.instance.exportBookToMarkdown(book, quotesService.quotes);
+                Clipboard.setData(ClipboardData(text: md));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Markdown для Obsidian скопирован в буфер обмена!')),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

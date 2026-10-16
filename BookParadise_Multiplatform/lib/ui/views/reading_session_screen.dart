@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/book.dart';
 import '../../data/services/reading_session_service.dart';
+import '../../data/services/soundscape_service.dart';
 import '../view_models/library_view_model.dart';
 import '../widgets/thinking_orb_widget.dart';
 
@@ -13,16 +14,27 @@ class ReadingSessionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sessionService = context.watch<ReadingSessionService>();
+    final soundscapeService = context.watch<SoundscapeService>();
     final libraryVM = context.watch<LibraryViewModel>();
-    final primaryAccent = Theme.of(context).colorScheme.primary;
+    final basePrimary = Theme.of(context).colorScheme.primary;
+    final activeTint = soundscapeService.mode != SoundscapeMode.none
+        ? soundscapeService.mode.accentColor
+        : basePrimary;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Сессия чтения'),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () {
+            soundscapeService.stop();
+            Navigator.of(context).pop();
+          },
+        ),
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -32,7 +44,7 @@ class ReadingSessionScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                   child: Row(
                     children: [
-                      Icon(Icons.auto_stories, color: primaryAccent),
+                      Icon(Icons.auto_stories, color: activeTint),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -62,9 +74,9 @@ class ReadingSessionScreen extends StatelessWidget {
                   ThinkingOrbWidget(
                     size: 160,
                     state: sessionService.isActive ? OrbState.breathing : OrbState.idle,
-                    color: primaryAccent,
+                    color: activeTint,
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 24),
                   Text(
                     sessionService.formattedTime,
                     style: const TextStyle(
@@ -74,14 +86,66 @@ class ReadingSessionScreen extends StatelessWidget {
                       letterSpacing: 2,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
-                    sessionService.isActive ? 'Фокус и концентрация...' : 'Пауза',
+                    sessionService.isActive
+                        ? (soundscapeService.mode != SoundscapeMode.none
+                            ? 'Фокус: ${soundscapeService.mode.title}'
+                            : 'Фокус и концентрация...')
+                        : 'Пауза',
                     style: TextStyle(
                       fontSize: 14,
                       color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
                     ),
                   ),
+                ],
+              ),
+
+              // 2.5. Фоновый эмбиент и концентрация
+              Column(
+                children: [
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: SoundscapeMode.values.map((mode) {
+                        final isSelected = soundscapeService.mode == mode;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: FilterChip(
+                            avatar: Icon(
+                              mode.icon,
+                              size: 16,
+                              color: isSelected ? Colors.white : mode.accentColor,
+                            ),
+                            label: Text(mode.title),
+                            selected: isSelected,
+                            selectedColor: mode.accentColor,
+                            labelStyle: TextStyle(
+                              color: isSelected ? Colors.white : null,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                            onSelected: (_) => soundscapeService.setMode(mode),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  if (soundscapeService.mode != SoundscapeMode.none) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(Icons.volume_down, size: 16, color: Colors.grey),
+                        Expanded(
+                          child: Slider(
+                            value: soundscapeService.volume,
+                            activeColor: soundscapeService.mode.accentColor,
+                            onChanged: (val) => soundscapeService.setVolume(val),
+                          ),
+                        ),
+                        const Icon(Icons.volume_up, size: 16, color: Colors.grey),
+                      ],
+                    ),
+                  ],
                 ],
               ),
 
@@ -92,7 +156,10 @@ class ReadingSessionScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: FilledButton.icon(
-                          style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            backgroundColor: activeTint,
+                          ),
                           icon: Icon(sessionService.isActive ? Icons.pause : Icons.play_arrow),
                           label: Text(sessionService.isActive ? 'Пауза' : 'Продолжить'),
                           onPressed: () {
@@ -157,6 +224,9 @@ class ReadingSessionScreen extends StatelessWidget {
               final session = await sessionService.finishSession(finalPage);
               if (session != null) {
                 await libraryVM.updateProgress(book.id, finalPage);
+              }
+              if (context.mounted) {
+                context.read<SoundscapeService>().stop();
               }
               Navigator.pop(ctx); // Close dialog
               Navigator.pop(context); // Close session screen

@@ -9,6 +9,7 @@ public struct ReadingSessionView: View {
 
     @ObservedObject private var sessionManager = ReadingSessionManager.shared
     @ObservedObject private var theme = ThemeManager.shared
+    @ObservedObject private var soundscapeManager = SoundscapeManager.shared
 
     @State private var isShowingFinishDialog: Bool = false
     @State private var endPageInput: String = ""
@@ -37,7 +38,7 @@ public struct ReadingSessionView: View {
                 theme.paperBackground(for: colorScheme)
                     .ignoresSafeArea()
 
-                VStack(spacing: 24) {
+                VStack(spacing: 20) {
                     // Верхний блок книги
                     bookHeader
                         .padding(.top, 12)
@@ -48,6 +49,10 @@ public struct ReadingSessionView: View {
                     zenReadingOrb
 
                     Spacer()
+
+                    // Фоновые звуки природы и концентрации
+                    soundscapeSelector
+                        .padding(.horizontal, 20)
 
                     // Панель управления (Начать чтение / Пауза / Завершить)
                     controlButtons
@@ -63,9 +68,13 @@ public struct ReadingSessionView: View {
                         if sessionManager.isRunning {
                             sessionManager.stopSession()
                         }
+                        soundscapeManager.stop()
                         dismiss()
                     }
                 }
+            }
+            .onDisappear {
+                soundscapeManager.stop()
             }
             .sheet(isPresented: $isShowingFinishDialog) {
                 finishSessionSheet
@@ -243,6 +252,71 @@ public struct ReadingSessionView: View {
         }
     }
 
+    // MARK: - Фоновые звуки природы и концентрации
+    private var soundscapeSelector: some View {
+        VStack(spacing: 8) {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(SoundscapeType.allCases) { item in
+                        let isSelected = soundscapeManager.currentMode == item
+                        Button(action: {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                soundscapeManager.setMode(item)
+                            }
+                        }) {
+                            HStack(spacing: 6) {
+                                Image(systemName: item.icon)
+                                    .font(.caption)
+                                Text(item.title)
+                                    .font(.caption)
+                                    .fontWeight(isSelected ? .bold : .medium)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(
+                                isSelected
+                                    ? item.accentColor.opacity(0.18)
+                                    : theme.cardBackground(for: colorScheme)
+                            )
+                            .foregroundColor(isSelected ? item.accentColor : .primary)
+                            .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(
+                                        isSelected ? item.accentColor : theme.cardBorder(for: colorScheme),
+                                        lineWidth: isSelected ? 1.5 : 0.5
+                                    )
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 4)
+            }
+
+            if soundscapeManager.currentMode != .none {
+                HStack(spacing: 10) {
+                    Image(systemName: "speaker.wave.1.fill")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+
+                    Slider(value: Binding(
+                        get: { Double(soundscapeManager.volume) },
+                        set: { soundscapeManager.volume = Float($0) }
+                    ), in: 0.05...1.0)
+                    .tint(soundscapeManager.currentMode.accentColor)
+
+                    Image(systemName: "speaker.wave.3.fill")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 2)
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+    }
+
     // MARK: - Диалог фиксации прочитанных страниц
     private var finishSessionSheet: some View {
         NavigationStack {
@@ -313,6 +387,7 @@ public struct ReadingSessionView: View {
                             self.completedRecord = rec
                             viewModel.updateBookProgress(bookId: book.id, pagesRead: endPage)
                         }
+                        soundscapeManager.stop()
                         isShowingFinishDialog = false
                         dismiss()
                     }

@@ -5,11 +5,13 @@ import Charts
 public struct DashboardView: View {
     @ObservedObject public var viewModel: LibraryViewModel
     @ObservedObject private var theme = ThemeManager.shared
+    @ObservedObject private var lendingManager = LendingManager.shared
     @State private var bookToUpdateProgress: Book? = nil
     @State private var bookForReadingSession: Book? = nil
     @State private var isShowingSettings: Bool = false
     @State private var isShowingDetailedStats: Bool = false
     @State private var isShowingQuotes: Bool = false
+    @State private var isShowingLending: Bool = false
     
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -22,6 +24,12 @@ public struct DashboardView: View {
                     // 0. Мотивация дня и прогресс годовой цели
                     DailyMotivationBanner(viewModel: viewModel)
                         .padding(.horizontal)
+
+                    // 0.5. Книги у друзей (если есть активные записи)
+                    if !lendingManager.activeRecords.isEmpty {
+                        lendingBanner
+                            .padding(.horizontal)
+                    }
                     
                     // 1. Блок «Читаю сейчас» (Горизонтальный свайп)
                     readingNowSection
@@ -87,12 +95,59 @@ public struct DashboardView: View {
                     DetailedStatsView(viewModel: viewModel)
                 }
             }
+            .sheet(isPresented: $isShowingLending) {
+                LendingListView()
+            }
             .refreshable {
                 await viewModel.syncWithCloud()
             }
         }
     }
     
+    // MARK: - 0.5. Баннер книг у друзей
+    private var lendingBanner: some View {
+        Button(action: { isShowingLending = true }) {
+            HStack(spacing: 12) {
+                Image(systemName: "person.2.circle.fill")
+                    .font(.title2)
+                    .foregroundColor(theme.primaryAccent)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Книги у друзей: \(lendingManager.activeRecords.count)")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+
+                    let overdue = lendingManager.overdueRecords.count
+                    if overdue > 0 {
+                        Text("⚠️ Просрочено к возврату: \(overdue)")
+                            .font(.caption2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.red)
+                    } else {
+                        Text("Все книги под контролем")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .padding(14)
+            .background(Color(UIColor.secondarySystemGroupedBackground))
+            .cornerRadius(14)
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .stroke(theme.primaryAccent.opacity(0.3), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
     // MARK: - 1. Читаю сейчас
     private var readingNowSection: some View {
         VStack(alignment: .leading, spacing: 10) {

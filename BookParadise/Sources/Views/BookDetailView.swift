@@ -13,6 +13,7 @@ public struct BookDetailView: View {
     @ObservedObject private var eBookStorage = EBookStorageManager.shared
 
     @AppStorage("kindleEmail") private var kindleEmail: String = ""
+    @ObservedObject private var lendingManager = LendingManager.shared
     @State private var isShowingProgressUpdate: Bool = false
     @State private var isShowingPlanSheet: Bool = false
     @State private var isShowingQuoteScanner: Bool = false
@@ -23,6 +24,7 @@ public struct BookDetailView: View {
     @State private var isEditingReview: Bool = false
     @State private var reviewDraft: String = ""
     @State private var isShowingKindleAlert: Bool = false
+    @State private var isShowingLendSheet: Bool = false
 
     public init(viewModel: LibraryViewModel, bookId: Int) {
         self.viewModel = viewModel
@@ -253,12 +255,21 @@ public struct BookDetailView: View {
                 .background(Color(UIColor.secondarySystemGroupedBackground))
                 .cornerRadius(16)
 
+                // Трекер одолженных книг (Lending & Borrowing)
+                lendingSection(for: book)
+
+                // Экспорт в Markdown для Obsidian / Notion
+                exportSection(for: book)
+
                 Spacer(minLength: 30)
             }
             .padding()
         }
         .background(Color(UIColor.systemGroupedBackground))
         .navigationTitle(book.title)
+        .sheet(isPresented: $isShowingLendSheet) {
+            LendBookSheet(book: book)
+        }
         .sheet(isPresented: $isShowingProgressUpdate) {
             ProgressUpdateSheet(viewModel: viewModel, book: book)
         }
@@ -574,5 +585,140 @@ public struct BookDetailView: View {
                 .fontWeight(.medium)
                 .multilineTextAlignment(.trailing)
         }
+    }
+
+    // MARK: - Трекер одолженных книг
+    private func lendingSection(for book: Book) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "person.2.fill")
+                    .foregroundColor(theme.primaryAccent)
+                Text("Книга у друзей (Трекер долгов)")
+                    .font(.headline)
+                Spacer()
+            }
+
+            if let active = lendingManager.activeLending(for: String(book.id)) {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(active.type == .lentToFriend ? "Одолжена другу:" : "Взята у:")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            Text(active.personName)
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                        }
+                        Spacer()
+                        if let days = active.daysRemaining {
+                            if days < 0 {
+                                Text("Просрочено \(abs(days)) дн.")
+                                    .font(.caption2)
+                                    .fontWeight(.bold)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.red.opacity(0.15))
+                                    .foregroundColor(.red)
+                                    .clipShape(Capsule())
+                            } else {
+                                Text("Осталось \(days) дн.")
+                                    .font(.caption2)
+                                    .fontWeight(.medium)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.orange.opacity(0.15))
+                                    .foregroundColor(.orange)
+                                    .clipShape(Capsule())
+                            }
+                        }
+                    }
+
+                    if let contact = active.contact, !contact.isEmpty {
+                        Text("Контакт: \(contact)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+
+                    Button(action: {
+                        withAnimation {
+                            lendingManager.markReturned(recordId: active.id)
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: "checkmark.circle.fill")
+                            Text("Отметить возврат книги")
+                        }
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.green)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(Color.green.opacity(0.12))
+                        .cornerRadius(10)
+                    }
+                }
+                .padding()
+                .background(Color(UIColor.tertiarySystemGroupedBackground))
+                .cornerRadius(12)
+            } else {
+                Button(action: { isShowingLendSheet = true }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "arrow.up.right.circle")
+                        Text("Одолжить книгу другу / Записать в долг")
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(theme.primaryAccent)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(theme.primaryAccent.opacity(0.12))
+                    .cornerRadius(10)
+                }
+            }
+        }
+        .padding()
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(16)
+    }
+
+    // MARK: - Экспорт в Markdown
+    private func exportSection(for book: Book) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "doc.text.fill")
+                    .foregroundColor(theme.primaryAccent)
+                Text("Экспорт для заметок (Obsidian / Notion)")
+                    .font(.headline)
+                Spacer()
+            }
+
+            Text("Создаёт готовый файл Markdown с YAML Frontmatter, оценкой, рецензией и всеми сохраненными цитатами книги.")
+                .font(.caption)
+                .foregroundColor(.secondary)
+
+            if let exportFile = generateMarkdownFile(for: book) {
+                ShareLink(item: exportFile, preview: SharePreview("\(book.title).md", image: Image(systemName: "doc.text"))) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "square.and.arrow.up")
+                        Text("Поделиться Markdown (.md)")
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(theme.primaryAccent)
+                    .cornerRadius(10)
+                }
+            }
+        }
+        .padding()
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(16)
+    }
+
+    private func generateMarkdownFile(for book: Book) -> URL? {
+        let md = MarkdownExportService.shared.exportBookToMarkdown(book: book, quotes: quotesManager.quotes)
+        return MarkdownExportService.shared.createTemporaryMarkdownFile(content: md, filename: "\(book.title)")
     }
 }
