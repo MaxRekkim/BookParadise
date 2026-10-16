@@ -25,7 +25,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
       final sess = context.read<ReadingSessionService>();
       final quotes = context.read<QuotesService>();
       ach.recalculateAll(
-        history: sess.history,
+        history: sess.sessionHistory,
         books: lib.books,
         quotes: quotes.quotes,
       );

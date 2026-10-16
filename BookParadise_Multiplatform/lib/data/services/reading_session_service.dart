@@ -27,6 +27,7 @@ class ReadingSessionService extends ChangeNotifier {
 
   List<ReadingSession> _sessionHistory = [];
   List<ReadingSession> get sessionHistory => _sessionHistory;
+  List<ReadingSession> get history => _sessionHistory;
 
   static const String _prefsKeySessions = 'bp_reading_sessions_json';
 
