@@ -59,6 +59,9 @@
 		A10000282345678900000028 /* AchievementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000282345678900000028 /* AchievementManager.swift */; };
 		A10000292345678900000029 /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000292345678900000029 /* AchievementsView.swift */; };
 		A10000302345678900000030 /* TimeCapsuleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000302345678900000030 /* TimeCapsuleCard.swift */; };
+		A10000312345678900000031 /* BookOracleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000312345678900000031 /* BookOracleManager.swift */; };
+		A10000322345678900000032 /* BookOracleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000322345678900000032 /* BookOracleView.swift */; };
+		A10000332345678900000033 /* ReadingWrappedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000332345678900000033 /* ReadingWrappedView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -116,6 +119,9 @@
 		B10000282345678900000028 /* AchievementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/AchievementManager.swift; sourceTree = "<group>"; };
 		B10000292345678900000029 /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/AchievementsView.swift; sourceTree = "<group>"; };
 		B10000302345678900000030 /* TimeCapsuleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/TimeCapsuleCard.swift; sourceTree = "<group>"; };
+		B10000312345678900000031 /* BookOracleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/BookOracleManager.swift; sourceTree = "<group>"; };
+		B10000322345678900000032 /* BookOracleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/BookOracleView.swift; sourceTree = "<group>"; };
+		B10000332345678900000033 /* ReadingWrappedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/ReadingWrappedView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,6 +199,9 @@
 				B10000282345678900000028 /* AchievementManager.swift */,
 				B10000292345678900000029 /* AchievementsView.swift */,
 				B10000302345678900000030 /* TimeCapsuleCard.swift */,
+				B10000312345678900000031 /* BookOracleManager.swift */,
+				B10000322345678900000032 /* BookOracleView.swift */,
+				B10000332345678900000033 /* ReadingWrappedView.swift */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -324,6 +333,9 @@
 				A10000282345678900000028 /* AchievementManager.swift in Sources */,
 				A10000292345678900000029 /* AchievementsView.swift in Sources */,
 				A10000302345678900000030 /* TimeCapsuleCard.swift in Sources */,
+				A10000312345678900000031 /* BookOracleManager.swift in Sources */,
+				A10000322345678900000032 /* BookOracleView.swift in Sources */,
+				A10000332345678900000033 /* ReadingWrappedView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,7 +402,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -399,7 +411,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.6.0;
+				MARKETING_VERSION = 2.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -416,7 +428,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -425,7 +437,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.6.0;
+				MARKETING_VERSION = 2.7.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;

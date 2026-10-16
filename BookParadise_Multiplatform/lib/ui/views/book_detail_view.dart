@@ -128,6 +128,29 @@ class _BookDetailViewState extends State<BookDetailView> {
                       valueColor: AlwaysStoppedAnimation<Color>(primaryAccent),
                     ),
                   ),
+                  if (!book.isFinished && book.remainingPages > 0) ...[
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.hourglass_bottom, size: 15, color: Colors.orange),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              'До финала: ${sessionService.formatEstimatedTime(book.remainingPages)}',
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.orange),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 14),
                   Row(
                     children: [

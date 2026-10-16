@@ -117,6 +117,59 @@ class ReadingSessionService extends ChangeNotifier {
     await prefs.setString(_prefsKeySessions, encoded);
   }
 
+  // MARK: - Time to Finish & Wrapped Analytics
+  double get averageSpeedPagesPerHour {
+    final valid = _sessionHistory.where((s) => s.durationSeconds >= 60 && s.pagesRead > 0).toList();
+    if (valid.isEmpty) return 40.0;
+    final totalPages = valid.fold<int>(0, (sum, s) => sum + s.pagesRead);
+    final totalHours = valid.fold<int>(0, (sum, s) => sum + s.durationSeconds) / 3600.0;
+    if (totalHours <= 0) return 40.0;
+    final sp = totalPages / totalHours;
+    return sp.clamp(15.0, 150.0);
+  }
+
+  String formatEstimatedTime(int remainingPages) {
+    if (remainingPages <= 0) return 'Книга прочитана';
+    final speed = averageSpeedPagesPerHour;
+    final totalMinutes = ((remainingPages / speed) * 60).round().clamp(1, 999999);
+    final h = totalMinutes ~/ 60;
+    final m = totalMinutes % 60;
+    final evenings = ((totalMinutes / 45.0).ceil()).clamp(1, 9999);
+
+    final timeStr = h > 0 ? (m > 0 ? '~$h ч $m мин' : '~$h ч') : '~$m мин';
+    final eveningWord = evenings == 1 ? '1 вечер' : '$evenings вечера';
+    return '$timeStr (около $eveningWord)';
+  }
+
+  int get totalReadingSeconds => _sessionHistory.fold<int>(0, (sum, s) => sum + s.durationSeconds);
+
+  String get mostActiveWeekdayString {
+    if (_sessionHistory.isEmpty) return 'Выходные';
+    final counts = <int, int>{};
+    for (final s in _sessionHistory) {
+      final w = s.startTime.weekday;
+      counts[w] = (counts[w] ?? 0) + 1;
+    }
+    int bestDay = 6;
+    int maxCount = -1;
+    counts.forEach((day, count) {
+      if (count > maxCount) {
+        maxCount = count;
+        bestDay = day;
+      }
+    });
+    switch (bestDay) {
+      case DateTime.monday: return 'Понедельник';
+      case DateTime.tuesday: return 'Вторник';
+      case DateTime.wednesday: return 'Среда';
+      case DateTime.thursday: return 'Четверг';
+      case DateTime.friday: return 'Пятница';
+      case DateTime.saturday: return 'Суббота';
+      case DateTime.sunday: return 'Воскресенье';
+      default: return 'Выходные';
+    }
+  }
+
   @override
   void dispose() {
     _ticker?.cancel();

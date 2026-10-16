@@ -6,6 +6,7 @@ import 'data/services/reading_session_service.dart';
 import 'data/services/lending_service.dart';
 import 'data/services/soundscape_service.dart';
 import 'data/services/achievement_service.dart';
+import 'data/services/book_oracle_service.dart';
 import 'ui/view_models/library_view_model.dart';
 import 'ui/views/main_navigation_shell.dart';
 
@@ -21,6 +22,7 @@ void main() async {
         ChangeNotifierProvider.value(value: LendingService.instance),
         ChangeNotifierProvider.value(value: SoundscapeService.instance),
         ChangeNotifierProvider.value(value: AchievementService.instance),
+        ChangeNotifierProvider.value(value: BookOracleService.instance),
         ChangeNotifierProvider(create: (_) => LibraryViewModel()),
       ],
       child: const BookParadiseApp(),

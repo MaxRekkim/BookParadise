@@ -128,6 +128,23 @@ public struct BookDetailView: View {
                     ProgressView(value: Double(book.pagesRead), total: Double(max(1, book.totalPages)))
                         .tint(theme.primaryAccent)
 
+                    if book.status != .completed && book.remainingPages > 0 {
+                        HStack(spacing: 6) {
+                            Image(systemName: "hourglass")
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                            Text("До финала: \(ReadingSessionManager.shared.estimatedTimeToFinish(remainingPages: book.remainingPages).displayString)")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.orange)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color.orange.opacity(0.1))
+                        .cornerRadius(8)
+                    }
+
                     // Большая кнопка «Сессия чтения»
                     Button(action: { isShowingReadingSession = true }) {
                         HStack(spacing: 8) {

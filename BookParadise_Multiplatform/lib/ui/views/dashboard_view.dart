@@ -14,6 +14,8 @@ import 'quotes_view.dart';
 import 'settings_dialog.dart';
 import 'lending_list_screen.dart';
 import 'achievements_screen.dart';
+import 'book_oracle_screen.dart';
+import 'reading_wrapped_screen.dart';
 import '../widgets/time_capsule_card.dart';
 
 class DashboardView extends StatelessWidget {
@@ -33,6 +35,13 @@ class DashboardView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Книжный Рай'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.auto_awesome, color: Colors.purple),
+            tooltip: 'Книжный Оракул-Сомелье',
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const BookOracleScreen()));
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.emoji_events_outlined, color: Colors.amber),
             tooltip: 'Трофеи и стрики',
@@ -65,6 +74,40 @@ class DashboardView extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
             child: TimeCapsuleCard(),
+          ),
+
+          // 1.3. Баннер Книжного Оракула-Сомелье
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            child: Card(
+              color: Colors.purple.withOpacity(0.06),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: BorderSide(color: Colors.purple.withOpacity(0.2)),
+              ),
+              child: ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.purple.withOpacity(0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.auto_awesome, color: Colors.purple, size: 20),
+                ),
+                title: const Row(
+                  children: [
+                    Text('Книжный Оракул-Сомелье', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    SizedBox(width: 6),
+                    Badge(label: Text('NEW', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold))),
+                  ],
+                ),
+                subtitle: const Text('Подбор книги по времени и настроению или жребий', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                trailing: const Icon(Icons.chevron_right, size: 20),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const BookOracleScreen()));
+                },
+              ),
+            ),
           ),
 
           // 1.5. Баннер книг у друзей (если есть активные записи)
@@ -206,7 +249,9 @@ class DashboardView extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      '${book.readPages} / ${book.totalPages} стр. (${(book.progressPercentage * 100).toInt()}%)',
+                                      '${book.readPages} / ${book.totalPages} стр. • ${sessionService.formatEstimatedTime(book.remainingPages)}',
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                       style: TextStyle(fontSize: 11, color: primaryAccent, fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(height: 6),
@@ -309,6 +354,34 @@ class DashboardView extends StatelessWidget {
                   },
                 ),
               ],
+            ),
+          ),
+
+          // 4. Баннер Reading Wrapped
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+            child: Card(
+              color: Colors.orange.withOpacity(0.06),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+                side: BorderSide(color: Colors.orange.withOpacity(0.2)),
+              ),
+              child: ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withOpacity(0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.shelves, color: Colors.orange, size: 20),
+                ),
+                title: const Text('Reading Wrapped • Книжные итоги', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                subtitle: const Text('Высота книжной башни, темпоритм и открытка для соцсетей', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                trailing: const Icon(Icons.chevron_right, size: 20),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const ReadingWrappedScreen()));
+                },
+              ),
             ),
           ),
 

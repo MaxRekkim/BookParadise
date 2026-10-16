@@ -7,6 +7,7 @@ public struct DashboardView: View {
     @ObservedObject private var theme = ThemeManager.shared
     @ObservedObject private var lendingManager = LendingManager.shared
     @ObservedObject private var achievementManager = AchievementManager.shared
+    @ObservedObject private var sessionManager = ReadingSessionManager.shared
     @State private var bookToUpdateProgress: Book? = nil
     @State private var bookForReadingSession: Book? = nil
     @State private var isShowingSettings: Bool = false
@@ -14,6 +15,8 @@ public struct DashboardView: View {
     @State private var isShowingQuotes: Bool = false
     @State private var isShowingLending: Bool = false
     @State private var isShowingAchievements: Bool = false
+    @State private var isShowingOracle: Bool = false
+    @State private var isShowingWrapped: Bool = false
     
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -38,6 +41,10 @@ public struct DashboardView: View {
                         bookForReadingSession = book
                     }
                     .padding(.horizontal)
+
+                    // 0.8. Книжный Оракул-Сомелье (Карточка подсказки)
+                    oracleQuickBanner
+                        .padding(.horizontal)
                     
                     // 1. Блок «Читаю сейчас» (Горизонтальный свайп)
                     readingNowSection
@@ -53,6 +60,10 @@ public struct DashboardView: View {
                     // 3.5. Переход к подробной аналитике
                     detailedStatsBanner
                         .padding(.horizontal)
+
+                    // 3.6. Reading Wrapped (Книжные итоги)
+                    wrappedQuickBanner
+                        .padding(.horizontal)
                     
                     // 4. Графики аналитики (SwiftCharts)
                     analyticsChartsSection
@@ -67,6 +78,11 @@ public struct DashboardView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack(spacing: 12) {
+                        Button(action: { isShowingOracle = true }) {
+                            Image(systemName: "sparkles")
+                                .foregroundColor(theme.primaryAccent)
+                        }
+
                         Button(action: { isShowingAchievements = true }) {
                             HStack(spacing: 3) {
                                 Image(systemName: "trophy.fill")
@@ -91,6 +107,14 @@ public struct DashboardView: View {
                         }
                     }
                 }
+            }
+            .sheet(isPresented: $isShowingOracle) {
+                BookOracleView(viewModel: viewModel) { book in
+                    bookForReadingSession = book
+                }
+            }
+            .sheet(isPresented: $isShowingWrapped) {
+                ReadingWrappedView(viewModel: viewModel)
             }
             .sheet(isPresented: $isShowingAchievements) {
                 AchievementsView()
@@ -252,10 +276,12 @@ public struct DashboardView: View {
                         Image(systemName: "bookmark.fill")
                             .font(.caption2)
                             .foregroundColor(.orange)
-                        Text("Осталось: \(book.remainingPages) стр.")
+                        Text("Осталось: \(book.remainingPages) стр. • \(sessionManager.estimatedTimeToFinish(remainingPages: book.remainingPages).displayString)")
                             .font(.caption2)
                             .fontWeight(.medium)
                             .foregroundColor(.orange)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
                     }
                 }
             }
@@ -425,6 +451,103 @@ public struct DashboardView: View {
                 
                 Spacer()
                 
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.secondary)
+            }
+            .padding(12)
+            .background(Color(UIColor.secondarySystemGroupedBackground))
+            .cornerRadius(14)
+            .shadow(color: Color.black.opacity(0.03), radius: 6, x: 0, y: 2)
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - 0.8. Карточка Оракула-Сомелье
+    private var oracleQuickBanner: some View {
+        Button(action: { isShowingOracle = true }) {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [.purple.opacity(0.2), theme.primaryAccent.opacity(0.12)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 36, height: 36)
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(.purple)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 6) {
+                        Text("Книжный Оракул-Сомелье")
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color(UIColor.label))
+                        Text("NEW")
+                            .font(.system(size: 8, weight: .heavy))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 1)
+                            .background(Color.purple)
+                            .cornerRadius(4)
+                    }
+                    Text("Не знаете, что читать? Подбор по настроению и времени")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .fontWeight(.bold)
+                    .foregroundColor(.secondary)
+            }
+            .padding(12)
+            .background(Color(UIColor.secondarySystemGroupedBackground))
+            .cornerRadius(14)
+            .shadow(color: Color.black.opacity(0.03), radius: 6, x: 0, y: 2)
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - 3.6. Карточка Reading Wrapped
+    private var wrappedQuickBanner: some View {
+        Button(action: { isShowingWrapped = true }) {
+            HStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [.orange.opacity(0.2), .pink.opacity(0.12)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 36, height: 36)
+                    Image(systemName: "books.vertical.fill")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(.orange)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Reading Wrapped • Книжные итоги")
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color(UIColor.label))
+                    Text("Высота книжной башни, темпоритм и открытка для соцсетей")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .fontWeight(.bold)
