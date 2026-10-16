@@ -128,21 +128,8 @@ public struct BookDetailView: View {
                     ProgressView(value: Double(book.pagesRead), total: Double(max(1, book.totalPages)))
                         .tint(theme.primaryAccent)
 
-                    if book.status != .completed && book.remainingPages > 0 {
-                        HStack(spacing: 6) {
-                            Image(systemName: "hourglass")
-                                .font(.caption)
-                                .foregroundColor(.orange)
-                            Text("До финала: \(ReadingSessionManager.shared.estimatedTimeToFinish(remainingPages: book.remainingPages).displayString)")
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.orange)
-                            Spacer()
-                        }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(Color.orange.opacity(0.1))
-                        .cornerRadius(8)
+                    if book.status != .read && book.remainingPages > 0 {
+                        timeToFinishBadge(remainingPages: book.remainingPages)
                     }
 
                     // Большая кнопка «Сессия чтения»
@@ -737,5 +724,23 @@ public struct BookDetailView: View {
     private func generateMarkdownFile(for book: Book) -> URL? {
         let md = MarkdownExportService.shared.exportBookToMarkdown(book: book, quotes: quotesManager.quotes)
         return MarkdownExportService.shared.createTemporaryMarkdownFile(content: md, filename: "\(book.title)")
+    }
+
+    private func timeToFinishBadge(remainingPages: Int) -> some View {
+        let estimate = ReadingSessionManager.shared.estimatedTimeToFinish(remainingPages: remainingPages)
+        return HStack(spacing: 6) {
+            Image(systemName: "hourglass")
+                .font(.caption)
+                .foregroundColor(.orange)
+            Text("До финала: \(estimate.displayString)")
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundColor(.orange)
+            Spacer()
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(Color.orange.opacity(0.1))
+        .cornerRadius(8)
     }
 }

@@ -14,12 +14,12 @@ public struct ReadingWrappedView: View {
 
     // MARK: - Расчет метрик
     private var completedBooks: [Book] {
-        viewModel.books.filter { $0.status == .completed }
+        viewModel.books.filter { $0.status == .read }
     }
 
     private var totalPagesRead: Int {
         completedBooks.reduce(0) { $0 + $1.totalPages } +
-        viewModel.books.filter { $0.status == .reading }.reduce(0) { $0 + $1.pagesRead }
+        viewModel.books.filter { $0.status == .inProgress }.reduce(0) { $0 + $1.pagesRead }
     }
 
     private var towerHeightCm: Double {
@@ -55,9 +55,9 @@ public struct ReadingWrappedView: View {
         }
     }
 
-    private var topGenre: (genre: BookGenre, count: Int, percent: Int)? {
+    private var topGenre: (genre: Genre, count: Int, percent: Int)? {
         guard !completedBooks.isEmpty else { return nil }
-        var genreCounts: [BookGenre: Int] = [:]
+        var genreCounts: [Genre: Int] = [:]
         for b in completedBooks {
             genreCounts[b.genre, default: 0] += 1
         }

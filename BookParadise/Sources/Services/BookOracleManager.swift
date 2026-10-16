@@ -112,17 +112,17 @@ public class BookOracleManager: ObservableObject {
         var candidates: [Book] = []
         switch source {
         case .planned:
-            candidates = books.filter { $0.status == .toRead }
+            candidates = books.filter { $0.status == .notStarted }
         case .inProgress:
-            candidates = books.filter { $0.status == .reading }
+            candidates = books.filter { $0.status == .inProgress }
         case .cycle:
-            candidates = books.filter { ($0.cycle?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false) && $0.status != .completed }
+            candidates = books.filter { $0.cycleName != "-" && !$0.cycleName.isEmpty && $0.status != .read }
         case .all:
-            candidates = books.filter { $0.status != .completed }
+            candidates = books.filter { $0.status != .read }
         }
 
         if candidates.isEmpty {
-            candidates = books.filter { $0.status != .completed }
+            candidates = books.filter { $0.status != .read }
         }
         if candidates.isEmpty {
             candidates = books
@@ -140,22 +140,22 @@ public class BookOracleManager: ObservableObject {
             case .any:
                 score += 5
             case .cozy:
-                if [.classic, .novel, .children, .ya].contains(b.genre) {
+                if [Genre.classicProse, Genre.modernProse, Genre.romanceYA].contains(b.genre) {
                     score += 15
                     reasons.append("жанр «\(b.genre.rawValue)» создаст теплое и комфортное настроение")
                 }
             case .thrilling:
-                if [.detective, .thriller, .fantasy, .scifi, .adventures].contains(b.genre) {
+                if [Genre.detective, Genre.sciFiAltHistory, Genre.psychologicalThriller, Genre.mysticGothic].contains(b.genre) {
                     score += 15
                     reasons.append("«\(b.genre.rawValue)» увлечет динамичным сюжетом без пауз")
                 }
             case .intellectual:
-                if [.nonfiction, .science, .philosophy, .biography, .history, .psychology].contains(b.genre) {
+                if [Genre.philosophyPsychology, Genre.trueCrime].contains(b.genre) {
                     score += 15
                     reasons.append("«\(b.genre.rawValue)» подарит пищу для глубоких размышлений")
                 }
             case .emotional:
-                if [.poetry, .drama, .novel, .ya].contains(b.genre) {
+                if [Genre.romanceYA, Genre.classicProse, Genre.modernProse].contains(b.genre) {
                     score += 15
                     reasons.append("книга наполнена сильными эмоциями и тонкими переживаниями")
                 }
@@ -177,22 +177,22 @@ public class BookOracleManager: ObservableObject {
                     reasons.append("комфортный объем (\(pages) стр.) не перегрузит ваш вечер")
                 }
             case .deep:
-                if pages > 380 || (b.cycle != nil && !b.cycle!.isEmpty) {
+                if pages > 380 || (b.cycleName != "-" && !b.cycleName.isEmpty) {
                     score += 14
                     reasons.append("масштабный объем (\(pages) стр.) позволит полностью раствориться в сюжете")
                 }
             }
 
             // Дополнительные бонусы
-            if b.status == .toRead {
+            if b.status == .notStarted {
                 score += 4
             }
-            if let rating = b.rating, rating == .fiveStars {
+            if let rating = b.rating, rating == .star5 || rating == .masterpiece {
                 score += 6
             }
-            if let cycle = b.cycle, !cycle.isEmpty {
+            if b.cycleName != "-" && !b.cycleName.isEmpty {
                 score += 3
-                reasons.append("часть серии «\(cycle)»")
+                reasons.append("часть серии «\(b.cycleName)»")
             }
 
             let justification: String
@@ -220,7 +220,7 @@ public class BookOracleManager: ObservableObject {
     }
 
     public func rollDice(from books: [Book]) -> BookRecommendation? {
-        let unread = books.filter { $0.status == .toRead }
+        let unread = books.filter { $0.status == .notStarted }
         let pool = unread.isEmpty ? books : unread
         guard let randomBook = pool.randomElement() else { return nil }
 

@@ -90,7 +90,7 @@ public class ReadingSessionManager: ObservableObject {
         let totalPages = validSessions.reduce(0) { $0 + $1.pagesRead }
         let totalHours = Double(validSessions.reduce(0) { $0 + $1.durationSeconds }) / 3600.0
         guard totalHours > 0 else { return 40.0 }
-        let sp = totalPages / totalHours
+        let sp = Double(totalPages) / totalHours
         return min(150.0, max(15.0, sp))
     }
 

@@ -267,8 +267,8 @@ public struct BookOracleView: View {
             HStack(spacing: 10) {
                 Button(action: {
                     var updated = rec.book
-                    if updated.status != .reading {
-                        updated.status = .reading
+                    if updated.status != .inProgress {
+                        updated.status = .inProgress
                         viewModel.updateBook(updated)
                     }
                     dismiss()
