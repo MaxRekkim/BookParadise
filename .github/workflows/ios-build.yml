@@ -92,7 +92,9 @@ jobs:
         if: failure()
         run: |
           echo "::error::iOS Build Failed:"
-          grep -E "error:|fatal error:" xcode-ios.log | head -n 25 || true
+          grep -E "error:|fatal error:" xcode-ios.log | head -n 25 | while IFS= read -r line; do
+            echo "::error::$line"
+          done || true
 
       - name: Package .app into .ipa for iOS
         run: |
@@ -126,7 +128,9 @@ jobs:
         if: failure()
         run: |
           echo "::error::macOS Build Failed:"
-          grep -E "error:|fatal error:" xcode-mac.log | head -n 25 || true
+          grep -E "error:|fatal error:" xcode-mac.log | head -n 25 | while IFS= read -r line; do
+            echo "::error::$line"
+          done || true
 
       - name: Package macOS App into .dmg and .pkg
         run: |

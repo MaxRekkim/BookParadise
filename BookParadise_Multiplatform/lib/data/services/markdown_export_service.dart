@@ -103,8 +103,8 @@ class MarkdownExportService {
     buffer.writeln('# Книжный Рай — Каталог библиотеки\n');
     buffer.writeln('*Экспортировано: $todayStr • Всего книг: ${books.length}*\n');
 
-    final read = books.where((b) => b.status == ReadingStatus.finished).length;
-    final inProgress = books.where((b) => b.status == ReadingStatus.reading).length;
+    final read = books.where((b) => b.status == ReadingStatus.completed).length;
+    final inProgress = books.where((b) => b.status == ReadingStatus.inProgress).length;
     final planned = books.where((b) => b.status == ReadingStatus.planned).length;
 
     buffer.writeln('## Сводка');

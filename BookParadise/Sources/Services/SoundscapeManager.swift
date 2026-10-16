@@ -97,7 +97,7 @@ public class SoundscapeManager: ObservableObject {
         stop()
 
         do {
-            #if os(iOS)
+            #if os(iOS) && !targetEnvironment(macCatalyst)
             let session = AVAudioSession.sharedInstance()
             try session.setCategory(.ambient, mode: .default, options: [.mixWithOthers])
             try session.setActive(true)
