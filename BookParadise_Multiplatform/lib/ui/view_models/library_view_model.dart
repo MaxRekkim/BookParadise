@@ -309,6 +309,15 @@ class LibraryViewModel extends ChangeNotifier {
     notifyListeners();
     await _api.postAddBook(book);
   }
+
+  Future<void> updateBook(Book book) async {
+    final idx = _books.indexWhere((b) => b.id == book.id);
+    if (idx != -1) {
+      _books[idx] = book;
+      await _api.saveCachedBooks(_books);
+      notifyListeners();
+    }
+  }
 }
 
 extension on List<Book> {

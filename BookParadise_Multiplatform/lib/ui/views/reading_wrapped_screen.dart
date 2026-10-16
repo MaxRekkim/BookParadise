@@ -19,7 +19,7 @@ class ReadingWrappedScreen extends StatelessWidget {
 
     final completedBooks = lib.books.where((b) => b.status == ReadingStatus.completed).toList();
     final totalPagesRead = completedBooks.fold<int>(0, (sum, b) => sum + b.totalPages) +
-        lib.books.where((b) => b.status == ReadingStatus.reading).fold<int>(0, (sum, b) => sum + b.pagesRead);
+        lib.books.where((b) => b.status == ReadingStatus.inProgress).fold<int>(0, (sum, b) => sum + b.readPages);
 
     final towerHeightCm = (totalPagesRead * 0.008) + (completedBooks.length * 0.4);
     final towerRounded = (towerHeightCm * 10).round() / 10.0;
@@ -68,7 +68,7 @@ class ReadingWrappedScreen extends StatelessWidget {
 • Высота книжной башни: $towerRounded см ($comparisonText)
 • Время в концентрации: $timeStr
 • Самый активный день: ${sessionService.mostActiveWeekdayString}
-${topGenre != null ? '• Любимый жанр: ${topGenre!.label} ($topGenrePct%)\n' : ''}${goldenQuote != null ? '\n«${goldenQuote.text}»\n' : ''}
+${topGenre != null ? '• Любимый жанр: ${topGenre!.title} ($topGenrePct%)\n' : ''}${goldenQuote != null ? '\n«${goldenQuote.text}»\n' : ''}
 #КнижныйРай #ReadingWrapped
 ''';
 
@@ -161,7 +161,7 @@ ${topGenre != null ? '• Любимый жанр: ${topGenre!.label} ($topGenre
                     _rowStat('Любимый день недели:', sessionService.mostActiveWeekdayString),
                     const SizedBox(height: 8),
                     if (topGenre != null) ...[
-                      _rowStat('Главный жанр:', '${topGenre!.label} ($topGenrePct%)'),
+                      _rowStat('Главный жанр:', '${topGenre!.title} ($topGenrePct%)'),
                       const SizedBox(height: 8),
                     ],
                     _rowStat('Средняя скорость:', '${sessionService.averageSpeedPagesPerHour.round()} стр./час'),

@@ -73,10 +73,10 @@ class BookOracleService extends ChangeNotifier {
     List<Book> candidates = [];
     switch (source) {
       case OracleQueueSource.planned:
-        candidates = books.where((b) => b.status == ReadingStatus.toRead).toList();
+        candidates = books.where((b) => b.status == ReadingStatus.planned).toList();
         break;
       case OracleQueueSource.inProgress:
-        candidates = books.where((b) => b.status == ReadingStatus.reading).toList();
+        candidates = books.where((b) => b.status == ReadingStatus.inProgress).toList();
         break;
       case OracleQueueSource.cycle:
         candidates = books.where((b) => b.cycle != null && b.cycle!.trim().isNotEmpty && b.status != ReadingStatus.completed).toList();
@@ -105,25 +105,25 @@ class BookOracleService extends ChangeNotifier {
           score += 5;
           break;
         case ReadingMood.cozy:
-          if ([BookGenre.classic, BookGenre.novel, BookGenre.children, BookGenre.ya].contains(b.genre)) {
+          if ([BookGenre.classic, BookGenre.prose, BookGenre.ya].contains(b.genre)) {
             score += 15;
-            reasons.add('жанр «${b.genre.label}» создаст тёплую и комфортную атмосферу');
+            reasons.add('жанр «${b.genre.title}» создаст тёплую и комфортную атмосферу');
           }
           break;
         case ReadingMood.thrilling:
-          if ([BookGenre.detective, BookGenre.thriller, BookGenre.fantasy, BookGenre.scifi, BookGenre.adventures].contains(b.genre)) {
+          if ([BookGenre.detective, BookGenre.thriller, BookGenre.fantasy].contains(b.genre)) {
             score += 15;
-            reasons.add('«${b.genre.label}» захватит динамичным сюжетом');
+            reasons.add('«${b.genre.title}» захватит динамичным сюжетом');
           }
           break;
         case ReadingMood.intellectual:
-          if ([BookGenre.nonfiction, BookGenre.science, BookGenre.philosophy, BookGenre.biography, BookGenre.history, BookGenre.psychology].contains(b.genre)) {
+          if ([BookGenre.nonfiction, BookGenre.psychology].contains(b.genre)) {
             score += 15;
-            reasons.add('«${b.genre.label}» подарит пищу для глубоких размышлений');
+            reasons.add('«${b.genre.title}» подарит пищу для глубоких размышлений');
           }
           break;
         case ReadingMood.emotional:
-          if ([BookGenre.poetry, BookGenre.drama, BookGenre.novel, BookGenre.ya].contains(b.genre)) {
+          if ([BookGenre.ya, BookGenre.prose, BookGenre.classic].contains(b.genre)) {
             score += 15;
             reasons.add('книга наполнена сильными эмоциями и тонкими чувствами');
           }
@@ -156,8 +156,10 @@ class BookOracleService extends ChangeNotifier {
           break;
       }
 
-      if (b.status == ReadingStatus.toRead) score += 4;
-      if (b.rating == BookRating.fiveStars) score += 6;
+      if (b.status == ReadingStatus.planned) score += 4;
+      if (b.rating != null && (b.rating!.contains('5') || b.rating!.toLowerCase().contains('шедевр'))) {
+        score += 6;
+      }
       if (b.cycle != null && b.cycle!.isNotEmpty) {
         score += 3;
         reasons.add('часть цикла «${b.cycle}»');
@@ -189,7 +191,7 @@ class BookOracleService extends ChangeNotifier {
   }
 
   BookRecommendation? rollDice(List<Book> books) {
-    final unread = books.where((b) => b.status == ReadingStatus.toRead).toList();
+    final unread = books.where((b) => b.status == ReadingStatus.planned).toList();
     final pool = unread.isEmpty ? books : unread;
     if (pool.isEmpty) return null;
 

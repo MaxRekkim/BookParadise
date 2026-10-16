@@ -287,7 +287,7 @@ class _BookOracleScreenState extends State<BookOracleScreen> with SingleTickerPr
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
-                          rec.book.genre.label,
+                          rec.book.genre.title,
                           style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: primaryAccent),
                         ),
                       ),
@@ -355,8 +355,8 @@ class _BookOracleScreenState extends State<BookOracleScreen> with SingleTickerPr
                     onPressed: () {
                       final lib = context.read<LibraryViewModel>();
                       var updated = rec.book;
-                      if (updated.status != ReadingStatus.reading) {
-                        updated = updated.copyWith(status: ReadingStatus.reading);
+                      if (updated.status != ReadingStatus.inProgress) {
+                        updated = updated.copyWith(status: ReadingStatus.inProgress);
                         lib.updateBook(updated);
                       }
                       Navigator.pop(context);

@@ -55,6 +55,10 @@ class Book {
   bool get isFinished => readPages >= totalPages && totalPages > 0;
   bool get hasKindleFile => localFileName != null && localFileName!.isNotEmpty;
 
+  int get remainingPages => (totalPages - readPages).clamp(0, totalPages);
+  int get pagesRead => readPages;
+  String? get coverUrl => cleanCoverURL;
+
   String? get cleanCoverURL {
     if (coverURL == null || coverURL!.trim().isEmpty) return null;
     var url = coverURL!.trim();
@@ -62,6 +66,54 @@ class Book {
       url = url.replaceFirst('http://', 'https://');
     }
     return url;
+  }
+
+  Book copyWith({
+    int? id,
+    String? title,
+    String? author,
+    int? totalPages,
+    int? readPages,
+    String? coverURL,
+    BookGenre? genre,
+    ReadingStatus? status,
+    String? rating,
+    String? notes,
+    String? review,
+    String? cycle,
+    int? cycleOrder,
+    int? cycleTotal,
+    String? planMonth,
+    int? planDays,
+    double? price,
+    String? publisher,
+    BookFormat? format,
+    ShelfLocation? shelfLocation,
+    String? localFileName,
+  }) {
+    return Book(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      author: author ?? this.author,
+      totalPages: totalPages ?? this.totalPages,
+      readPages: readPages ?? this.readPages,
+      coverURL: coverURL ?? this.coverURL,
+      genre: genre ?? this.genre,
+      status: status ?? this.status,
+      rating: rating ?? this.rating,
+      notes: notes ?? this.notes,
+      review: review ?? this.review,
+      cycle: cycle ?? this.cycle,
+      cycleOrder: cycleOrder ?? this.cycleOrder,
+      cycleTotal: cycleTotal ?? this.cycleTotal,
+      planMonth: planMonth ?? this.planMonth,
+      planDays: planDays ?? this.planDays,
+      price: price ?? this.price,
+      publisher: publisher ?? this.publisher,
+      format: format ?? this.format,
+      shelfLocation: shelfLocation ?? this.shelfLocation,
+      localFileName: localFileName ?? this.localFileName,
+    );
   }
 
   factory Book.fromJson(Map<String, dynamic> json) {
