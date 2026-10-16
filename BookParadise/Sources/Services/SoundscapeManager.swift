@@ -1,5 +1,6 @@
 import Foundation
 import AVFoundation
+import CoreAudio
 import SwiftUI
 
 public enum SoundscapeType: String, CaseIterable, Identifiable {
