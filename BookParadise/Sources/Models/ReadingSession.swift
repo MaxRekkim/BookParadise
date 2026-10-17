@@ -1,6 +1,9 @@
 import Foundation
 
+public typealias ReadingSession = ReadingSessionRecord
+
 public struct ReadingSessionRecord: Identifiable, Codable {
+
     public var id: UUID
     public var bookId: Int
     public var bookTitle: String
@@ -10,6 +13,7 @@ public struct ReadingSessionRecord: Identifiable, Codable {
     public var endPage: Int
     public var pagesRead: Int
     public var speedPagesPerHour: Double
+    public var durationMinutes: Int { durationSeconds / 60 }
 
     public init(
         id: UUID = UUID(),

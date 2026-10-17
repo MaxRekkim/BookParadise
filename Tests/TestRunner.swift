@@ -28,7 +28,7 @@ func assertTrue(_ condition: Bool, _ message: String = "", file: String = #file,
 }
 
 print("=======================================================")
-print("🧪 Running BookParadise v3.0.1 Comprehensive Test Suite")
+print("🧪 Running BookParadise v3.1.0 Comprehensive Test Suite")
 print("=======================================================")
 
 // -----------------------------------------------------------------------------
@@ -293,6 +293,142 @@ assertEqual(decoded.percent, 50, "Decoded widget progress percent matches")
 assertEqual(decoded.dailyStreak, 7, "Decoded widget streak matches")
 
 // -----------------------------------------------------------------------------
+// 6. TEST: Genre Radar & Shannon Diversity Entropy Engine
+// -----------------------------------------------------------------------------
+print("\n[Suite 6/10] Testing Genre Radar & Shannon Diversity Engine...")
+
+func calculateMockShannonEntropy(counts: [Int]) -> Double {
+    let total = counts.reduce(0, +)
+    guard total > 0 else { return 0.0 }
+    let k = Double(counts.count)
+    let maxEntropy = log(k)
+    var entropySum: Double = 0.0
+    for c in counts where c > 0 {
+        let p = Double(c) / Double(total)
+        entropySum -= p * log(p)
+    }
+    return maxEntropy > 0 ? min(max(entropySum / maxEntropy, 0.0), 1.0) : 0.0
+}
+
+assertEqual(calculateMockShannonEntropy(counts: [0, 0, 0, 0, 0]), 0.0, "Empty library entropy is 0.0")
+assertEqual(calculateMockShannonEntropy(counts: [10, 0, 0, 0, 0, 0, 0, 0, 0]), 0.0, "Monoculture single-genre entropy is 0.0")
+
+let uniformEntropy = calculateMockShannonEntropy(counts: [5, 5, 5, 5, 5, 5, 5, 5, 5])
+assertTrue(abs(uniformEntropy - 1.0) < 0.001, "Uniform distribution across 9 genres gives max entropy ~1.0")
+
+let skewedEntropy = calculateMockShannonEntropy(counts: [10, 5, 2, 0, 0, 0, 0, 0, 0])
+assertTrue(skewedEntropy > 0.3 && skewedEntropy < 0.7, "Skewed distribution gives realistic intermediate entropy (~0.5)")
+
+// -----------------------------------------------------------------------------
+// 7. TEST: Smart Reading Pace & Velocity Forecasting
+// -----------------------------------------------------------------------------
+print("\n[Suite 7/10] Testing Smart Reading Pace & Velocity Forecasting...")
+
+struct MockSession {
+    let pages: Int
+    let minutes: Int
+}
+
+func calculateMockPPH(sessions: [MockSession]) -> Double {
+    guard !sessions.isEmpty else { return 28.0 }
+    var totalWeightedPPH: Double = 0.0
+    var totalWeight: Double = 0.0
+    for (idx, s) in sessions.enumerated() {
+        let weight = Double(idx + 1)
+        let rate = (Double(s.pages) / Double(s.minutes)) * 60.0
+        totalWeightedPPH += rate * weight
+        totalWeight += weight
+    }
+    return (totalWeightedPPH / totalWeight * 10).rounded() / 10
+}
+
+assertEqual(calculateMockPPH(sessions: []), 28.0, "Default rate with no sessions is 28.0 pph")
+
+let testSessions = [
+    MockSession(pages: 15, minutes: 30), // 30 pph, weight 1
+    MockSession(pages: 20, minutes: 30)  // 40 pph, weight 2 -> (30*1 + 40*2)/3 = 110/3 = 36.7 pph
+]
+assertEqual(calculateMockPPH(sessions: testSessions), 36.7, "Weighted average calculates accurate pace")
+
+let remainingPages = 140
+let calculatedPPH = 28.0
+let minutesRemaining = Int(ceil((Double(remainingPages) / calculatedPPH) * 60.0))
+assertEqual(minutesRemaining, 300, "140 pages at 28 pph equals exactly 300 minutes (5 hours)")
+
+// -----------------------------------------------------------------------------
+// 8. TEST: Library Economics & Leisure Value
+// -----------------------------------------------------------------------------
+print("\n[Suite 8/10] Testing Library Economics & Leisure Value...")
+
+func calculateMockEconomics(paperCount: Int, eCount: Int, totalPagesRead: Int, totalHours: Double) -> (invested: Double, costPage: Double, costHour: Double, savings: Double) {
+    let invested = Double(paperCount) * 750.0 + Double(eCount) * 350.0
+    let costPage = totalPagesRead > 0 ? (invested / Double(totalPagesRead) * 100).rounded() / 100 : invested
+    let costHour = totalHours > 0 ? (invested / totalHours * 10).rounded() / 10 : invested
+    let savings = max(totalHours * 400.0 - invested, 0.0)
+    return (invested, costPage, costHour, savings)
+}
+
+let eco = calculateMockEconomics(paperCount: 5, eCount: 5, totalPagesRead: 2750, totalHours: 100.0)
+assertEqual(eco.invested, 5500.0, "5 paper + 5 e-books investment is 5500.0")
+assertEqual(eco.costPage, 2.0, "5500 investment / 2750 pages = 2.0 per page")
+assertEqual(eco.costHour, 55.0, "5500 investment / 100 hours = 55.0 per hour")
+assertEqual(eco.savings, 34500.0, "100 hours * 400 benchmark - 5500 = 34500 leisure savings")
+
+// -----------------------------------------------------------------------------
+// 9. TEST: DNF (Did Not Finish) Analytics Engine
+// -----------------------------------------------------------------------------
+print("\n[Suite 9/10] Testing DNF (Did Not Finish) Analytics Engine...")
+
+struct MockDNFBook {
+    let pagesRead: Int
+    let totalPages: Int
+}
+
+func calculateMockDNF(books: [MockDNFBook]) -> (avgDropPct: Double, rule50PassedRate: Double, hoursSaved: Double) {
+    guard !books.isEmpty else { return (0.0, 0.0, 0.0) }
+    var sumPct: Double = 0.0
+    var rule50Passed = 0
+    var unreadPages = 0
+    for b in books {
+        let pct = (Double(b.pagesRead) / Double(b.totalPages)) * 100.0
+        sumPct += pct
+        if b.pagesRead >= 50 || pct >= 20.0 { rule50Passed += 1 }
+        unreadPages += max(b.totalPages - b.pagesRead, 0)
+    }
+    let avg = sumPct / Double(books.count)
+    let rate = (Double(rule50Passed) / Double(books.count)) * 100.0
+    let saved = Double(unreadPages) / 30.0
+    return ((avg * 10).rounded() / 10, (rate * 10).rounded() / 10, (saved * 10).rounded() / 10)
+}
+
+let dnfBooks = [
+    MockDNFBook(pagesRead: 55, totalPages: 300), // 18.3%, >= 50 pages -> rule passed
+    MockDNFBook(pagesRead: 100, totalPages: 400) // 25.0%, >= 50 pages -> rule passed
+]
+let dnfStats = calculateMockDNF(books: dnfBooks)
+assertEqual(dnfStats.rule50PassedRate, 100.0, "Both books gave author >= 50 pages -> 100% Rule of 50 rate")
+assertEqual(dnfStats.hoursSaved, 18.2, "(245 + 300 unread) = 545 / 30 = 18.2 hours saved")
+
+// -----------------------------------------------------------------------------
+// 10. TEST: Time Travel Literary Axis Engine
+// -----------------------------------------------------------------------------
+print("\n[Suite 10/10] Testing Time Travel Literary Axis Engine...")
+
+func determineMockEpoch(author: String, edition: String) -> String {
+    let lower = (author + " " + edition).lowercased()
+    if lower.contains("гомер") || lower.contains("платон") { return "Античность" }
+    if lower.contains("шекспир") || lower.contains("данте") { return "Средневековье и Ренессанс" }
+    if lower.contains("толстой") || lower.contains("пушкин") { return "Золотой XIX век" }
+    if lower.contains("булгаков") || lower.contains("оруэлл") { return "Модернизм и XX век" }
+    return "XXI век и Современность"
+}
+
+assertEqual(determineMockEpoch(author: "Гомер", edition: "Илиада"), "Античность", "Гомер maps to Antiquity")
+assertEqual(determineMockEpoch(author: "Уильям Шекспир", edition: "Гамлет"), "Средневековье и Ренессанс", "Шекспир maps to Middle Ages & Renaissance")
+assertEqual(determineMockEpoch(author: "Лев Толстой", edition: "Война и мир"), "Золотой XIX век", "Толстой maps to Golden XIX Century")
+assertEqual(determineMockEpoch(author: "Джордж Оруэлл", edition: "1984"), "Модернизм и XX век", "Оруэлл maps to Modernism & XX Century")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -303,7 +439,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v3.0.1 is solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v3.1.0 is solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")

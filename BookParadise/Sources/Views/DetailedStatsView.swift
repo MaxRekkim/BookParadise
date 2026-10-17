@@ -96,6 +96,22 @@ public struct DetailedStatsView: View {
                 genreBreakdownCard
                     .padding(.horizontal)
 
+                // 4.1. Радар жанрового разнообразия (Spider Chart & Shannon Entropy)
+                GenreRadarChartView(books: viewModel.books)
+                    .padding(.horizontal)
+
+                // 4.2. Шкала литературных эпох (Time Travel Axis)
+                TimeTravelAxisCardView(books: viewModel.books)
+                    .padding(.horizontal)
+
+                // 4.3. Экономика библиотеки и ценность чтения
+                LibraryEconomicsCardView(books: viewModel.books, sessions: sessionManager.sessionHistory)
+                    .padding(.horizontal)
+
+                // 4.4. Осознанный отказ от книг (DNF Analytics)
+                DNFAnalyticsCardView(books: viewModel.books)
+                    .padding(.horizontal)
+
                 // 5. Оценки и галерея Шедевров
                 ratingsAndMasterpiecesCard
                     .padding(.horizontal)

@@ -57,6 +57,12 @@ public struct DashboardView: View {
                         // 1. Блок «Книги в фокусе (Hot Reads)»
                         if !viewModel.readingNowBooks.isEmpty {
                             HotReadsBentoView(viewModel: viewModel, selectedBookForSession: $bookForReadingSession)
+                            
+                            // 1.2. Умный расчёт времени и темп чтения
+                            if let activeBook = viewModel.readingNowBooks.first {
+                                PaceVelocityCard(book: activeBook, sessions: sessionManager.sessionHistory)
+                                    .padding(.horizontal)
+                            }
                         } else {
                             readingNowSection
                         }
