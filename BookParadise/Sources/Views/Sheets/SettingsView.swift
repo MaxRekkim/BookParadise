@@ -21,6 +21,7 @@ public struct SettingsView: View {
     @State private var isShowingImporter: Bool = false
     @State private var importAlertMessage: String? = nil
     @State private var isShowingImportAlert: Bool = false
+    @State private var isShowingDebugDiagnostics: Bool = false
     @ObservedObject private var updateManager = UpdateManager.shared
     public var onDismiss: (() -> Void)? = nil
     
@@ -520,6 +521,34 @@ public struct SettingsView: View {
                         }
                     }
                 }
+
+                // MARK: - Debug & Diagnostics
+                Section(header: Text("🛠️ Режим разработчика и диагностика (Debug)")) {
+                    Button(action: {
+                        isShowingDebugDiagnostics = true
+                    }) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "ladybug.fill")
+                                .foregroundColor(.orange)
+                                .font(.headline)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Панель диагностики и отладки")
+                                    .font(.subheadline)
+                                    .foregroundColor(.primary)
+                                Text("XP & Стрики, каналы Soundscape, WidgetKit, логи системы")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                }
             }
             .navigationTitle("Настройки")
             .navigationBarTitleDisplayMode(.inline)
@@ -604,6 +633,9 @@ public struct SettingsView: View {
                     .frame(width: 380, height: 320)
                 }
                 .macSheetFrame()
+            }
+            .sheet(isPresented: $isShowingDebugDiagnostics) {
+                DebugDiagnosticsView()
             }
             .onAppear {
                 webAppURL = GoogleSheetsAPIService.shared.apiURLString

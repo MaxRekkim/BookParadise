@@ -76,6 +76,7 @@
 		A10000532345678900000053 /* BookParadise/Sources/Views/Components/RPGDashboardCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000532345678900000053 /* BookParadise/Sources/Views/Components/RPGDashboardCard.swift */; };
 		A10000542345678900000054 /* BookParadise/Sources/Views/Components/ReadingHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000542345678900000054 /* BookParadise/Sources/Views/Components/ReadingHeatmapView.swift */; };
 		A10000552345678900000055 /* BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000552345678900000055 /* BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift */; };
+		A10000562345678900000056 /* BookParadise/Sources/Views/Debug/DebugDiagnosticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000562345678900000056 /* BookParadise/Sources/Views/Debug/DebugDiagnosticsView.swift */; };
 		A11C0DE123456789ABCDEF01 /* BookParadise/Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11C0DE223456789ABCDEF02 /* BookParadise/Resources/Assets.xcassets */; };
 		A2D01757B7FB30D83F71BC42 /* BookParadise/Sources/Views/LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF78C7237D080A6F64CE875 /* BookParadise/Sources/Views/LibraryView.swift */; };
 		AF6824F508686520BF8094D4 /* BookParadise/Sources/Views/MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9873C29434472930EC446CE /* BookParadise/Sources/Views/MainTabView.swift */; };
@@ -186,6 +187,7 @@
 		B10000532345678900000053 /* BookParadise/Sources/Views/Components/RPGDashboardCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/RPGDashboardCard.swift; sourceTree = "<group>"; };
 		B10000542345678900000054 /* BookParadise/Sources/Views/Components/ReadingHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ReadingHeatmapView.swift; sourceTree = "<group>"; };
 		B10000552345678900000055 /* BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift; sourceTree = "<group>"; };
+		B10000562345678900000056 /* BookParadise/Sources/Views/Debug/DebugDiagnosticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Debug/DebugDiagnosticsView.swift; sourceTree = "<group>"; };
 		B31F051912C52A30FC0ADD33 /* BookParadise/Sources/Models/BingoAndCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BingoAndCycle.swift; sourceTree = "<group>"; };
 		C10000012345678900000001 /* BookParadiseWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BookParadiseWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C10000022345678900000002 /* BookParadise/Sources/Widgets/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BookParadise/Sources/Widgets/Info.plist; sourceTree = "<group>"; };
@@ -313,6 +315,7 @@
 				B10000532345678900000053 /* BookParadise/Sources/Views/Components/RPGDashboardCard.swift */,
 				B10000542345678900000054 /* BookParadise/Sources/Views/Components/ReadingHeatmapView.swift */,
 				B10000552345678900000055 /* BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift */,
+				B10000562345678900000056 /* BookParadise/Sources/Views/Debug/DebugDiagnosticsView.swift */,
 				C10000022345678900000002 /* BookParadise/Sources/Widgets/Info.plist */,
 			);
 			name = Sources;
@@ -501,6 +504,7 @@
 				A10000532345678900000053 /* BookParadise/Sources/Views/Components/RPGDashboardCard.swift in Sources */,
 				A10000542345678900000054 /* BookParadise/Sources/Views/Components/ReadingHeatmapView.swift in Sources */,
 				A10000552345678900000055 /* BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift in Sources */,
+				A10000562345678900000056 /* BookParadise/Sources/Views/Debug/DebugDiagnosticsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -600,7 +604,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGNING_REQUIRED = NO;
 				CURRENT_PROJECT_VERSION = 30;
 				DERIVE_MACS_SYNTHESIZED_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
@@ -625,7 +631,9 @@
 		C10000142345678900000014 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGNING_REQUIRED = NO;
 				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;

@@ -28,8 +28,25 @@ public class StreakManager: ObservableObject {
     public var currentStreak: Int { streak.currentStreak }
     public var bestStreak: Int { streak.bestStreak }
     public var freezes: Int { streak.streakFreezesRemaining }
+    public var freezesAvailable: Int { streak.streakFreezesRemaining }
     public var targetPages: Int { streak.dailyTargetPages }
     public var targetMinutes: Int { streak.dailyTargetMinutes }
+    public var lastActiveDate: Date? { streak.lastActivityDate }
+
+    public func recordReadingToday() {
+        recordActivity(pages: 10, minutes: 15)
+    }
+
+    public func restoreFreeze() {
+        streak.streakFreezesRemaining = min(4, streak.streakFreezesRemaining + 1)
+        save()
+    }
+
+    public func resetStreak() {
+        streak.currentStreak = 0
+        streak.activeDates.removeAll()
+        save()
+    }
 
     public var isCompletedToday: Bool {
         let todayStr = dateFormatter.string(from: Date())

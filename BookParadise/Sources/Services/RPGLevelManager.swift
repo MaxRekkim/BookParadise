@@ -59,6 +59,20 @@ public class RPGLevelManager: ObservableObject {
         return min(1.0, Double(currentLevelXPProgress) / Double(currentLevelXPSpan))
     }
 
+    public var currentRankTitle: String {
+        return currentRank.title
+    }
+
+    public func awardXP(_ amount: Int, reason: String = "") {
+        addXP(amount, reason: reason)
+    }
+
+    public func resetProgress() {
+        state.totalXP = 0
+        state.unlockedPerks.removeAll()
+        save()
+    }
+
     public var currentRank: RPGRankInfo {
         let lvl = currentLevel
         switch lvl {
