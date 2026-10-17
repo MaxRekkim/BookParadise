@@ -27,7 +27,7 @@ public struct MenuBarCompanionState: Identifiable, Codable, Equatable {
         activeSoundscapeName: String = "Дождь и библиотека"
     ) {
         self.id = id
-        self.bookTitle = bookTitle
+        self.currentBookTitle = bookTitle
         self.author = author
         self.currentPage = currentPage
         self.totalPages = totalPages
@@ -36,6 +36,11 @@ public struct MenuBarCompanionState: Identifiable, Codable, Equatable {
         self.currentPacePPH = currentPacePPH
         self.isSoundscapePlaying = isSoundscapePlaying
         self.activeSoundscapeName = activeSoundscapeName
+    }
+    
+    public var bookTitle: String {
+        get { currentBookTitle }
+        set { currentBookTitle = newValue }
     }
     
     public var statusItemTitleString: String {
