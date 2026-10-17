@@ -145,7 +145,25 @@ public struct DetailedStatsView: View {
                         .padding(.horizontal)
                 }
 
-                // Группа 5: Оценки и логи
+                // Группа 5: PKM и Универсальная синхронизация (Wave 6: v3.6.0)
+                Group {
+                    ObsidianVaultSyncView()
+                        .padding(.horizontal)
+
+                    UniversalLibraryImporterView()
+                        .padding(.horizontal)
+
+                    ReadingAlmanacPreviewView()
+                        .padding(.horizontal)
+
+                    BookClubThesisView()
+                        .padding(.horizontal)
+
+                    ReadingChronotypeView()
+                        .padding(.horizontal)
+                }
+
+                // Группа 6: Оценки и логи
                 Group {
                     ratingsAndMasterpiecesCard
                         .padding(.horizontal)

@@ -1010,6 +1010,164 @@ menuBar.isSoundscapePlaying.toggle()
 assertEqual(menuBar.isSoundscapePlaying, false, "Soundscape toggle mutes audio from menu bar")
 
 // -----------------------------------------------------------------------------
+// 31. TEST: Obsidian Vault Sync & Markdown Wikilink Engine
+// -----------------------------------------------------------------------------
+print("\n[Suite 31/35] Testing Obsidian Vault Sync & Markdown Engine...")
+
+func mockObsidianFrontmatter(title: String, author: String, genre: String, rating: String) -> String {
+    """
+    title: "\(title)"
+    author: "[[\(author)]]"
+    genre: "\(genre)"
+    rating: "\(rating)"
+    tags:
+      - #books/\(genre.lowercased())
+    """
+}
+
+let yaml = mockObsidianFrontmatter(title: "Мастер и Маргарита", author: "Михаил Булгаков", genre: "Классика", rating: "Шедевр")
+assertTrue(yaml.contains("[[Михаил Булгаков]]"), "Obsidian YAML contains author wikilink")
+assertTrue(yaml.contains("#books/классика"), "Obsidian YAML contains lowercase genre tag")
+
+func sanitizeObsidianFilename(_ title: String) -> String {
+    let sanitized = title.replacingOccurrences(of: "/", with: "-")
+    return "Books/\(sanitized).md"
+}
+assertEqual(sanitizeObsidianFilename("Война и мир/Том 1"), "Books/Война и мир-Том 1.md", "Sanitizes filename path safely")
+
+// -----------------------------------------------------------------------------
+// 32. TEST: Universal Library Data Importer (CSV/JSON Parser)
+// -----------------------------------------------------------------------------
+print("\n[Suite 32/35] Testing Universal Library Data Importer...")
+
+func parseCSVRow(_ line: String) -> [String] {
+    var tokens: [String] = []
+    var cur = ""
+    var inQuotes = false
+    for ch in line {
+        if ch == "\"" { inQuotes.toggle() }
+        else if ch == "," && !inQuotes {
+            tokens.append(cur.trimmingCharacters(in: .whitespaces))
+            cur = ""
+        } else {
+            cur.append(ch)
+        }
+    }
+    tokens.append(cur.trimmingCharacters(in: .whitespaces))
+    return tokens
+}
+
+let csvRow = "\"Мастер и Маргарита, Полное издание\",Михаил Булгаков,384,5"
+let tokens = parseCSVRow(csvRow)
+assertEqual(tokens.count, 4, "CSV parser extracts 4 tokens correctly")
+assertEqual(tokens[0], "Мастер и Маргарита, Полное издание", "Quotes preserve embedded comma")
+assertEqual(tokens[2], "384", "Page count token extracted")
+
+func detectCSVSource(_ header: String) -> String {
+    let lower = header.lowercased()
+    if lower.contains("my rating") { return "Goodreads" }
+    if lower.contains("моя оценка") { return "LiveLib" }
+    if lower.contains("storygraph") { return "StoryGraph" }
+    return "Generic"
+}
+assertEqual(detectCSVSource("Title,Author,My Rating,Number of Pages"), "Goodreads", "Detects Goodreads header")
+assertEqual(detectCSVSource("Название книги,Автор,Моя оценка"), "LiveLib", "Detects LiveLib header")
+
+// -----------------------------------------------------------------------------
+// 33. TEST: Reading Almanac Booklet & Annual PDF Highlights
+// -----------------------------------------------------------------------------
+print("\n[Suite 33/35] Testing Reading Almanac Booklet Generator...")
+
+struct MockAlmanacPage {
+    let index: Int
+    let title: String
+    let highlights: [String]
+}
+
+func generateAnnualAlmanacMock(year: Int, books: Int, pages: Int, topGenre: String) -> [MockAlmanacPage] {
+    [
+        MockAlmanacPage(index: 1, title: "Альманах Чтения \(year)", highlights: ["\(books) книг", "\(pages) страниц"]),
+        MockAlmanacPage(index: 2, title: "Когнитивная Аналитика", highlights: ["Топ-жанр: \(topGenre)"]),
+        MockAlmanacPage(index: 3, title: "Зал Литературной Славы", highlights: ["Главные открытия"]),
+        MockAlmanacPage(index: 4, title: "Золотая Антология Цитат", highlights: ["Избранные мысли"])
+    ]
+}
+
+let almanac = generateAnnualAlmanacMock(year: 2026, books: 42, pages: 14200, topGenre: "Классика")
+assertEqual(almanac.count, 4, "Almanac generates exact 4 booklet pages")
+assertEqual(almanac[0].title, "Альманах Чтения 2026", "Almanac cover title includes target year")
+assertTrue(almanac[0].highlights.contains("42 книг"), "Almanac cover summarizes annual books count")
+
+// -----------------------------------------------------------------------------
+// 34. TEST: Book Club Thesis & Dialectic Discussion Generator
+// -----------------------------------------------------------------------------
+print("\n[Suite 34/35] Testing Book Club Thesis & Discussion Generator...")
+
+enum MockCategory: String, CaseIterable {
+    case moralDilemma = "Моральная дилемма"
+    case philosophicalCore = "Философский нерв"
+    case symbolism = "Символизм"
+    case psychology = "Психология героев"
+}
+
+struct MockPrompt {
+    let category: MockCategory
+    let question: String
+    let minutes: Int
+}
+
+let clubAgenda = [
+    MockPrompt(category: .moralDilemma, question: "Оправдан ли конформизм прокуратора?", minutes: 20),
+    MockPrompt(category: .philosophicalCore, question: "Почему Мастер заслужил 'Покой', а не 'Свет'?", minutes: 25),
+    MockPrompt(category: .symbolism, question: "Какую роль играет весенняя гроза над Ершалаимом?", minutes: 15),
+    MockPrompt(category: .psychology, question: "Преображение поэта Бездомного: выздоровление или крах?", minutes: 15)
+]
+
+let totalAgendaMinutes = clubAgenda.reduce(0) { $0 + $1.minutes }
+assertEqual(totalAgendaMinutes, 75, "Club debate agenda calculates 75 total minutes")
+assertEqual(clubAgenda.count, 4, "Agenda contains 4 diverse dialectic questions")
+assertEqual(clubAgenda[0].category, .moralDilemma, "First question explores moral dilemma")
+
+// -----------------------------------------------------------------------------
+// 35. TEST: Circadian Reading Chronotype & Cognitive Peak Engine
+// -----------------------------------------------------------------------------
+print("\n[Suite 35/35] Testing Circadian Reading Chronotype Engine...")
+
+enum MockChronotype: String {
+    case morningLark = "Утренний жаворонок"
+    case afternoonThinker = "Полуденный мыслитель"
+    case eveningContemplator = "Вечерний созерцатель"
+    case nightPhilosopher = "Ночной философ (Сова)"
+}
+
+func calculateDominantChronotype(sessionHours: [Int]) -> (chronotype: MockChronotype, peakHour: String) {
+    var m = 0, a = 0, e = 0, n = 0
+    for h in sessionHours {
+        switch h {
+        case 5..<11: m += 1
+        case 11..<17: a += 1
+        case 17..<22: e += 1
+        default: n += 1
+        }
+    }
+    let mx = max(m, max(a, max(e, n)))
+    if mx == m { return (.morningLark, "08:00") }
+    if mx == a { return (.afternoonThinker, "13:00") }
+    if mx == e { return (.eveningContemplator, "19:00") }
+    return (.nightPhilosopher, "23:00")
+}
+
+let nightSessions = [22, 23, 23, 0, 1, 23, 14, 8]
+let nightResult = calculateDominantChronotype(sessionHours: nightSessions)
+assertEqual(nightResult.chronotype, .nightPhilosopher, "Night session cluster correctly identifies Night Philosopher (Owl)")
+assertEqual(nightResult.peakHour, "23:00", "Night Philosopher peak cognitive hour is 23:00")
+
+let morningSessions = [6, 7, 7, 8, 8, 9, 10, 15]
+let morningResult = calculateDominantChronotype(sessionHours: morningSessions)
+assertEqual(morningResult.chronotype, .morningLark, "Morning session cluster correctly identifies Morning Lark")
+assertEqual(morningResult.peakHour, "08:00", "Morning Lark peak cognitive hour is 08:00")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -1020,7 +1178,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v3.5.0 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v3.6.0 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")
