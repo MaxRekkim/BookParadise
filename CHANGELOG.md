@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [2.13.2] — 2026-10-17
+
+### Добавлено и настроено (Native WidgetKit Extension for iOS Home Screen & macOS Desktop)
+- **Нативный системный Widget Extension (`BookParadiseWidgetExtension.appex`)**:
+  - Сконфигурирован полноценный таргет расширения виджетов `BookParadiseWidgetExtension` в `BookParadise.xcodeproj` с типом `com.apple.product-type.app-extension` и бандлом `com.maxim.bookparadise.widget`.
+  - Добавлена фаза сборки `Embed App Extensions` в главный таргет `BookParadise`, которая встраивает скомпилированный `.appex` в `BookParadise.app/PlugIns/`.
+  - Теперь приложение **«Книжный Рай» отображается в системном меню добавления виджетов (`+`) на рабочем столе iOS и в Центре уведомлений macOS**!
+  - Поддерживаются 2 системных формата виджетов:
+    - **Маленький (Small 1x1)**: текущая читаемая книга, прогресс-бар, процент прочтения и оставшиеся страницы.
+    - **Средний (Medium 2x1)**: двухколоночный информационный дашборд с активной книгой, прогрессом чтения, годовой целью и мотивационной цитатой.
+  - Поддержка фонов для iOS 16 и iOS 17/18 (`containerBackground`).
+  - Двойная синхронизация данных через App Group `group.com.maxim.bookparadise` (общий JSON-контейнер и `UserDefaults(suiteName:)`).
+
 ## [2.13.1] — 2026-10-17
 
 ### Добавлено и исправлено (Working App Icon Switcher, WidgetKit Previews & Desktop Widgets)

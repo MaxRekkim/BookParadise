@@ -20,6 +20,20 @@
                ReferencedContainer = "container:BookParadise.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "C10000102345678900000010"
+               BuildableName = "BookParadiseWidgetExtension.appex"
+               BlueprintName = "BookParadiseWidgetExtension"
+               ReferencedContainer = "container:BookParadise.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

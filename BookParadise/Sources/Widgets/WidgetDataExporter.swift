@@ -14,6 +14,18 @@ public struct WidgetBookSnapshot: Codable {
     public var progressPercent: Double
     public var remainingPages: Int
 
+    public init(id: Int, title: String, author: String, coverURL: String? = nil, pagesRead: Int, totalPages: Int, progressPercent: Double, remainingPages: Int) {
+        self.id = id
+        self.title = title
+        self.author = author
+        self.coverURL = coverURL
+        self.pagesRead = pagesRead
+        self.totalPages = totalPages
+        self.progressPercent = progressPercent
+        self.remainingPages = remainingPages
+    }
+
+    #if !WIDGET_EXTENSION
     public init(book: Book) {
         self.id = book.id
         self.title = book.title
@@ -24,6 +36,7 @@ public struct WidgetBookSnapshot: Codable {
         self.progressPercent = book.progressPercent
         self.remainingPages = book.remainingPages
     }
+    #endif
 }
 
 public struct WidgetDataSnapshot: Codable {
@@ -53,6 +66,7 @@ public class WidgetDataExporter {
         return paths[0].appendingPathComponent(fileName)
     }
 
+    #if !WIDGET_EXTENSION
     public func export(books: [Book]) {
         let readingNow = books.first(where: { $0.status == .inProgress })
         let readCount = books.filter { $0.status == .read }.count
@@ -66,6 +80,9 @@ public class WidgetDataExporter {
         do {
             let data = try JSONEncoder().encode(snapshot)
             try data.write(to: sharedContainerURL, options: Data.WritingOptions.atomic)
+            if let defaults = UserDefaults(suiteName: Self.appGroupName) {
+                defaults.set(data, forKey: "WidgetDataSnapshot")
+            }
             #if canImport(WidgetKit)
             WidgetCenter.shared.reloadAllTimelines()
             #endif
@@ -73,8 +90,14 @@ public class WidgetDataExporter {
             print("Failed to export widget data: \(error)")
         }
     }
+    #endif
 
     public func loadSnapshot() -> WidgetDataSnapshot? {
+        if let defaults = UserDefaults(suiteName: Self.appGroupName),
+           let data = defaults.data(forKey: "WidgetDataSnapshot"),
+           let snapshot = try? JSONDecoder().decode(WidgetDataSnapshot.self, from: data) {
+            return snapshot
+        }
         guard FileManager.default.fileExists(atPath: sharedContainerURL.path) else {
             return nil
         }

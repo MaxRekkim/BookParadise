@@ -18,14 +18,14 @@ public struct BookParadiseProvider: TimelineProvider {
 
     public func placeholder(in context: Context) -> BookParadiseEntry {
         let dummyBook = WidgetBookSnapshot(
-            book: Book(
-                id: 1,
-                title: "Внутри убийцы",
-                author: "Майк Омер",
-                pagesRead: 215,
-                totalPages: 416,
-                status: .inProgress
-            )
+            id: 1,
+            title: "Внутри убийцы",
+            author: "Майк Омер",
+            coverURL: nil,
+            pagesRead: 215,
+            totalPages: 416,
+            progressPercent: 51.68,
+            remainingPages: 201
         )
         return BookParadiseEntry(
             date: Date(),
@@ -244,13 +244,27 @@ public struct BookParadiseWidgetEntryView: View {
     }
 
     public var body: some View {
-        switch family {
-        case .systemSmall:
-            BookParadiseSmallWidgetView(entry: entry)
-        case .systemMedium:
-            BookParadiseMediumWidgetView(entry: entry)
-        default:
-            BookParadiseSmallWidgetView(entry: entry)
+        Group {
+            switch family {
+            case .systemSmall:
+                BookParadiseSmallWidgetView(entry: entry)
+            case .systemMedium:
+                BookParadiseMediumWidgetView(entry: entry)
+            default:
+                BookParadiseSmallWidgetView(entry: entry)
+            }
+        }
+        .applyWidgetBackground()
+    }
+}
+
+extension View {
+    @ViewBuilder
+    func applyWidgetBackground() -> some View {
+        if #available(iOS 17.0, macOS 14.0, *) {
+            self.containerBackground(Color(UIColor.secondarySystemBackground), for: .widget)
+        } else {
+            self.background(Color(UIColor.secondarySystemBackground))
         }
     }
 }
@@ -265,8 +279,18 @@ public struct BookParadiseWidget: Widget {
             BookParadiseWidgetEntryView(entry: entry)
         }
         .configurationDisplayName("Книжный Рай")
-        .description("Отслеживайте прогресс чтения текущей книги прямо на главном экране iOS.")
+        .description("Отслеживайте прогресс чтения прямо на главном экране.")
         .supportedFamilies([.systemSmall, .systemMedium])
+    }
+}
+
+@main
+public struct BookParadiseWidgetBundle: WidgetBundle {
+    public init() {}
+
+    @WidgetBundleBuilder
+    public var body: some Widget {
+        BookParadiseWidget()
     }
 }
 #endif
