@@ -66,7 +66,7 @@ public struct SanctuaryMasterOverviewView: View {
                         .foregroundColor(theme.primaryAccent)
                         .tracking(1.4)
                     
-                    Text("v4.3.0")
+                    Text("v4.4.0")
                         .font(.system(size: 8, weight: .black, design: .monospaced))
                         .foregroundColor(.white)
                         .padding(.horizontal, 6)

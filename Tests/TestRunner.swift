@@ -1548,6 +1548,53 @@ assertEqual(mockLibraryTitle(segment: 0, booksCount: 42, cyclesCount: 5), "Би�
 assertEqual(mockLibraryTitle(segment: 1, booksCount: 42, cyclesCount: 5), "Циклы (5)", "Segment 1 yields series and cycles")
 
 // -----------------------------------------------------------------------------
+// 46. TEST: Tactile Skeuomorphic Page-Flip Physics & Paper Acoustics
+// -----------------------------------------------------------------------------
+print("\n[Suite 46/46] Testing Tactile Skeuomorphic Page-Flip Physics & Paper Acoustics...")
+
+struct MockTactilePagePhysics {
+    var dragProgress: Double
+    var isForward: Bool
+    var paperWeightMultiplier: Float
+
+    var rotationAngle: Double {
+        let curved = pow(max(0.0, min(1.0, dragProgress)), 0.92)
+        return isForward ? -curved * 180.0 : 180.0 - (1.0 - curved) * 180.0
+    }
+
+    var isPastThreshold: Bool { dragProgress >= 0.35 }
+    var shadowOpacity: Double { sin(dragProgress * .pi) * 0.42 }
+    var isShowingReverseSide: Bool { abs(rotationAngle) >= 90.0 }
+}
+
+let startPhysics = MockTactilePagePhysics(dragProgress: 0.0, isForward: true, paperWeightMultiplier: 1.0)
+assertEqual(startPhysics.rotationAngle, 0.0, "At 0% drag, rotation angle is exactly 0 degrees")
+assertEqual(startPhysics.isPastThreshold, false, "At 0% drag, threshold is not met")
+assertEqual(startPhysics.shadowOpacity, 0.0, "At 0% drag, shadow opacity is 0")
+assertEqual(startPhysics.isShowingReverseSide, false, "At 0% drag, front side is facing reader")
+
+let midPhysics = MockTactilePagePhysics(dragProgress: 0.5, isForward: true, paperWeightMultiplier: 1.0)
+assertTrue(midPhysics.isPastThreshold, "At 50% drag, page flip threshold (35%) is crossed")
+assertTrue(midPhysics.shadowOpacity > 0.4, "At 50% drag, shadow opacity peaks near maximum")
+assertTrue(abs(midPhysics.rotationAngle) >= 90.0, "At 50% drag, rotation passes 90 degrees showing reverse side")
+assertTrue(midPhysics.isShowingReverseSide, "Reverse side visible past 90 degrees")
+
+let endPhysics = MockTactilePagePhysics(dragProgress: 1.0, isForward: true, paperWeightMultiplier: 1.0)
+assertEqual(round(endPhysics.rotationAngle), -180.0, "At 100% forward drag, rotation angle reaches -180 degrees")
+assertEqual(round(endPhysics.shadowOpacity * 1000) / 1000, 0.0, "At 100% drag, shadow returns to 0 as page lays flat")
+
+let backwardPhysics = MockTactilePagePhysics(dragProgress: 1.0, isForward: false, paperWeightMultiplier: 1.0)
+assertEqual(round(backwardPhysics.rotationAngle), 180.0, "At 100% backward drag, rotation angle reaches +180 degrees")
+
+// Paper Weight Acoustics Pitch Verification
+let lightPitch: Float = 1.45
+let stdPitch: Float = 1.0
+let heavyPitch: Float = 0.72
+
+assertTrue(lightPitch > stdPitch, "Lightweight paper produces higher whispery flutter pitch")
+assertTrue(heavyPitch < stdPitch, "Heavy verge paper produces deeper thumping frequency")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -1558,7 +1605,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v4.3.0 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v4.4.0 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")

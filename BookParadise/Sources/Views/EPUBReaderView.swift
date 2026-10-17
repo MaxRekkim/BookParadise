@@ -15,6 +15,7 @@ public struct EPUBReaderView: View {
     @State private var isFolioMode: Bool = true
     @State private var showingNeuroPacer: Bool = false
     @State private var showingBinauralSheet: Bool = false
+    @ObservedObject private var audioEngine = TactilePageFlipAudioEngine.shared
 
     private let wineAccent = Color(red: 0.52, green: 0.14, blue: 0.20)
 
@@ -303,6 +304,29 @@ public struct EPUBReaderView: View {
                     Text("На широких экранах iPad и Mac отображает разворот с реалистичной тенью переплёта.")
                         .font(.caption)
                         .foregroundColor(.secondary)
+                }
+
+                Section("Тактильная физика и шелест страниц") {
+                    Toggle("Акустический шелест бумаги", isOn: $audioEngine.isSoundEnabled)
+                        .tint(wineAccent)
+
+                    Picker("Плотность бумаги", selection: $audioEngine.paperWeight) {
+                        ForEach(PaperWeight.allCases) { weight in
+                            Text(weight.title).tag(weight)
+                        }
+                    }
+
+                    HStack {
+                        Image(systemName: "speaker.wave.1")
+                            .foregroundColor(.secondary)
+                        Slider(value: Binding(
+                            get: { Double(audioEngine.volume) },
+                            set: { audioEngine.volume = Float($0) }
+                        ), in: 0.1...1.0)
+                            .tint(wineAccent)
+                        Image(systemName: "speaker.wave.3")
+                            .foregroundColor(.secondary)
+                    }
                 }
 
                 Section("Размер текста") {
