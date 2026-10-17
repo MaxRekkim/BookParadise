@@ -127,7 +127,7 @@ public struct HotReadsBentoView: View {
                                         .font(.system(size: 10, weight: .heavy, design: .rounded))
                                         .foregroundColor(theme.primaryAccent)
                                     Spacer()
-                                    Text("\(book.currentPage)/\(book.totalPages) стр.")
+                                    Text("\(book.pagesRead)/\(book.totalPages) стр.")
                                         .font(.system(size: 9, weight: .semibold))
                                         .foregroundColor(.secondary)
                                 }
