@@ -28,7 +28,7 @@ class _NotesJournalViewState extends State<NotesJournalView> {
   Widget build(BuildContext context) {
     final notesService = context.watch<NotesService>();
     final themeService = context.watch<ThemeService>();
-    final accent = themeService.currentAccentColor;
+    final accent = themeService.primaryAccent;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     var allNotes = notesService.search(_searchQuery);

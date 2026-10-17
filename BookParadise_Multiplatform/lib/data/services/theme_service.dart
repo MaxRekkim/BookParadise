@@ -28,6 +28,7 @@ class ThemeService extends ChangeNotifier {
 
   Color _primaryAccent = const Color(0xFF8B263E);
   Color get primaryAccent => _primaryAccent;
+  Color get currentAccentColor => _primaryAccent;
 
   Color _secondaryAccent = const Color(0xFFC0586B);
   Color get secondaryAccent => _secondaryAccent;

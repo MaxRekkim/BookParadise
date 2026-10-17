@@ -343,7 +343,7 @@ public struct BookDetailView: View {
 
     // MARK: - Секция Заметок Markdown
     private func notesSection(for book: Book) -> some View {
-        let bookNotes = noteStore.notes(for: book.id)
+        let bookNotes = noteStore.notesForBook(bookId: book.id)
         return VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "note.text")

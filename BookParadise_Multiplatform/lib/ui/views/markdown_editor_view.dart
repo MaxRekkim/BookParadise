@@ -117,7 +117,7 @@ class _MarkdownEditorViewState extends State<MarkdownEditorView> {
   @override
   Widget build(BuildContext context) {
     final themeService = context.watch<ThemeService>();
-    final accent = themeService.currentAccentColor;
+    final accent = themeService.primaryAccent;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final width = MediaQuery.of(context).size.width;
     final isWide = width >= 720;

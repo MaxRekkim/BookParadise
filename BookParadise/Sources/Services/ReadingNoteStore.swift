@@ -49,6 +49,10 @@ public class ReadingNoteStore: ObservableObject {
         return notes.filter { $0.bookId == bookId }
     }
     
+    public func notes(for bookId: Int) -> [ReadingNote] {
+        return notesForBook(bookId: bookId)
+    }
+    
     public func searchNotes(query: String) -> [ReadingNote] {
         let q = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !q.isEmpty else { return notes }
