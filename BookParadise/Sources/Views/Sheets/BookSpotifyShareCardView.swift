@@ -177,12 +177,18 @@ public struct BookSpotifyShareCardView: View {
             }
 
             // Звезды рейтинга
-            if book.rating > 0 {
+            if let rating = book.rating, rating.numericScore > 0 {
                 HStack(spacing: 3) {
                     ForEach(1...5, id: \.self) { star in
-                        Image(systemName: star <= book.rating ? "star.fill" : "star")
+                        Image(systemName: star <= rating.numericScore ? "star.fill" : "star")
                             .font(.system(size: 13))
-                            .foregroundColor(star <= book.rating ? Color.yellow : Color.gray.opacity(0.4))
+                            .foregroundColor(star <= rating.numericScore ? Color.yellow : Color.gray.opacity(0.4))
+                    }
+                    if rating == .masterpiece {
+                        Text("Шедевр!")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.yellow)
+                            .padding(.leading, 4)
                     }
                 }
             }
@@ -206,8 +212,8 @@ public struct BookSpotifyShareCardView: View {
 
                 statPill(
                     title: "СТАТУС",
-                    value: book.status.title,
-                    icon: book.status == .read ? "checkmark.seal.fill" : "bookmark.fill"
+                    value: book.status.rawValue,
+                    icon: book.status.iconName
                 )
             }
 
