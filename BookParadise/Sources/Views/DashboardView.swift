@@ -17,6 +17,7 @@ public struct DashboardView: View {
     @State private var isShowingAchievements: Bool = false
     @State private var isShowingOracle: Bool = false
     @State private var isShowingWrapped: Bool = false
+    @State private var isShowingAddBook: Bool = false
     
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -24,54 +25,83 @@ public struct DashboardView: View {
     
     public var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // 0. Мотивация дня и прогресс годовой цели
-                    DailyMotivationBanner(viewModel: viewModel)
-                        .padding(.horizontal)
-
-                    // 0.5. Книги у друзей (если есть активные записи)
-                    if !lendingManager.activeRecords.isEmpty {
-                        lendingBanner
+            ZStack(alignment: .bottom) {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // 0. Мотивация дня и прогресс годовой цели
+                        DailyMotivationBanner(viewModel: viewModel)
                             .padding(.horizontal)
+
+                        // 0.5. Книги у друзей (если есть активные записи)
+                        if !lendingManager.activeRecords.isEmpty {
+                            lendingBanner
+                                .padding(.horizontal)
+                        }
+
+                        // 0.7. Капсула Времени (Литературные воспоминания)
+                        TimeCapsuleCard(viewModel: viewModel) { book in
+                            bookForReadingSession = book
+                        }
+                        .padding(.horizontal)
+
+                        // 0.8. Книжный Оракул-Сомелье (Карточка подсказки)
+                        oracleQuickBanner
+                            .padding(.horizontal)
+                        
+                        // 1. Блок «Книги в фокусе (Hot Reads)»
+                        if !viewModel.readingNowBooks.isEmpty {
+                            HotReadsBentoView(viewModel: viewModel, selectedBookForSession: $bookForReadingSession)
+                        } else {
+                            readingNowSection
+                        }
+                        
+                        // 1.5. Темпоритм чтения (Reading Velocity Spline Chart)
+                        ReadingVelocityChartView(viewModel: viewModel)
+                            .padding(.horizontal)
+                        
+                        // 1.8. Кольцо годовой цели и Спектр библиотеки
+                        ExecutiveQuotaRingAndMixView(viewModel: viewModel)
+                            .padding(.horizontal)
+                        
+                        // 2. Календарь активности (Сетка ПН–ВСК на 2026 год)
+                        ReadingCalendarView(viewModel: viewModel)
+                            .padding(.horizontal)
+                        
+                        // 3. Карточки общей сводки (Адаптивная сетка)
+                        summaryGridSection
+                            .padding(.horizontal)
+                        
+                        // 3.5. Переход к подробной аналитике
+                        detailedStatsBanner
+                            .padding(.horizontal)
+
+                        // 3.6. Reading Wrapped (Книжные итоги)
+                        wrappedQuickBanner
+                            .padding(.horizontal)
+                        
+                        // 4. Графики аналитики (SwiftCharts)
+                        analyticsChartsSection
+                            .padding(.horizontal)
+                        
+                        Spacer(minLength: 85)
                     }
-
-                    // 0.7. Капсула Времени (Литературные воспоминания)
-                    TimeCapsuleCard(viewModel: viewModel) { book in
-                        bookForReadingSession = book
-                    }
-                    .padding(.horizontal)
-
-                    // 0.8. Книжный Оракул-Сомелье (Карточка подсказки)
-                    oracleQuickBanner
-                        .padding(.horizontal)
-                    
-                    // 1. Блок «Читаю сейчас» (Горизонтальный свайп)
-                    readingNowSection
-                    
-                    // 2. Календарь активности (Сетка ПН–ВСК на 2026 год)
-                    ReadingCalendarView(viewModel: viewModel)
-                        .padding(.horizontal)
-                    
-                    // 3. Карточки общей сводки (Адаптивная сетка)
-                    summaryGridSection
-                        .padding(.horizontal)
-                    
-                    // 3.5. Переход к подробной аналитике
-                    detailedStatsBanner
-                        .padding(.horizontal)
-
-                    // 3.6. Reading Wrapped (Книжные итоги)
-                    wrappedQuickBanner
-                        .padding(.horizontal)
-                    
-                    // 4. Графики аналитики (SwiftCharts)
-                    analyticsChartsSection
-                        .padding(.horizontal)
-                    
-                    Spacer(minLength: 40)
+                    .padding(.top, 8)
                 }
-                .padding(.top, 8)
+                
+                // Плавающий док быстрых действий (Floating Quick Navigation Dock)
+                FloatingQuickDockView(
+                    viewModel: viewModel,
+                    onSearchTapped: { isShowingDetailedStats = true },
+                    onAddBookTapped: { isShowingAddBook = true },
+                    onTimerTapped: {
+                        if let first = viewModel.readingNowBooks.first ?? viewModel.books.first {
+                            bookForReadingSession = first
+                        }
+                    },
+                    onQuotesTapped: { isShowingQuotes = true },
+                    onOracleTapped: { isShowingOracle = true }
+                )
+                .padding(.bottom, 16)
             }
             .background(Color(UIColor.systemGroupedBackground))
             .navigationTitle("Книжный Рай")
@@ -129,6 +159,9 @@ public struct DashboardView: View {
             }
             .sheet(item: $bookForReadingSession) { book in
                 ReadingSessionView(viewModel: viewModel, book: book)
+            }
+            .sheet(isPresented: $isShowingAddBook) {
+                AddBookSheet(viewModel: viewModel)
             }
             .sheet(isPresented: $isShowingSettings) {
                 SettingsView(viewModel: viewModel)

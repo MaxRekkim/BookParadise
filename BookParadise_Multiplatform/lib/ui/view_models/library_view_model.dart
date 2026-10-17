@@ -136,7 +136,7 @@ class LibraryViewModel extends ChangeNotifier {
   String exportJsonBackup() {
     final list = _books.map((b) => b.toJson()).toList();
     final data = {
-      'version': '2.9.0',
+      'version': '2.10.0',
       'exportDate': DateTime.now().toIso8601String(),
       'annualGoal': _annualGoal,
       'booksCount': list.length,
@@ -365,6 +365,17 @@ class LibraryViewModel extends ChangeNotifier {
     await _api.saveCachedBooks(_books);
     notifyListeners();
     await _api.postAddBook(book);
+  }
+
+  Future<void> addCustomBook(String title, String author, int totalPages) async {
+    final newBook = Book(
+      id: DateTime.now().millisecondsSinceEpoch,
+      title: title,
+      author: author,
+      totalPages: totalPages > 0 ? totalPages : 300,
+      status: ReadingStatus.planned,
+    );
+    await addBook(newBook);
   }
 
   Future<void> updateBook(Book book) async {

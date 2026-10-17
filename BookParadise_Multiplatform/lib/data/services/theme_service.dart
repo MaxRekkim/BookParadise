@@ -68,6 +68,17 @@ class ThemeService extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleTheme() {
+    final next = _selectedTheme == AppTheme.wineVelvet
+        ? AppTheme.midnightOxford
+        : _selectedTheme == AppTheme.midnightOxford
+            ? AppTheme.bookAmber
+            : _selectedTheme == AppTheme.bookAmber
+                ? AppTheme.emeraldBinding
+                : AppTheme.wineVelvet;
+    setTheme(next);
+  }
+
   void _startTimer() {
     _timer = Timer.periodic(const Duration(minutes: 5), (_) {
       if (_selectedTheme == AppTheme.autoDayNight) {

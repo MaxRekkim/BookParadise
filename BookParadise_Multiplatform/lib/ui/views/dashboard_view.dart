@@ -17,6 +17,10 @@ import 'achievements_screen.dart';
 import 'book_oracle_screen.dart';
 import 'reading_wrapped_screen.dart';
 import '../widgets/time_capsule_card.dart';
+import '../widgets/reading_velocity_chart.dart';
+import '../widgets/hot_reads_bento_grid.dart';
+import '../widgets/executive_quota_ring_and_mix.dart';
+import '../widgets/floating_quick_dock.dart';
 
 class DashboardView extends StatelessWidget {
   const DashboardView({super.key});
@@ -65,8 +69,11 @@ class DashboardView extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView(
+      body: Stack(
         children: [
+          ListView(
+            padding: const EdgeInsets.only(bottom: 90),
+            children: [
           // 1. Мотивационный баннер цитаты дня и прогресса цели года
           const DailyMotivationBanner(),
 
@@ -146,25 +153,10 @@ class DashboardView extends StatelessWidget {
               ),
             ),
 
-          // 2. Блок «Читаю сейчас»
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Читаю сейчас',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  '${inProgressBooks.length} книг',
-                  style: TextStyle(color: primaryAccent, fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
-          ),
-
-          if (inProgressBooks.isEmpty)
+          // 2. Блок «Книги в фокусе (Hot Reads)»
+          if (inProgressBooks.isNotEmpty)
+            HotReadsBentoGrid(books: inProgressBooks)
+          else
             Card(
               margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
               child: Padding(
@@ -184,106 +176,13 @@ class DashboardView extends StatelessWidget {
                   ),
                 ),
               ),
-            )
-          else
-            SizedBox(
-              height: 180,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                itemCount: inProgressBooks.length,
-                itemBuilder: (context, index) {
-                  final book = inProgressBooks[index];
-                  return Container(
-                    width: 300,
-                    margin: const EdgeInsets.only(right: 12.0),
-                    child: Card(
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(16),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => BookDetailView(book: book)),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Row(
-                            children: [
-                              BookCoverWidget(
-                                coverURL: book.cleanCoverURL,
-                                title: book.title,
-                                author: book.author,
-                                width: 80,
-                                height: 120,
-                                cornerRadius: 8,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      book.title,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      book.author,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(fontSize: 11, color: Colors.grey),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(4),
-                                      child: LinearProgressIndicator(
-                                        value: book.progressPercentage,
-                                        minHeight: 6,
-                                        backgroundColor: primaryAccent.withOpacity(0.12),
-                                        valueColor: AlwaysStoppedAnimation<Color>(primaryAccent),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      '${book.readPages} / ${book.totalPages} стр. • ${sessionService.formatEstimatedTime(book.remainingPages)}',
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 1,
-                                      style: TextStyle(fontSize: 11, color: primaryAccent, fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    SizedBox(
-                                      height: 32,
-                                      child: FilledButton.tonalIcon(
-                                        style: FilledButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                                        ),
-                                        icon: const Icon(Icons.timer_outlined, size: 14),
-                                        label: const Text('Сессия', style: TextStyle(fontSize: 11)),
-                                        onPressed: () {
-                                          sessionService.startSession(book.id, book.readPages);
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (_) => ReadingSessionScreen(book: book)),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
             ),
+
+          // 2.2. Темпоритм чтения (Executive Reading Velocity Spline Chart)
+          const ReadingVelocityChart(),
+
+          // 2.4. Кольцо годовой цели и Спектр библиотеки (Executive Quota & Library Mix)
+          const ExecutiveQuotaRingAndMix(),
 
           const SizedBox(height: 16),
 
@@ -386,6 +285,16 @@ class DashboardView extends StatelessWidget {
           ),
 
           const SizedBox(height: 24),
+            ],
+          ),
+          const Positioned(
+            bottom: 16,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: FloatingQuickDock(),
+            ),
+          ),
         ],
       ),
     );

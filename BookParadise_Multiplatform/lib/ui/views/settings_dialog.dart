@@ -187,7 +187,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
             // 6. Версия
             Center(
               child: Text(
-                'Книжный Рай • Версия 2.9.0 (Сборка 14)',
+                'Книжный Рай • Версия 2.10.0 (Сборка 15)',
                 style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
               ),
             ),
@@ -235,7 +235,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
               maxLines: 8,
               style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
               decoration: const InputDecoration(
-                hintText: '{\n  "version": "2.9.0",\n  "books": [...]\n}',
+                hintText: '{\n  "version": "2.10.0",\n  "books": [...]\n}',
                 border: OutlineInputBorder(),
               ),
             ),
