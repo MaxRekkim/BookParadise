@@ -91,6 +91,14 @@ public struct DashboardView: View {
                         wrappedQuickBanner
                             .padding(.horizontal)
                         
+                        // 3.7. Книжный Клуб и Синхронизация заметок (Wave 3)
+                        ReadingClubCardView()
+                            .padding(.horizontal)
+
+                        // 3.8. Трекер аренды и возврата книг у друзей (Wave 3)
+                        BookLendingTrackerView()
+                            .padding(.horizontal)
+                        
                         // 4. Графики аналитики (SwiftCharts)
                         analyticsChartsSection
                             .padding(.horizontal)

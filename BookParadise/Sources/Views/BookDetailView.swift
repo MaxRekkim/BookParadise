@@ -30,6 +30,7 @@ public struct BookDetailView: View {
     @State private var selectedNoteForEdit: ReadingNote? = nil
     @State private var isShowingSpotifyCard: Bool = false
     @State private var isShowingInAppReader: Bool = false
+    @State private var isShowingBookBeam: Bool = false
 
     public init(viewModel: LibraryViewModel, bookId: Int) {
         self.viewModel = viewModel
@@ -292,6 +293,21 @@ public struct BookDetailView: View {
         }
         .background(Color(UIColor.systemGroupedBackground))
         .navigationTitle(book.title)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    isShowingBookBeam = true
+                    HapticManager.shared.lightTap()
+                }) {
+                    Image(systemName: "dot.radiowaves.left.and.right")
+                        .foregroundColor(theme.primaryAccent)
+                }
+                .accessibilityLabel("Передать книгу через Book Beam")
+            }
+        }
+        .sheet(isPresented: $isShowingBookBeam) {
+            BookBeamShareView(payload: makeBookBeamPayload(for: book))
+        }
         .sheet(isPresented: $isShowingLendSheet) {
             LendBookSheet(book: book)
         }
@@ -361,6 +377,21 @@ public struct BookDetailView: View {
         .fullScreenCover(isPresented: $isShowingInAppReader) {
             EPUBReaderView(book: book, viewModel: viewModel)
         }
+    }
+
+    private func makeBookBeamPayload(for book: Book) -> BookBeamPayload {
+        let firstQuote = quotesManager.quotesForBook(bookId: book.id).first?.text
+        let stars = book.rating?.starCount ?? 5
+        return BookBeamPayload(
+            bookTitle: book.title,
+            author: book.author,
+            isbn: book.isbn,
+            totalPages: book.totalPages,
+            genre: book.genre.rawValue,
+            ratingStars: stars,
+            reviewText: book.review,
+            favoriteQuote: firstQuote
+        )
     }
 
     // MARK: - Секция Заметок Markdown

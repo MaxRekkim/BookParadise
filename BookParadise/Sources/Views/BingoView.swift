@@ -4,6 +4,7 @@ import UIKit
 public struct BingoView: View {
     @ObservedObject public var viewModel: LibraryViewModel
     @State private var isShowingAddPlanSelector: Bool = false
+    @State private var selectedBingoTab: Int = 0 // 0: Планы по месяцам, 1: Матрица Бинго 5x5
     
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -29,10 +30,27 @@ public struct BingoView: View {
     public var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Переключатель месяцев
-                monthTabsBar
+                // Переключатель режима: Планы / Матрица Бинго
+                Picker("Режим", selection: $selectedBingoTab) {
+                    Text("Планы по месяцам").tag(0)
+                    Text("Матрица Бинго 5x5").tag(1)
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
                 
-                ScrollView {
+                if selectedBingoTab == 1 {
+                    ScrollView {
+                        ReadingBingoMatrixView()
+                            .padding(.horizontal, 16)
+                            .padding(.top, 8)
+                            .padding(.bottom, 24)
+                    }
+                } else {
+                    // Переключатель месяцев
+                    monthTabsBar
+                    
+                    ScrollView {
                     VStack(spacing: 16) {
                         // Сводка месяца
                         monthSummaryCard
@@ -69,6 +87,7 @@ public struct BingoView: View {
                         Spacer(minLength: 90)
                     }
                     .padding()
+                }
                 }
             }
             .background(Color(UIColor.systemGroupedBackground))

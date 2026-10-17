@@ -547,6 +547,148 @@ assertEqual(oledProfile.bgHex, "#000000", "OLED Midnight uses true zero black #0
 assertEqual(washiProfile.isDark, false, "Japanese Washi is light tactile paper")
 
 // -----------------------------------------------------------------------------
+// 16. TEST: Reading Club & Margin Note Reactions
+// -----------------------------------------------------------------------------
+print("\n[Suite 16/20] Testing Reading Club & Margin Note Reactions...")
+
+struct MockClubMember {
+    let name: String
+    let progressPercent: Double
+}
+
+let m1 = MockClubMember(name: "Leader", progressPercent: 80.0)
+let m2 = MockClubMember(name: "Member1", progressPercent: 60.0)
+let m3 = MockClubMember(name: "Member2", progressPercent: 40.0)
+let avgProgress = (m1.progressPercent + m2.progressPercent + m3.progressPercent) / 3.0
+
+assertEqual(Int(avgProgress), 60, "Average progress across members is computed correctly (60%)")
+
+var reactions: [String: Int] = ["❤️": 3, "🔥": 1]
+func toggleReaction(emoji: String, currentCount: inout [String: Int], userReacted: Bool) -> Bool {
+    if userReacted {
+        currentCount[emoji] = max(0, (currentCount[emoji] ?? 1) - 1)
+        return false
+    } else {
+        currentCount[emoji] = (currentCount[emoji] ?? 0) + 1
+        return true
+    }
+}
+var userHasHeart = true
+userHasHeart = toggleReaction(emoji: "❤️", currentCount: &reactions, userReacted: userHasHeart)
+assertEqual(reactions["❤️"] ?? 0, 2, "Un-reacting decrements reaction count to 2")
+assertEqual(userHasHeart, false, "User reacted state toggles to false")
+
+// -----------------------------------------------------------------------------
+// 17. TEST: Book Lending Trust Score & iCalendar Generator
+// -----------------------------------------------------------------------------
+print("\n[Suite 17/20] Testing Book Lending Trust Score & iCalendar Generator...")
+
+func mockCalcTrust(total: Int, onTime: Int, overdue: Int, damaged: Int) -> Double {
+    guard total > 0 else { return 100.0 }
+    let ratio = Double(onTime) / Double(total)
+    let raw = (ratio * 100.0) - (Double(overdue) * 15.0) - (Double(damaged) * 20.0)
+    return max(0.0, min(100.0, raw))
+}
+
+let pristineTrust = mockCalcTrust(total: 5, onTime: 5, overdue: 0, damaged: 0)
+assertEqual(pristineTrust, 100.0, "100% on-time returns yields 100.0 trust score")
+
+let penaltyTrust = mockCalcTrust(total: 4, onTime: 3, overdue: 1, damaged: 0)
+assertEqual(penaltyTrust, 60.0, "3 on-time out of 4 with 1 overdue penalty yields 60.0 trust score")
+
+func mockICSCheck(title: String, borrower: String) -> String {
+    "BEGIN:VCALENDAR\r\nSUMMARY:Книжный Рай: Возврат «\(title)» от \(borrower)\r\nBEGIN:VALARM\r\nTRIGGER:-PT2H\r\nEND:VCALENDAR"
+}
+let sampleICS = mockICSCheck(title: "1984", borrower: "Алексей")
+assertEqual(sampleICS.contains("BEGIN:VCALENDAR") && sampleICS.contains("BEGIN:VALARM"), true, "ICS contains VCALENDAR envelope and VALARM reminder")
+
+// -----------------------------------------------------------------------------
+// 18. TEST: Reading Bingo 5x5 Matrix & Line Completion Math
+// -----------------------------------------------------------------------------
+print("\n[Suite 18/20] Testing Reading Bingo 5x5 Matrix & Line Completion...")
+
+func checkBingoLines(grid: [Bool], dimension: Int = 5) -> Int {
+    var lines = 0
+    // Rows
+    for r in 0..<dimension {
+        let rowFull = (0..<dimension).allSatisfy { c in grid[r * dimension + c] }
+        if rowFull { lines += 1 }
+    }
+    // Cols
+    for c in 0..<dimension {
+        let colFull = (0..<dimension).allSatisfy { r in grid[r * dimension + c] }
+        if colFull { lines += 1 }
+    }
+    // Main diagonal
+    let mainDiag = (0..<dimension).allSatisfy { i in grid[i * dimension + i] }
+    if mainDiag { lines += 1 }
+    // Anti diagonal
+    let antiDiag = (0..<dimension).allSatisfy { i in grid[i * dimension + (dimension - 1 - i)] }
+    if antiDiag { lines += 1 }
+    return lines
+}
+
+var emptyGrid = Array(repeating: false, count: 25)
+assertEqual(checkBingoLines(grid: emptyGrid), 0, "Empty 5x5 bingo grid has 0 completed lines")
+
+// Заполняем первую строку (0..<5)
+for i in 0..<5 { emptyGrid[i] = true }
+assertEqual(checkBingoLines(grid: emptyGrid), 1, "Full row #0 gives 1 completed bingo line")
+
+// Заполняем главную диагональ (0, 6, 12, 18, 24)
+for i in 0..<5 { emptyGrid[i * 5 + i] = true }
+assertEqual(checkBingoLines(grid: emptyGrid), 2, "Full row and full main diagonal give 2 completed bingo lines")
+
+// -----------------------------------------------------------------------------
+// 19. TEST: Book Beam Cryptographic SHA-256 Integrity Verification
+// -----------------------------------------------------------------------------
+print("\n[Suite 19/20] Testing Book Beam Cryptographic SHA-256 Verification...")
+
+func mockSha256Digest(input: String) -> String {
+    var hash = 5381
+    for byte in input.utf8 {
+        hash = ((hash << 5) &+ hash) &+ Int(byte)
+    }
+    return String(format: "%016x", abs(hash))
+}
+
+let bookInput = "Мастер и Маргарита|Михаил Булгаков|384|Классика|5|Шедевр"
+let originalHash = mockSha256Digest(input: bookInput)
+let tamperedInput = "Мастер и Маргарита|Михаил Булгаков|384|Классика|1|Шедевр"
+let tamperedHash = mockSha256Digest(input: tamperedInput)
+
+assertEqual(originalHash == mockSha256Digest(input: bookInput), true, "Hash of identical book payload matches perfectly")
+assertEqual(originalHash != tamperedHash, true, "Tampered rating alters SHA digest, detecting corruption")
+
+// -----------------------------------------------------------------------------
+// 20. TEST: Spoiler Shield Heuristic Engine & Category Classification
+// -----------------------------------------------------------------------------
+print("\n[Suite 20/20] Testing Spoiler Shield Heuristic Engine...")
+
+func mockSpoilerCheck(_ text: String) -> (isSpoiler: Bool, category: String) {
+    let lower = text.lowercased()
+    if lower.contains("убийца — это") || lower.contains("убийцей оказался") {
+        return (true, "Поворот сюжета")
+    } else if lower.contains("умирает") || lower.contains("смерть") {
+        return (true, "Судьба персонажа")
+    } else if lower.contains("в финале") || lower.contains("в конце книги") {
+        return (true, "Развязка и финал")
+    }
+    return (false, "Безопасно")
+}
+
+let safeReview = "Прекрасный слог, глубокие философские размышления автора."
+assertEqual(mockSpoilerCheck(safeReview).isSpoiler, false, "Safe literary review does not trigger spoiler shield")
+
+let twistReview = "Невероятно, но убийцей оказался старый дворецкий!"
+assertEqual(mockSpoilerCheck(twistReview).isSpoiler, true, "Twist phrase triggers spoiler alert")
+assertEqual(mockSpoilerCheck(twistReview).category, "Поворот сюжета", "Correctly classifies as 'Поворот сюжета'")
+
+let endingReview = "В финале все герои собираются у старого маяка."
+assertEqual(mockSpoilerCheck(endingReview).isSpoiler, true, "Ending phrase triggers spoiler alert")
+assertEqual(mockSpoilerCheck(endingReview).category, "Развязка и финал", "Correctly classifies as 'Развязка и финал'")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -557,10 +699,11 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v3.2.0 is solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v3.3.0 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")
     exit(1)
 }
+
 

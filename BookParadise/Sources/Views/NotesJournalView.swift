@@ -214,12 +214,15 @@ public struct NotesJournalView: View {
                         .foregroundColor(.secondary)
                 }
                 
-                // Фрагмент текста
-                Text(n.excerpt)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.leading)
+                // Фрагмент текста с защитой от спойлеров (Wave 3)
+                let spoilerAnalysis = SpoilerShieldEngine.analyzeText(n.content)
+                SpoilerShieldView(isSpoiler: spoilerAnalysis.hasSpoiler, spoilerTag: spoilerAnalysis.recommendedBadge) {
+                    Text(n.excerpt)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                }
                 
                 // Нижняя строка: теги и статистика
                 HStack(spacing: 6) {

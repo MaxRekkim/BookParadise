@@ -68,6 +68,10 @@ public class LendingManager: ObservableObject {
         }
     }
 
+    public func markAsReturned(recordId: UUID) {
+        markReturned(recordId: recordId)
+    }
+
     public func deleteRecord(recordId: UUID) {
         records.removeAll { $0.id == recordId }
         save()
