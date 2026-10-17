@@ -46,10 +46,17 @@ extension View {
     
     @ViewBuilder
     public func onMacExitCommand(perform action: @escaping () -> Void) -> some View {
-        #if targetEnvironment(macCatalyst) || os(macOS)
+        #if os(macOS) && !targetEnvironment(macCatalyst)
         self.onExitCommand(perform: action)
         #else
-        self
+        self.background(
+            Button("") {
+                action()
+            }
+            .keyboardShortcut(.escape, modifiers: [])
+            .opacity(0)
+            .frame(width: 0, height: 0)
+        )
         #endif
     }
 }
