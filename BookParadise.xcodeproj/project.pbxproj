@@ -87,6 +87,14 @@
 		A10000642345678900000064 /* BookParadise/Sources/Views/Components/DNFAnalyticsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000642345678900000064 /* BookParadise/Sources/Views/Components/DNFAnalyticsCardView.swift */; };
 		A10000652345678900000065 /* BookParadise/Sources/Models/TimeTravelAxisModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000652345678900000065 /* BookParadise/Sources/Models/TimeTravelAxisModel.swift */; };
 		A10000662345678900000066 /* BookParadise/Sources/Views/Components/TimeTravelAxisCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000662345678900000066 /* BookParadise/Sources/Views/Components/TimeTravelAxisCardView.swift */; };
+		A10000672345678900000067 /* BookParadise/Sources/Services/SmartTypographerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000672345678900000067 /* BookParadise/Sources/Services/SmartTypographerEngine.swift */; };
+		A10000682345678900000068 /* BookParadise/Sources/Models/NeuroPacerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000682345678900000068 /* BookParadise/Sources/Models/NeuroPacerEngine.swift */; };
+		A10000692345678900000069 /* BookParadise/Sources/Models/BinauralFocusEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000692345678900000069 /* BookParadise/Sources/Models/BinauralFocusEngine.swift */; };
+		A10000702345678900000070 /* BookParadise/Sources/Models/FolioSpreadModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000702345678900000070 /* BookParadise/Sources/Models/FolioSpreadModel.swift */; };
+		A10000712345678900000071 /* BookParadise/Sources/Models/PaperTextureKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000712345678900000071 /* BookParadise/Sources/Models/PaperTextureKit.swift */; };
+		A10000722345678900000072 /* BookParadise/Sources/Views/Sheets/BionicNeuroPacerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000722345678900000072 /* BookParadise/Sources/Views/Sheets/BionicNeuroPacerView.swift */; };
+		A10000732345678900000073 /* BookParadise/Sources/Views/Components/FolioBookSpreadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000732345678900000073 /* BookParadise/Sources/Views/Components/FolioBookSpreadView.swift */; };
+		A10000742345678900000074 /* BookParadise/Sources/Views/Sheets/SoundscapeBinauralSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000742345678900000074 /* BookParadise/Sources/Views/Sheets/SoundscapeBinauralSheet.swift */; };
 		A11C0DE123456789ABCDEF01 /* BookParadise/Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11C0DE223456789ABCDEF02 /* BookParadise/Resources/Assets.xcassets */; };
 		A2D01757B7FB30D83F71BC42 /* BookParadise/Sources/Views/LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF78C7237D080A6F64CE875 /* BookParadise/Sources/Views/LibraryView.swift */; };
 		AF6824F508686520BF8094D4 /* BookParadise/Sources/Views/MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9873C29434472930EC446CE /* BookParadise/Sources/Views/MainTabView.swift */; };
@@ -208,6 +216,14 @@
 		B10000642345678900000064 /* BookParadise/Sources/Views/Components/DNFAnalyticsCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/DNFAnalyticsCardView.swift; sourceTree = "<group>"; };
 		B10000652345678900000065 /* BookParadise/Sources/Models/TimeTravelAxisModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/TimeTravelAxisModel.swift; sourceTree = "<group>"; };
 		B10000662345678900000066 /* BookParadise/Sources/Views/Components/TimeTravelAxisCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/TimeTravelAxisCardView.swift; sourceTree = "<group>"; };
+		B10000672345678900000067 /* BookParadise/Sources/Services/SmartTypographerEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/SmartTypographerEngine.swift; sourceTree = "<group>"; };
+		B10000682345678900000068 /* BookParadise/Sources/Models/NeuroPacerEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/NeuroPacerEngine.swift; sourceTree = "<group>"; };
+		B10000692345678900000069 /* BookParadise/Sources/Models/BinauralFocusEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BinauralFocusEngine.swift; sourceTree = "<group>"; };
+		B10000702345678900000070 /* BookParadise/Sources/Models/FolioSpreadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/FolioSpreadModel.swift; sourceTree = "<group>"; };
+		B10000712345678900000071 /* BookParadise/Sources/Models/PaperTextureKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/PaperTextureKit.swift; sourceTree = "<group>"; };
+		B10000722345678900000072 /* BookParadise/Sources/Views/Sheets/BionicNeuroPacerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/BionicNeuroPacerView.swift; sourceTree = "<group>"; };
+		B10000732345678900000073 /* BookParadise/Sources/Views/Components/FolioBookSpreadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/FolioBookSpreadView.swift; sourceTree = "<group>"; };
+		B10000742345678900000074 /* BookParadise/Sources/Views/Sheets/SoundscapeBinauralSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/SoundscapeBinauralSheet.swift; sourceTree = "<group>"; };
 		B31F051912C52A30FC0ADD33 /* BookParadise/Sources/Models/BingoAndCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BingoAndCycle.swift; sourceTree = "<group>"; };
 		C10000012345678900000001 /* BookParadiseWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BookParadiseWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C10000022345678900000002 /* BookParadise/Sources/Widgets/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BookParadise/Sources/Widgets/Info.plist; sourceTree = "<group>"; };
@@ -346,6 +362,14 @@
 				B10000642345678900000064 /* BookParadise/Sources/Views/Components/DNFAnalyticsCardView.swift */,
 				B10000652345678900000065 /* BookParadise/Sources/Models/TimeTravelAxisModel.swift */,
 				B10000662345678900000066 /* BookParadise/Sources/Views/Components/TimeTravelAxisCardView.swift */,
+				B10000672345678900000067 /* BookParadise/Sources/Services/SmartTypographerEngine.swift */,
+				B10000682345678900000068 /* BookParadise/Sources/Models/NeuroPacerEngine.swift */,
+				B10000692345678900000069 /* BookParadise/Sources/Models/BinauralFocusEngine.swift */,
+				B10000702345678900000070 /* BookParadise/Sources/Models/FolioSpreadModel.swift */,
+				B10000712345678900000071 /* BookParadise/Sources/Models/PaperTextureKit.swift */,
+				B10000722345678900000072 /* BookParadise/Sources/Views/Sheets/BionicNeuroPacerView.swift */,
+				B10000732345678900000073 /* BookParadise/Sources/Views/Components/FolioBookSpreadView.swift */,
+				B10000742345678900000074 /* BookParadise/Sources/Views/Sheets/SoundscapeBinauralSheet.swift */,
 				C10000022345678900000002 /* BookParadise/Sources/Widgets/Info.plist */,
 			);
 			name = Sources;
@@ -545,6 +569,14 @@
 				A10000642345678900000064 /* BookParadise/Sources/Views/Components/DNFAnalyticsCardView.swift in Sources */,
 				A10000652345678900000065 /* BookParadise/Sources/Models/TimeTravelAxisModel.swift in Sources */,
 				A10000662345678900000066 /* BookParadise/Sources/Views/Components/TimeTravelAxisCardView.swift in Sources */,
+				A10000672345678900000067 /* BookParadise/Sources/Services/SmartTypographerEngine.swift in Sources */,
+				A10000682345678900000068 /* BookParadise/Sources/Models/NeuroPacerEngine.swift in Sources */,
+				A10000692345678900000069 /* BookParadise/Sources/Models/BinauralFocusEngine.swift in Sources */,
+				A10000702345678900000070 /* BookParadise/Sources/Models/FolioSpreadModel.swift in Sources */,
+				A10000712345678900000071 /* BookParadise/Sources/Models/PaperTextureKit.swift in Sources */,
+				A10000722345678900000072 /* BookParadise/Sources/Views/Sheets/BionicNeuroPacerView.swift in Sources */,
+				A10000732345678900000073 /* BookParadise/Sources/Views/Components/FolioBookSpreadView.swift in Sources */,
+				A10000742345678900000074 /* BookParadise/Sources/Views/Sheets/SoundscapeBinauralSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -589,7 +621,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 33;
 				DERIVE_MACS_SYNTHESIZED_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
@@ -599,7 +631,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.1.0;
+				MARKETING_VERSION = 3.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -647,7 +679,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CODE_SIGNING_REQUIRED = NO;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 33;
 				DERIVE_MACS_SYNTHESIZED_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
@@ -657,7 +689,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.1.0;
+				MARKETING_VERSION = 3.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -674,7 +706,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CODE_SIGNING_REQUIRED = NO;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 33;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookParadise/Sources/Widgets/Info.plist;
@@ -684,7 +716,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.1.0;
+				MARKETING_VERSION = 3.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -701,7 +733,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 33;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookParadise/Sources/Widgets/Info.plist;
@@ -711,7 +743,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.1.0;
+				MARKETING_VERSION = 3.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

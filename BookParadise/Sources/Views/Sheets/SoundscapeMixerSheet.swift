@@ -3,6 +3,7 @@ import SwiftUI
 public struct SoundscapeMixerSheet: View {
     @ObservedObject private var soundManager = SoundscapeManager.shared
     @Environment(\.dismiss) private var dismiss
+    @State private var showingBinauralSheet: Bool = false
     private let wineAccent = Color(red: 0.52, green: 0.14, blue: 0.20)
 
     public init() {}
@@ -61,6 +62,34 @@ public struct SoundscapeMixerSheet: View {
                     .padding(16)
                     .background(Color(UIColor.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 18))
+
+                    // Карточка бинауральных волн и таймера сна
+                    Button {
+                        showingBinauralSheet = true
+                        HapticManager.shared.lightTap()
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "waveform.path.ecg")
+                                .font(.title2)
+                                .foregroundColor(wineAccent)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Бинауральные ритмы и таймер сна")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                Text("Гамма 40 Гц, Альфа 10 Гц, экспоненциальное угасание")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(14)
+                        .background(Color(UIColor.secondarySystemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                    }
 
                     // Пресеты атмосферы
                     VStack(alignment: .leading, spacing: 10) {
@@ -146,6 +175,9 @@ public struct SoundscapeMixerSheet: View {
                     .fontWeight(.bold)
                     .foregroundColor(wineAccent)
                 }
+            }
+            .sheet(isPresented: $showingBinauralSheet) {
+                SoundscapeBinauralSheet()
             }
         }
     }

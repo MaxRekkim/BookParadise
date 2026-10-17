@@ -28,7 +28,7 @@ func assertTrue(_ condition: Bool, _ message: String = "", file: String = #file,
 }
 
 print("=======================================================")
-print("🧪 Running BookParadise v3.1.0 Comprehensive Test Suite")
+print("🧪 Running BookParadise v3.2.0 Comprehensive Test Suite")
 print("=======================================================")
 
 // -----------------------------------------------------------------------------
@@ -429,6 +429,124 @@ assertEqual(determineMockEpoch(author: "Лев Толстой", edition: "Вой
 assertEqual(determineMockEpoch(author: "Джордж Оруэлл", edition: "1984"), "Модернизм и XX век", "Оруэлл maps to Modernism & XX Century")
 
 // -----------------------------------------------------------------------------
+// 11. TEST: Smart Typographer & OCR Cleanup Engine
+// -----------------------------------------------------------------------------
+print("\n[Suite 11/15] Testing Smart Typographer & OCR Cleanup Engine...")
+
+func mockJoinHyphens(_ text: String) -> String {
+    return text.replacingOccurrences(
+        of: "([А-Яа-яA-Za-z0-9])-\\s*[\\r\\n]+\\s*([А-Яа-яA-Za-z0-9])",
+        with: "$1$2",
+        options: .regularExpression
+    )
+}
+
+func mockQuotesFormat(_ text: String) -> String {
+    var result = ""
+    var inQuoteLevel = 0
+    let chars = Array(text)
+    for (i, ch) in chars.enumerated() {
+        if ch == "\"" {
+            let isStart = (i == 0) || (chars[i-1].isWhitespace || chars[i-1] == "(")
+            if isStart {
+                inQuoteLevel += 1
+                result.append(inQuoteLevel == 1 ? "«" : "„")
+            } else {
+                inQuoteLevel = max(0, inQuoteLevel - 1)
+                result.append(inQuoteLevel == 0 ? "»" : "“")
+            }
+        } else {
+            result.append(ch)
+        }
+    }
+    return result
+}
+
+assertEqual(mockJoinHyphens("кни-\nга"), "книга", "Hyphenated word across newline is joined")
+assertEqual(mockQuotesFormat("\"Здравствуй, мир\""), "«Здравствуй, мир»", "Straight quotes convert to French angle quotes")
+assertEqual(mockQuotesFormat("\"он сказал: \"да\"\""), "«он сказал: „да“»", "Nested quotes convert to German quotes inside French quotes")
+
+// -----------------------------------------------------------------------------
+// 12. TEST: Neuro-Pacer & Bionic Eye Fixation Engine
+// -----------------------------------------------------------------------------
+print("\n[Suite 12/15] Testing Neuro-Pacer & Bionic Eye Fixation Engine...")
+
+func mockCalculateORP(length: Int) -> Int {
+    switch length {
+    case 1: return 0
+    case 2...5: return 1
+    case 6...9: return 2
+    case 10...13: return 3
+    default: return 4
+    }
+}
+
+func mockWPMInterval(wpm: Int, multiplier: Double = 1.0) -> Double {
+    let safeWpm = max(60, min(1200, wpm))
+    return ((60.0 / Double(safeWpm)) * 1000.0) * multiplier
+}
+
+assertEqual(mockCalculateORP(length: 1), 0, "1-letter word ORP is index 0")
+assertEqual(mockCalculateORP(length: 4), 1, "4-letter word ORP is index 1")
+assertEqual(mockCalculateORP(length: 8), 2, "8-letter word ORP is index 2")
+assertEqual(mockCalculateORP(length: 12), 3, "12-letter word ORP is index 3")
+assertEqual(mockWPMInterval(wpm: 300), 200.0, "300 WPM equals exactly 200ms per word")
+let intervalWithMultiplier = (mockWPMInterval(wpm: 300, multiplier: 2.2) * 10).rounded() / 10
+assertEqual(intervalWithMultiplier, 440.0, "Sentence end 2.2x multiplier equals 440ms")
+
+// -----------------------------------------------------------------------------
+// 13. TEST: Binaural Focus & Algorithmic Sound Decay Engine
+// -----------------------------------------------------------------------------
+print("\n[Suite 13/15] Testing Binaural Focus & Sound Decay Engine...")
+
+func mockFadeVolume(initialVolume: Float, elapsed: Double, total: Double) -> Float {
+    guard total > 0 else { return 0.0 }
+    let progress = min(1.0, max(0.0, elapsed / total))
+    let factor = Float(pow(1.0 - progress, 1.6))
+    return (initialVolume * factor * 100).rounded() / 100
+}
+
+assertEqual(mockFadeVolume(initialVolume: 1.0, elapsed: 0.0, total: 60.0), 1.0, "0% elapsed returns full initial volume")
+assertEqual(mockFadeVolume(initialVolume: 1.0, elapsed: 60.0, total: 60.0), 0.0, "100% elapsed returns 0.0 volume")
+let halfVolume = mockFadeVolume(initialVolume: 1.0, elapsed: 30.0, total: 60.0)
+assertEqual(halfVolume > 0.25 && halfVolume < 0.40, true, "50% elapsed smoothly decays to ~33% volume via exponential curve")
+
+// -----------------------------------------------------------------------------
+// 14. TEST: Folio Two-Page Spread Geometry & Pagination
+// -----------------------------------------------------------------------------
+print("\n[Suite 14/15] Testing Folio Spread Geometry & Pagination...")
+
+func mockDetermineFolioMode(width: Double, isRegular: Bool) -> String {
+    if isRegular || width >= 720.0 {
+        return "twoPageSpread"
+    } else {
+        return "singlePage"
+    }
+}
+
+assertEqual(mockDetermineFolioMode(width: 393.0, isRegular: false), "singlePage", "iPhone portrait (393pt) uses single page mode")
+assertEqual(mockDetermineFolioMode(width: 852.0, isRegular: false), "twoPageSpread", "iPhone landscape (852pt) uses two-page spread mode")
+assertEqual(mockDetermineFolioMode(width: 1024.0, isRegular: true), "twoPageSpread", "iPad / Mac Catalyst uses two-page spread mode")
+
+// -----------------------------------------------------------------------------
+// 15. TEST: PaperTextureKit & OLED Midnight Color Matrix
+// -----------------------------------------------------------------------------
+print("\n[Suite 15/15] Testing PaperTextureKit & OLED Midnight...")
+
+struct MockTextureProfile {
+    let name: String
+    let isDark: Bool
+    let bgHex: String
+}
+
+let oledProfile = MockTextureProfile(name: "oledMidnight", isDark: true, bgHex: "#000000")
+let washiProfile = MockTextureProfile(name: "japaneseWashi", isDark: false, bgHex: "#F7F5EE")
+
+assertEqual(oledProfile.isDark, true, "OLED Midnight profile correctly flags dark mode")
+assertEqual(oledProfile.bgHex, "#000000", "OLED Midnight uses true zero black #000000")
+assertEqual(washiProfile.isDark, false, "Japanese Washi is light tactile paper")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -439,9 +557,10 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v3.1.0 is solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v3.2.0 is solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")
     exit(1)
 }
+

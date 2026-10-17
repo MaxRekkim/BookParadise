@@ -11,6 +11,10 @@ public struct EPUBReaderView: View {
     @State private var showingSettings: Bool = false
     @State private var showingQuoteAlert: Bool = false
     @State private var quickQuoteText: String = ""
+    @State private var selectedTexture: PaperTextureType = .sepiaComfort
+    @State private var isFolioMode: Bool = true
+    @State private var showingNeuroPacer: Bool = false
+    @State private var showingBinauralSheet: Bool = false
 
     private let wineAccent = Color(red: 0.52, green: 0.14, blue: 0.20)
 
@@ -21,8 +25,14 @@ public struct EPUBReaderView: View {
 
     public var body: some View {
         ZStack {
-            readerService.theme.backgroundColor
+            selectedTexture.backgroundColor
                 .ignoresSafeArea()
+
+            if !selectedTexture.isDarkMode {
+                PaperNoiseOverlay()
+                    .opacity(0.035)
+                    .ignoresSafeArea()
+            }
 
             VStack(spacing: 0) {
                 // Верхний тулбар
@@ -37,58 +47,89 @@ public struct EPUBReaderView: View {
                         ProgressView()
                         Text("Подготовка книги к чтению...")
                             .font(.caption)
-                            .foregroundColor(readerService.theme.textColor.opacity(0.7))
+                            .foregroundColor(selectedTexture.textColor.opacity(0.7))
                     }
                     .frame(maxHeight: .infinity)
                 } else {
                     let chapter = chapters[currentChapterIndex]
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: readerService.lineSpacing + 10) {
-                            Text(chapter.title)
-                                .font(readerService.selectedFont.font(size: readerService.fontSize + 8).bold())
-                                .foregroundColor(readerService.theme.textColor)
-                                .padding(.top, 16)
-                                .padding(.bottom, 8)
 
-                            if readerService.isBionicEnabled {
-                                let attr = readerService.bionicAttributedString(
-                                    from: chapter.content,
-                                    baseFont: readerService.selectedFont.font(size: readerService.fontSize),
-                                    textColor: readerService.theme.textColor
-                                )
-                                Text(attr)
-                                    .lineSpacing(readerService.lineSpacing)
-                            } else {
-                                Text(chapter.content)
-                                    .font(readerService.selectedFont.font(size: readerService.fontSize))
-                                    .foregroundColor(readerService.theme.textColor)
-                                    .lineSpacing(readerService.lineSpacing)
-                            }
+                    if isFolioMode {
+                        let spread = FolioSpreadModel.paginateSpread(
+                            chapterText: chapter.content,
+                            author: book.author,
+                            bookTitle: book.title,
+                            chapterTitle: chapter.title,
+                            currentPageBase: max(1, currentChapterIndex * 2 + 1)
+                        )
 
-                            // Нижний разделитель и кнопка перехода
-                            HStack {
+                        FolioBookSpreadView(
+                            spread: spread,
+                            texture: selectedTexture,
+                            font: readerService.selectedFont,
+                            fontSize: readerService.fontSize,
+                            lineSpacing: readerService.lineSpacing,
+                            onPreviousPage: {
                                 if currentChapterIndex > 0 {
-                                    Button("← Предыдущая глава") {
-                                        currentChapterIndex -= 1
-                                        HapticManager.shared.lightTap()
-                                    }
-                                    .foregroundColor(wineAccent)
+                                    currentChapterIndex -= 1
+                                    HapticManager.shared.lightTap()
                                 }
-
-                                Spacer()
-
+                            },
+                            onNextPage: {
                                 if currentChapterIndex < chapters.count - 1 {
-                                    Button("Следующая глава →") {
-                                        currentChapterIndex += 1
-                                        HapticManager.shared.lightTap()
-                                    }
-                                    .foregroundColor(wineAccent)
-                                    .fontWeight(.bold)
+                                    currentChapterIndex += 1
+                                    HapticManager.shared.lightTap()
                                 }
                             }
-                            .padding(.vertical, 24)
+                        )
+                    } else {
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: readerService.lineSpacing + 10) {
+                                Text(chapter.title)
+                                    .font(readerService.selectedFont.font(size: readerService.fontSize + 8).bold())
+                                    .foregroundColor(selectedTexture.textColor)
+                                    .padding(.top, 16)
+                                    .padding(.bottom, 8)
+
+                                if readerService.isBionicEnabled {
+                                    let attr = readerService.bionicAttributedString(
+                                        from: chapter.content,
+                                        baseFont: readerService.selectedFont.font(size: readerService.fontSize),
+                                        textColor: selectedTexture.textColor
+                                    )
+                                    Text(attr)
+                                        .lineSpacing(readerService.lineSpacing)
+                                } else {
+                                    Text(chapter.content)
+                                        .font(readerService.selectedFont.font(size: readerService.fontSize))
+                                        .foregroundColor(selectedTexture.textColor)
+                                        .lineSpacing(readerService.lineSpacing)
+                                }
+
+                                // Нижний разделитель и кнопка перехода
+                                HStack {
+                                    if currentChapterIndex > 0 {
+                                        Button("← Предыдущая глава") {
+                                            currentChapterIndex -= 1
+                                            HapticManager.shared.lightTap()
+                                        }
+                                        .foregroundColor(wineAccent)
+                                    }
+
+                                    Spacer()
+
+                                    if currentChapterIndex < chapters.count - 1 {
+                                        Button("Следующая глава →") {
+                                            currentChapterIndex += 1
+                                            HapticManager.shared.lightTap()
+                                        }
+                                        .foregroundColor(wineAccent)
+                                        .fontWeight(.bold)
+                                    }
+                                }
+                                .padding(.vertical, 24)
+                            }
+                            .padding(.horizontal, 22)
                         }
-                        .padding(.horizontal, 22)
                     }
                 }
 
@@ -105,6 +146,13 @@ public struct EPUBReaderView: View {
         .sheet(isPresented: $showingSettings) {
             readerSettingsSheet
         }
+        .sheet(isPresented: $showingNeuroPacer) {
+            let activeText = chapters.isEmpty ? book.title : chapters[currentChapterIndex].content
+            BionicNeuroPacerView(text: activeText, bookTitle: book.title)
+        }
+        .sheet(isPresented: $showingBinauralSheet) {
+            SoundscapeBinauralSheet()
+        }
         .alert("Цитата сохранена", isPresented: $showingQuoteAlert) {
             Button("Отлично", role: .cancel) {}
         } message: {
@@ -120,21 +168,41 @@ public struct EPUBReaderView: View {
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(readerService.theme.textColor)
+                    .foregroundColor(selectedTexture.textColor)
             }
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(book.title)
                     .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(readerService.theme.textColor)
+                    .foregroundColor(selectedTexture.textColor)
                     .lineLimit(1)
                 Text(book.author)
                     .font(.system(size: 11))
-                    .foregroundColor(readerService.theme.textColor.opacity(0.7))
+                    .foregroundColor(selectedTexture.textColor.opacity(0.7))
                     .lineLimit(1)
             }
 
             Spacer()
+
+            // Бинауральный фокус и амбиент
+            Button {
+                showingBinauralSheet = true
+                HapticManager.shared.lightTap()
+            } label: {
+                Image(systemName: "headphones")
+                    .font(.system(size: 15))
+                    .foregroundColor(selectedTexture.textColor)
+            }
+
+            // Нейро-пейсер RSVP скорочтение
+            Button {
+                showingNeuroPacer = true
+                HapticManager.shared.lightTap()
+            } label: {
+                Image(systemName: "eye.circle.fill")
+                    .font(.system(size: 16))
+                    .foregroundColor(selectedTexture.textColor)
+            }
 
             // Переключатель Bionic Reading
             Button {
@@ -149,8 +217,8 @@ public struct EPUBReaderView: View {
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(readerService.isBionicEnabled ? wineAccent : readerService.theme.textColor.opacity(0.1))
-                .foregroundColor(readerService.isBionicEnabled ? .white : readerService.theme.textColor)
+                .background(readerService.isBionicEnabled ? wineAccent : selectedTexture.textColor.opacity(0.1))
+                .foregroundColor(readerService.isBionicEnabled ? .white : selectedTexture.textColor)
                 .clipShape(Capsule())
             }
 
@@ -161,7 +229,7 @@ public struct EPUBReaderView: View {
             } label: {
                 Image(systemName: "textformat.size")
                     .font(.system(size: 16))
-                    .foregroundColor(readerService.theme.textColor)
+                    .foregroundColor(selectedTexture.textColor)
             }
         }
         .padding(.horizontal, 16)
@@ -174,7 +242,7 @@ public struct EPUBReaderView: View {
             if !chapters.isEmpty {
                 Text("Глава \(currentChapterIndex + 1) из \(chapters.count)")
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(readerService.theme.textColor.opacity(0.8))
+                    .foregroundColor(selectedTexture.textColor.opacity(0.8))
 
                 Spacer()
 
@@ -217,6 +285,26 @@ public struct EPUBReaderView: View {
     private var readerSettingsSheet: some View {
         NavigationView {
             Form {
+                Section("Текстура бумаги и OLED") {
+                    Picker("Текстура", selection: $selectedTexture) {
+                        ForEach(PaperTextureType.allCases) { t in
+                            Text(t.title).tag(t)
+                        }
+                    }
+
+                    Text(selectedTexture.description)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
+                Section("Книжная вёрстка") {
+                    Toggle("Двухстраничный книжный разворот (Folio)", isOn: $isFolioMode)
+                        .tint(wineAccent)
+                    Text("На широких экранах iPad и Mac отображает разворот с реалистичной тенью переплёта.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+
                 Section("Размер текста") {
                     HStack {
                         Text("A")
@@ -232,15 +320,6 @@ public struct EPUBReaderView: View {
                     Picker("Шрифт", selection: $readerService.selectedFont) {
                         ForEach(ReaderFont.allCases) { f in
                             Text(f.rawValue).tag(f)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                }
-
-                Section("Цветовая схема") {
-                    Picker("Тема", selection: $readerService.theme) {
-                        ForEach(ReaderTheme.allCases) { t in
-                            Text(t.rawValue).tag(t)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -266,18 +345,27 @@ public struct EPUBReaderView: View {
                 }
             }
         }
-        .presentationDetents([.medium])
+        .presentationDetents([.medium, .large])
     }
 
     private func loadBookChapters() {
         if let fileURL = EBookStorageManager.shared.fileURL(for: book.id) {
-            chapters = readerService.parseBookContent(url: fileURL, bookTitle: book.title)
+            let rawChapters = readerService.parseBookContent(url: fileURL, bookTitle: book.title)
+            self.chapters = rawChapters.map {
+                ReaderChapter(
+                    id: $0.id,
+                    title: $0.title,
+                    content: SmartTypographerEngine.formatText($0.content),
+                    estimatedReadMinutes: $0.estimatedReadMinutes
+                )
+            }
         } else {
+            let sampleContent = SmartTypographerEngine.formatText("Файл электронной книги пока не прикреплен к карточке этой книги.\n\nВы можете прикрепить любой файл .epub, .pdf, .fb2 или .txt через карточку книги, нажав «Прикрепить файл книги».\n\nВстроенный движок «Книжного Рая» 3.2 поддерживает Folio двухстраничный разворот, PaperTextureKit (включая ночной OLED Midnight), Bionic Reading, RSVP Нейро-пейсер со скоростью до 800 слов в минуту, бинауральные ритмы для максимальной концентрации и автоматическую книжную типографику.")
             chapters = [
                 ReaderChapter(
                     id: 1,
                     title: "Чтение: \(book.title)",
-                    content: "Файл электронной книги пока не прикреплен к карточке этой книги.\n\nВы можете прикрепить любой файл .epub, .pdf, .fb2 или .txt через карточку книги, нажав «Прикрепить файл книги».\n\nВстроенный движок «Книжного Рая» 3.0 поддерживает Bionic Reading, литературные шрифты, кастомные темы и мгновенное сохранение цитат.",
+                    content: sampleContent,
                     estimatedReadMinutes: 1
                 )
             ]

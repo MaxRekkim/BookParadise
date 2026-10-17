@@ -82,7 +82,24 @@ public struct QuoteScannerView: View {
                 }
 
                 // Текст цитаты
-                Section(header: Text("Текст цитаты *")) {
+                Section(
+                    header: HStack {
+                        Text("Текст цитаты *")
+                        Spacer()
+                        Button(action: {
+                            quoteText = SmartTypographerEngine.formatText(quoteText)
+                            HapticManager.shared.lightTap()
+                        }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "wand.and.stars")
+                                Text("Типографика")
+                            }
+                            .font(.caption2)
+                            .bold()
+                            .foregroundColor(theme.primaryAccent)
+                        }
+                    }
+                ) {
                     TextEditor(text: $quoteText)
                         .frame(minHeight: 120)
                 }
@@ -246,9 +263,9 @@ public struct QuoteScannerView: View {
 
             let finalPieces = textPieces
             await MainActor.run {
-                self.recognizedFragments = Array(finalPieces.prefix(8))
+                self.recognizedFragments = Array(finalPieces.prefix(8)).map { SmartTypographerEngine.formatText($0) }
                 if self.quoteText.isEmpty && !finalPieces.isEmpty {
-                    self.quoteText = finalPieces.joined(separator: " ")
+                    self.quoteText = SmartTypographerEngine.formatText(finalPieces.joined(separator: " "))
                 }
                 self.isProcessingOCR = false
             }

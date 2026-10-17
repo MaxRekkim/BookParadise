@@ -40,6 +40,18 @@ public final class HapticManager {
         #endif
     }
 
+    public func notificationSuccess() {
+        success()
+    }
+
+    public func selectionChanged() {
+        #if canImport(UIKit) && !targetEnvironment(macCatalyst)
+        let generator = UISelectionFeedbackGenerator()
+        generator.prepare()
+        generator.selectionChanged()
+        #endif
+    }
+
     public func levelUp() {
         #if canImport(UIKit) && !targetEnvironment(macCatalyst)
         let generator = UINotificationFeedbackGenerator()
