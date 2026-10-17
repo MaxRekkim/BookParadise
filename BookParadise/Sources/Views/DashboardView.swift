@@ -104,6 +104,26 @@ public struct DashboardView: View {
             .background(Color(UIColor.systemGroupedBackground))
             .navigationTitle("Книжный Рай")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        isShowingSearchSheet = true
+                        HapticManager.shared.lightTap()
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "command")
+                                .font(.system(size: 13, weight: .semibold))
+                            Text("⌘K")
+                                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        }
+                        .foregroundColor(theme.primaryAccent)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(theme.primaryAccent.opacity(0.12))
+                        .clipShape(Capsule())
+                    }
+                    .accessibilityLabel("Универсальная командная палитра (⌘K)")
+                }
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack(spacing: 14) {
                         Button(action: {
@@ -196,14 +216,31 @@ public struct DashboardView: View {
                 .macSheetFrame(large: true)
             }
             .sheet(isPresented: $isShowingSearchSheet) {
-                NavigationStack {
-                    FilteredBooksView(
-                        title: "Поиск по библиотеке",
-                        books: viewModel.books,
-                        viewModel: viewModel,
-                        onDismiss: { isShowingSearchSheet = false }
-                    )
-                }
+                CommandPaletteOverlayView(
+                    viewModel: viewModel,
+                    onSelectBook: { book in
+                        bookForReadingSession = book
+                    },
+                    onNavigateTab: { _ in },
+                    onTriggerAction: { tag in
+                        switch tag {
+                        case "startTimer":
+                            if let firstBook = viewModel.readingNowBooks.first ?? viewModel.books.first {
+                                bookForReadingSession = firstBook
+                            }
+                        case "standBy":
+                            isShowingStandByClock = true
+                        case "soundscape":
+                            isShowingSoundscapeMixer = true
+                        case "addBook":
+                            isShowingAddBook = true
+                        case "oracle":
+                            isShowingOracle = true
+                        default:
+                            break
+                        }
+                    }
+                )
                 .macSheetFrame(large: true)
             }
             .sheet(isPresented: $isShowingSoundscapeMixer) {

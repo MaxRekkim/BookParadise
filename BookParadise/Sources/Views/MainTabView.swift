@@ -45,6 +45,7 @@ public struct MainTabView: View {
     @State private var quickActionSheetPresented: Bool = false
     @State private var isShowingSessionPicker: Bool = false
     @State private var isShowingQuotePicker: Bool = false
+    @State private var isShowingCommandPalette: Bool = false
     
     public init() {}
     
@@ -87,6 +88,30 @@ public struct MainTabView: View {
             QuickBookPickerSheet(viewModel: viewModel, mode: .quoteScanner)
                 .macSheetFrame()
         }
+        .sheet(isPresented: $isShowingCommandPalette) {
+            CommandPaletteOverlayView(
+                viewModel: viewModel,
+                onSelectBook: { _ in
+                    selectedTab = .library
+                },
+                onNavigateTab: { tabIndex in
+                    if let tab = AppTab(rawValue: tabIndex) {
+                        selectedTab = tab
+                    }
+                },
+                onTriggerAction: { tag in
+                    switch tag {
+                    case "addBook":
+                        isShowingAddBook = true
+                    case "startTimer":
+                        isShowingSessionPicker = true
+                    default:
+                        break
+                    }
+                }
+            )
+            .macSheetFrame(large: true)
+        }
     }
     
     // MARK: - 1. НАСТОЛЬНЫЙ ИНТЕРФЕЙС ДЛЯ MACOS (ПОСТОЯННЫЙ САЙДБАР + ТУЛБАР)
@@ -106,6 +131,13 @@ public struct MainTabView: View {
             .navigationTitle("Книжный Рай")
             .navigationSplitViewColumnWidth(min: 240, ideal: 270, max: 320)
             .toolbar {
+                ToolbarItem(placement: .automatic) {
+                    Button(action: { isShowingCommandPalette = true }) {
+                        Label("Палитра", systemImage: "command")
+                    }
+                    .keyboardShortcut("k", modifiers: .command)
+                }
+
                 ToolbarItem(placement: .automatic) {
                     Button(action: { isShowingAddBook = true }) {
                         Label("Новая книга", systemImage: "plus")

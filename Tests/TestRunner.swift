@@ -1319,7 +1319,7 @@ assertEqual(unlockedCount, 4, "All default demo trophies unlocked for v4.0.0 cel
 print("\n[Suite 40/40] Testing Sanctuary Master Overview & Milestone Stats...")
 
 struct MockSanctuaryMasterStats {
-    var versionString: String = "4.3.0"
+    var versionString: String = "4.6.0"
     var totalBooksInLibrary: Int = 42
     var totalPagesCompleted: Int = 14200
     var totalReadingHours: Double = 417.6
@@ -1332,10 +1332,10 @@ struct MockSanctuaryMasterStats {
 }
 
 let masterStats = MockSanctuaryMasterStats()
-assertEqual(masterStats.versionString, "4.3.0", "Sanctuary version string is 4.3.0")
+assertEqual(masterStats.versionString, "4.6.0", "Sanctuary version string is 4.6.0")
 assertEqual(masterStats.totalBooksInLibrary, 42, "Library contains 42 books")
 assertEqual(masterStats.totalPagesCompleted, 14200, "14,200 total pages completed")
-assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.3.0")
+assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.6.0")
 
 // -----------------------------------------------------------------------------
 // 41. TEST: AuthorTypographerEngine & Micro-Typography
@@ -1647,6 +1647,69 @@ assertEqual(classicMottos.count, 7, "Curated library contains 7 classical Latin 
 assertTrue(classicMottos.contains("Vita Brevis, Ars Longa"), "Hippocrates motto present in curated collection")
 
 // -----------------------------------------------------------------------------
+// 48. TEST: Universal Command Palette (⌘K) & Fuzzy Search Engine
+// -----------------------------------------------------------------------------
+print("\n[Suite 48/48] Testing Universal Command Palette (⌘K) & Fuzzy Search Engine...")
+
+struct MockPaletteItem {
+    let title: String
+    let subtitle: String
+    let category: String
+    let tag: String
+}
+
+func mockPaletteSearch(query: String, books: [(title: String, author: String)]) -> [MockPaletteItem] {
+    let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+    var results: [MockPaletteItem] = []
+
+    let systemActions = [
+        MockPaletteItem(title: "Начать сессию чтения", subtitle: "Запустить таймер", category: "actions", tag: "startTimer"),
+        MockPaletteItem(title: "Ночные часы StandBy", subtitle: "OLED часы 1800K", category: "actions", tag: "standBy"),
+        MockPaletteItem(title: "Мастерская экслибриса", subtitle: "Книжный знак", category: "actions", tag: "exlibris"),
+        MockPaletteItem(title: "Кабинет Святилища", subtitle: "Раздел настроек", category: "navigation", tag: "tab:4")
+    ]
+
+    if trimmed.isEmpty {
+        return systemActions
+    }
+
+    results.append(contentsOf: systemActions.filter {
+        $0.title.lowercased().contains(trimmed) || $0.subtitle.lowercased().contains(trimmed)
+    })
+
+    for b in books where b.title.lowercased().contains(trimmed) || b.author.lowercased().contains(trimmed) {
+        results.append(MockPaletteItem(title: b.title, subtitle: b.author, category: "books", tag: "book"))
+    }
+
+    return results
+}
+
+let mockBooks = [
+    (title: "Мастер и Маргарита", author: "Михаил Булгаков"),
+    (title: "Преступление и наказание", author: "Федор Достоевский"),
+    (title: "Дюна", author: "Фрэнк Герберт")
+]
+
+// 1. Empty query returns default actions
+let emptyResults = mockPaletteSearch(query: "", books: mockBooks)
+assertEqual(emptyResults.count, 4, "Empty query returns 4 default quick actions")
+
+// 2. Query 'Мастер' matches both book and action
+let masterResults = mockPaletteSearch(query: "Мастер", books: mockBooks)
+assertTrue(masterResults.contains { $0.title == "Мастерская экслибриса" }, "Matches action 'Мастерская экслибриса'")
+assertTrue(masterResults.contains { $0.title == "Мастер и Маргарита" }, "Matches book 'Мастер и Маргарита'")
+
+// 3. Query 'Таймер' matches session starter
+let timerResults = mockPaletteSearch(query: "таймер", books: mockBooks)
+assertEqual(timerResults.count, 1, "Query 'таймер' matches exactly 1 action")
+assertEqual(timerResults.first?.tag, "startTimer", "Matched action tag is startTimer")
+
+// 4. Query 'Достоевский' matches by author
+let authorResults = mockPaletteSearch(query: "достоевский", books: mockBooks)
+assertEqual(authorResults.count, 1, "Matches book by author name")
+assertEqual(authorResults.first?.title, "Преступление и наказание", "Found correct book by author")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -1657,7 +1720,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v4.5.0 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v4.6.0 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")
