@@ -153,7 +153,7 @@ public struct ReadingWrappedView: View {
                         .keyboardShortcut(.cancelAction)
                 }
             }
-            .onExitCommand {
+            .onMacExitCommand {
                 handleDismiss()
             }
             .interactiveDismissDisabled(false)

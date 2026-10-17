@@ -137,7 +137,7 @@ public struct ReadingChallengeView: View {
                                 .keyboardShortcut(.cancelAction)
                             }
                         }
-                        .onExitCommand {
+                        .onMacExitCommand {
                             handleDismiss()
                         }
                         .interactiveDismissDisabled(false)
@@ -146,7 +146,7 @@ public struct ReadingChallengeView: View {
                 scrollContent
                     .navigationTitle("Книжный вызов 2026")
                     .navigationBarTitleDisplayMode(.inline)
-                    .onExitCommand {
+                    .onMacExitCommand {
                         handleDismiss()
                     }
             }

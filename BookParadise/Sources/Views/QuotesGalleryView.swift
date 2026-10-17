@@ -89,7 +89,7 @@ public struct QuotesGalleryView: View {
                     }
                 }
             }
-            .onExitCommand {
+            .onMacExitCommand {
                 handleDismiss()
             }
             .interactiveDismissDisabled(false)

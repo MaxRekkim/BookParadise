@@ -43,5 +43,14 @@ extension View {
         self
         #endif
     }
+    
+    @ViewBuilder
+    public func onMacExitCommand(perform action: @escaping () -> Void) -> some View {
+        #if targetEnvironment(macCatalyst) || os(macOS)
+        self.onExitCommand(perform: action)
+        #else
+        self
+        #endif
+    }
 }
 

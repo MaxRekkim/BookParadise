@@ -289,7 +289,7 @@ public struct SettingsView: View {
                         .keyboardShortcut(.cancelAction)
                 }
             }
-            .onExitCommand {
+            .onMacExitCommand {
                 handleDismiss()
             }
             .interactiveDismissDisabled(false)

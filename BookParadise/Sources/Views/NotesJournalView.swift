@@ -149,7 +149,7 @@ public struct NotesJournalView: View {
                     }
                 }
             }
-            .onExitCommand {
+            .onMacExitCommand {
                 handleDismiss()
             }
             .interactiveDismissDisabled(false)

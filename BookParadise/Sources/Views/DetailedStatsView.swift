@@ -113,7 +113,7 @@ public struct DetailedStatsView: View {
                     .keyboardShortcut(.cancelAction)
             }
         }
-        .onExitCommand {
+        .onMacExitCommand {
             handleDismiss()
         }
         .interactiveDismissDisabled(false)
@@ -590,6 +590,7 @@ public struct FilteredBooksView: View {
     public let title: String
     public let books: [Book]
     @ObservedObject public var viewModel: LibraryViewModel
+    @ObservedObject private var theme = ThemeManager.shared
     public var onDismiss: (() -> Void)? = nil
     @State private var searchText: String = ""
 
@@ -707,7 +708,7 @@ public struct FilteredBooksView: View {
                 }
             }
         }
-        .onExitCommand {
+        .onMacExitCommand {
             onDismiss?()
         }
         .interactiveDismissDisabled(false)

@@ -143,7 +143,7 @@ public struct MainTabView: View {
             contentForSelectedTab
         }
         .navigationSplitViewStyle(.balanced)
-        .onExitCommand {
+        .onMacExitCommand {
             exit(0)
         }
     }
@@ -374,7 +374,7 @@ struct QuickBookPickerSheet: View {
                         .keyboardShortcut(.cancelAction)
                 }
             }
-            .onExitCommand {
+            .onMacExitCommand {
                 dismiss()
             }
             .interactiveDismissDisabled(false)

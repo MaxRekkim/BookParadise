@@ -75,7 +75,7 @@ public struct AchievementsView: View {
                         .keyboardShortcut(.cancelAction)
                 }
             }
-            .onExitCommand {
+            .onMacExitCommand {
                 handleDismiss()
             }
             .interactiveDismissDisabled(false)

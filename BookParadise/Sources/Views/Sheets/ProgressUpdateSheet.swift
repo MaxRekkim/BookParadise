@@ -198,7 +198,7 @@ public struct ProgressUpdateSheet: View {
                         .keyboardShortcut(.defaultAction)
                 }
             }
-            .onExitCommand {
+            .onMacExitCommand {
                 handleDismiss()
             }
             .interactiveDismissDisabled(false)
