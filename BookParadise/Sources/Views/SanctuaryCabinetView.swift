@@ -21,6 +21,7 @@ public struct SanctuaryCabinetView: View {
     @State private var isShowingSovereignVault: Bool = false
     @State private var isShowingObsidianSync: Bool = false
     @State private var isShowingImporter: Bool = false
+    @State private var isShowingExLibrisStudio: Bool = false
 
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -137,6 +138,10 @@ public struct SanctuaryCabinetView: View {
                 }
                 .macSheetFrame()
             }
+            .sheet(isPresented: $isShowingExLibrisStudio) {
+                ExLibrisStudioSheet()
+                    .macSheetFrame(large: true)
+            }
         }
     }
 
@@ -206,6 +211,16 @@ public struct SanctuaryCabinetView: View {
                     color: .blue
                 ) {
                     isShowingNeuroPacer = true
+                    HapticManager.shared.lightTap()
+                }
+
+                cabinetToolCard(
+                    title: "Мастерская экслибриса",
+                    subtitle: "Личный книжный знак и форзац",
+                    icon: "seal.fill",
+                    color: Color(red: 0.85, green: 0.68, blue: 0.28)
+                ) {
+                    isShowingExLibrisStudio = true
                     HapticManager.shared.lightTap()
                 }
             }

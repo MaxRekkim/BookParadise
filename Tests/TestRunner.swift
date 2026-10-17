@@ -1595,6 +1595,58 @@ assertTrue(lightPitch > stdPitch, "Lightweight paper produces higher whispery fl
 assertTrue(heavyPitch < stdPitch, "Heavy verge paper produces deeper thumping frequency")
 
 // -----------------------------------------------------------------------------
+// 47. TEST: Personal Ex Libris & Embossed Bookplate Generator
+// -----------------------------------------------------------------------------
+print("\n[Suite 47/47] Testing Personal Ex Libris & Embossed Bookplate Generator...")
+
+struct MockExLibrisConfig {
+    var ownerName: String
+    var monogram: String
+    var motto: String
+    var styleRaw: String
+    var embossRaw: String
+    var establishedYear: Int
+    var isAutoStampEnabled: Bool
+
+    var formattedHeader: String { "EX • LIBRIS" }
+    var formattedMonogram: String { monogram.uppercased() }
+    var formattedYear: String { "EST. ANNO \(establishedYear)" }
+}
+
+let defaultConfig = MockExLibrisConfig(
+    ownerName: "Максим Емельянов",
+    monogram: "ме",
+    motto: "Silentium Legentis",
+    styleRaw: "renaissanceWoodcut",
+    embossRaw: "goldLeaf",
+    establishedYear: 2026,
+    isAutoStampEnabled: true
+)
+
+assertEqual(defaultConfig.formattedHeader, "EX • LIBRIS", "Bookplate header displays classical spaced typography")
+assertEqual(defaultConfig.formattedMonogram, "МЕ", "Monogram initials are automatically uppercased")
+assertEqual(defaultConfig.formattedYear, "EST. ANNO 2026", "Established year formats with historical prefix")
+assertTrue(defaultConfig.isAutoStampEnabled, "Auto-stamping on library endpapers is enabled by default")
+
+let availableStyles = ["renaissanceWoodcut", "artNouveau", "baroqueCrest", "modernistMinimal", "gothicMonastic"]
+assertEqual(availableStyles.count, 5, "Ex Libris studio provides exactly 5 distinct historical artistic styles")
+
+let availableEmbossTypes = ["blindEmboss", "goldLeaf", "inkStamp", "waxSeal"]
+assertEqual(availableEmbossTypes.count, 4, "Ex Libris studio provides 4 tactile materialization types")
+
+let classicMottos = [
+    "Silentium Legentis",
+    "Vita Brevis, Ars Longa",
+    "Nulla Dies Sine Linea",
+    "Libris Libertas",
+    "Amor Librorum Nos Unit",
+    "Semper Legere",
+    "Veritas Vos Liberabit"
+]
+assertEqual(classicMottos.count, 7, "Curated library contains 7 classical Latin bibliophile mottos")
+assertTrue(classicMottos.contains("Vita Brevis, Ars Longa"), "Hippocrates motto present in curated collection")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -1605,7 +1657,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v4.4.0 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v4.5.0 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")

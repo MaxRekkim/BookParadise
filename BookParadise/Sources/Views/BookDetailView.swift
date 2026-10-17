@@ -223,6 +223,9 @@ public struct BookDetailView: View {
                 // Электронная книга / Файл книги (PDF, EPUB)
                 eBookSection(for: book)
 
+                // Персональный экслибрис владельца (Ex Libris)
+                exLibrisBookplateSection(for: book)
+
                 // Цитаты и заметки из книги (OCR / Apple Vision)
                 quotesSection(for: book)
 
@@ -649,6 +652,36 @@ public struct BookDetailView: View {
         .padding()
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(16)
+    }
+
+    // MARK: - Секция Экслибриса владельца (Ex Libris)
+    @ViewBuilder
+    private func exLibrisBookplateSection(for book: Book) -> some View {
+        let exLibrisConfig = ExLibrisConfig.load()
+        if exLibrisConfig.isAutoStampEnabled {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Image(systemName: "seal.fill")
+                        .foregroundColor(exLibrisConfig.embossType.primaryColor)
+                    Text("Книжный знак владельца (Ex Libris)")
+                        .font(.headline)
+                    Spacer()
+                    Text(exLibrisConfig.style.title)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+
+                HStack {
+                    Spacer()
+                    ExLibrisBookplateView(config: exLibrisConfig, scale: 0.85, showShadow: true)
+                    Spacer()
+                }
+                .padding(.vertical, 8)
+            }
+            .padding()
+            .background(Color(UIColor.secondarySystemGroupedBackground))
+            .cornerRadius(16)
+        }
     }
 
     // MARK: - Секция Цитат и заметок
