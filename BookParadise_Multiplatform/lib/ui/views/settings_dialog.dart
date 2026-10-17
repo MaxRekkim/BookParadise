@@ -107,7 +107,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
                         decoration: BoxDecoration(
                           color: Colors.amber.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.pad(BorderSide(color: Colors.amber.withOpacity(0.3))),
+                          border: Border.all(color: Colors.amber.withOpacity(0.3)),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

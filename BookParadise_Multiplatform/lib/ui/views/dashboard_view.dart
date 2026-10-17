@@ -100,7 +100,17 @@ class DashboardView extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                       ),
                       const SizedBox(width: 6),
-                      const Badge(label: Text('OTA', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold))),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: Colors.amber,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'OTA',
+                          style: TextStyle(color: Colors.black87, fontSize: 8, fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ],
                   ),
                   subtitle: Text(
