@@ -128,6 +128,22 @@ public struct DetailedStatsView: View {
                 WorldbuildingLoreVaultView()
                     .padding(.horizontal)
 
+                // 4.6. Системная интеграция iOS & macOS (Wave 5: v3.5.0)
+                InteractiveReadingWidgetView()
+                    .padding(.horizontal)
+
+                ReadingLiveActivityView()
+                    .padding(.horizontal)
+
+                SpotlightSearchDebugView()
+                    .padding(.horizontal)
+
+                AppIntentsConfigView()
+                    .padding(.horizontal)
+
+                MenuBarCompanionView()
+                    .padding(.horizontal)
+
                 // 5. Оценки и галерея Шедевров
                 ratingsAndMasterpiecesCard
                     .padding(.horizontal)

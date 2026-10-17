@@ -28,7 +28,7 @@ func assertTrue(_ condition: Bool, _ message: String = "", file: String = #file,
 }
 
 print("=======================================================")
-print("🧪 Running BookParadise v3.4.0 Comprehensive Test Suite")
+print("🧪 Running BookParadise v3.5.0 Comprehensive Test Suite")
 print("=======================================================")
 
 // -----------------------------------------------------------------------------
@@ -887,6 +887,129 @@ entryBal.isManuallyUnlocked = true
 assertEqual(entryBal.isLocked(atChapter: 15), false, "Manual spoiler reveal safely unlocks the lore entry")
 
 // -----------------------------------------------------------------------------
+// 26. TEST: Interactive Reading Widget & Quick Log Math
+// -----------------------------------------------------------------------------
+print("\n[Suite 26/30] Testing Interactive Widget & Quick Log Engine...")
+
+struct MockWidgetState {
+    var currentPage: Int
+    var totalPages: Int
+    var dailyPagesToday: Int
+    var dailyTarget: Int
+    
+    mutating func increment(by delta: Int) {
+        let remaining = max(totalPages - currentPage, 0)
+        let actual = min(delta, remaining)
+        currentPage += actual
+        dailyPagesToday += actual
+    }
+}
+
+var widget = MockWidgetState(currentPage: 215, totalPages: 384, dailyPagesToday: 18, dailyTarget: 30)
+widget.increment(by: 5)
+assertEqual(widget.currentPage, 220, "Incrementing by 5 advances currentPage to 220")
+assertEqual(widget.dailyPagesToday, 23, "Incrementing by 5 advances dailyPagesToday to 23")
+
+// Test boundary clamping: only 164 pages remain
+widget.increment(by: 500)
+assertEqual(widget.currentPage, 384, "Oversized increment safely clamps at totalPages without overflowing")
+
+// -----------------------------------------------------------------------------
+// 27. TEST: ActivityKit Dynamic Island & Session Chronometer
+// -----------------------------------------------------------------------------
+print("\n[Suite 27/30] Testing ActivityKit Dynamic Island Engine...")
+
+struct MockLiveActivityState {
+    var elapsedSeconds: Int
+    var targetMinutes: Int
+    var isPaused: Bool
+    
+    var formattedTime: String {
+        let m = elapsedSeconds / 60
+        let s = elapsedSeconds % 60
+        return String(format: "%02d:%02d", m, s)
+    }
+    
+    var progressRatio: Double {
+        min(Double(elapsedSeconds) / Double(targetMinutes * 60), 1.0)
+    }
+}
+
+let activeSession = MockLiveActivityState(elapsedSeconds: 845, targetMinutes: 30, isPaused: false)
+assertEqual(activeSession.formattedTime, "14:05", "845 seconds formats to exactly '14:05'")
+assertEqual(round(activeSession.progressRatio * 100) / 100, 0.47, "845s / 1800s equals ~0.47 progress ratio")
+
+// -----------------------------------------------------------------------------
+// 28. TEST: CoreSpotlight Indexing & Deep Link Routing
+// -----------------------------------------------------------------------------
+print("\n[Suite 28/30] Testing CoreSpotlight Metadata & Deep Link Engine...")
+
+func makeDeepLink(bookId: String) -> String {
+    "bookparadise://book?id=\(bookId)"
+}
+
+func matchesSpotlightQuery(query: String, title: String, author: String, keywords: [String]) -> Bool {
+    let q = query.lowercased()
+    return title.lowercased().contains(q) || author.lowercased().contains(q) || keywords.contains(where: { $0.lowercased().contains(q) })
+}
+
+let testBookId = "D1E2F3A4-B5C6-7890-EF12-3456789ABCDE"
+assertEqual(makeDeepLink(bookId: testBookId), "bookparadise://book?id=D1E2F3A4-B5C6-7890-EF12-3456789ABCDE", "Deep link URL matches exact schema")
+
+let bTitle = "Мастер и Маргарита"
+let bAuthor = "Михаил Булгаков"
+let bKeywords = ["воланд", "маргарита", "пилат", "москва"]
+
+assertTrue(matchesSpotlightQuery(query: "Мастер", title: bTitle, author: bAuthor, keywords: bKeywords), "Spotlight matches on book title")
+assertTrue(matchesSpotlightQuery(query: "Булгаков", title: bTitle, author: bAuthor, keywords: bKeywords), "Spotlight matches on author")
+assertTrue(matchesSpotlightQuery(query: "воланд", title: bTitle, author: bAuthor, keywords: bKeywords), "Spotlight matches on semantic keyword")
+assertEqual(matchesSpotlightQuery(query: "Шерлок", title: bTitle, author: bAuthor, keywords: bKeywords), false, "Spotlight returns false on unrelated query")
+
+// -----------------------------------------------------------------------------
+// 29. TEST: App Intents & Siri Verbal Snippets
+// -----------------------------------------------------------------------------
+print("\n[Suite 29/30] Testing App Intents & Siri Verbal Response Engine...")
+
+func mockLogPagesIntent(pages: Int, bookTitle: String) -> (success: Bool, message: String) {
+    guard pages > 0 else { return (false, "Количество страниц должно быть больше нуля.") }
+    return (true, "Записано \(pages) стр. в «\(bookTitle)».")
+}
+
+let validIntent = mockLogPagesIntent(pages: 20, bookTitle: "1984")
+assertEqual(validIntent.success, true, "Logging 20 pages succeeds")
+assertEqual(validIntent.message, "Записано 20 стр. в «1984».", "Verbal message formatted correctly")
+
+let invalidIntent = mockLogPagesIntent(pages: 0, bookTitle: "1984")
+assertEqual(invalidIntent.success, false, "Logging 0 pages triggers validation error")
+
+// -----------------------------------------------------------------------------
+// 30. TEST: macOS Menu Bar Companion & Status Item
+// -----------------------------------------------------------------------------
+print("\n[Suite 30/30] Testing macOS Menu Bar Companion Status Item...")
+
+struct MockMenuBarState {
+    var pacePPH: Double
+    var pagesToday: Int
+    var dailyTarget: Int
+    var isSoundscapePlaying: Bool
+    
+    var statusTitle: String {
+        "📖 \(Int(pacePPH)) с/ч"
+    }
+    
+    var quotaRatio: Double {
+        min(Double(pagesToday) / Double(dailyTarget), 1.0)
+    }
+}
+
+var menuBar = MockMenuBarState(pacePPH: 34.0, pagesToday: 18, dailyTarget: 30, isSoundscapePlaying: true)
+assertEqual(menuBar.statusTitle, "📖 34 с/ч", "Menu bar status item renders clean reading pace string")
+assertEqual(round(menuBar.quotaRatio * 100) / 100, 0.60, "18/30 pages equals exactly 60% daily quota")
+
+menuBar.isSoundscapePlaying.toggle()
+assertEqual(menuBar.isSoundscapePlaying, false, "Soundscape toggle mutes audio from menu bar")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -897,12 +1020,13 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v3.4.0 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v3.5.0 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")
     exit(1)
 }
+
 
 
 

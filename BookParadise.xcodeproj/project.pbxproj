@@ -115,6 +115,16 @@
 		A10000922345678900000092 /* BookParadise/Sources/Views/Components/QuoteSemanticClusterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000922345678900000092 /* BookParadise/Sources/Views/Components/QuoteSemanticClusterView.swift */; };
 		A10000932345678900000093 /* BookParadise/Sources/Models/WorldbuildingLoreVaultModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000932345678900000093 /* BookParadise/Sources/Models/WorldbuildingLoreVaultModel.swift */; };
 		A10000942345678900000094 /* BookParadise/Sources/Views/Components/WorldbuildingLoreVaultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000942345678900000094 /* BookParadise/Sources/Views/Components/WorldbuildingLoreVaultView.swift */; };
+		A10000952345678900000095 /* BookParadise/Sources/Models/InteractiveReadingWidgetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000952345678900000095 /* BookParadise/Sources/Models/InteractiveReadingWidgetModel.swift */; };
+		A10000962345678900000096 /* BookParadise/Sources/Views/Components/InteractiveReadingWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000962345678900000096 /* BookParadise/Sources/Views/Components/InteractiveReadingWidgetView.swift */; };
+		A10000972345678900000097 /* BookParadise/Sources/Models/ReadingLiveActivityModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000972345678900000097 /* BookParadise/Sources/Models/ReadingLiveActivityModel.swift */; };
+		A10000982345678900000098 /* BookParadise/Sources/Views/Components/ReadingLiveActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000982345678900000098 /* BookParadise/Sources/Views/Components/ReadingLiveActivityView.swift */; };
+		A10000992345678900000099 /* BookParadise/Sources/Services/CoreSpotlightIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000992345678900000099 /* BookParadise/Sources/Services/CoreSpotlightIndexer.swift */; };
+		A10001002345678900000100 /* BookParadise/Sources/Views/Components/SpotlightSearchDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001002345678900000100 /* BookParadise/Sources/Views/Components/SpotlightSearchDebugView.swift */; };
+		A10001012345678900000101 /* BookParadise/Sources/Models/BookAppIntentsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001012345678900000101 /* BookParadise/Sources/Models/BookAppIntentsModel.swift */; };
+		A10001022345678900000102 /* BookParadise/Sources/Views/Components/AppIntentsConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001022345678900000102 /* BookParadise/Sources/Views/Components/AppIntentsConfigView.swift */; };
+		A10001032345678900000103 /* BookParadise/Sources/Models/MenuBarCompanionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001032345678900000103 /* BookParadise/Sources/Models/MenuBarCompanionModel.swift */; };
+		A10001042345678900000104 /* BookParadise/Sources/Views/Components/MenuBarCompanionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001042345678900000104 /* BookParadise/Sources/Views/Components/MenuBarCompanionView.swift */; };
 		A11C0DE123456789ABCDEF01 /* BookParadise/Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11C0DE223456789ABCDEF02 /* BookParadise/Resources/Assets.xcassets */; };
 		A2D01757B7FB30D83F71BC42 /* BookParadise/Sources/Views/LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF78C7237D080A6F64CE875 /* BookParadise/Sources/Views/LibraryView.swift */; };
 		AF6824F508686520BF8094D4 /* BookParadise/Sources/Views/MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9873C29434472930EC446CE /* BookParadise/Sources/Views/MainTabView.swift */; };
@@ -264,6 +274,16 @@
 		B10000922345678900000092 /* BookParadise/Sources/Views/Components/QuoteSemanticClusterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/QuoteSemanticClusterView.swift; sourceTree = "<group>"; };
 		B10000932345678900000093 /* BookParadise/Sources/Models/WorldbuildingLoreVaultModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/WorldbuildingLoreVaultModel.swift; sourceTree = "<group>"; };
 		B10000942345678900000094 /* BookParadise/Sources/Views/Components/WorldbuildingLoreVaultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/WorldbuildingLoreVaultView.swift; sourceTree = "<group>"; };
+		B10000952345678900000095 /* BookParadise/Sources/Models/InteractiveReadingWidgetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/InteractiveReadingWidgetModel.swift; sourceTree = "<group>"; };
+		B10000962345678900000096 /* BookParadise/Sources/Views/Components/InteractiveReadingWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/InteractiveReadingWidgetView.swift; sourceTree = "<group>"; };
+		B10000972345678900000097 /* BookParadise/Sources/Models/ReadingLiveActivityModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/ReadingLiveActivityModel.swift; sourceTree = "<group>"; };
+		B10000982345678900000098 /* BookParadise/Sources/Views/Components/ReadingLiveActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ReadingLiveActivityView.swift; sourceTree = "<group>"; };
+		B10000992345678900000099 /* BookParadise/Sources/Services/CoreSpotlightIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/CoreSpotlightIndexer.swift; sourceTree = "<group>"; };
+		B10001002345678900000100 /* BookParadise/Sources/Views/Components/SpotlightSearchDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/SpotlightSearchDebugView.swift; sourceTree = "<group>"; };
+		B10001012345678900000101 /* BookParadise/Sources/Models/BookAppIntentsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BookAppIntentsModel.swift; sourceTree = "<group>"; };
+		B10001022345678900000102 /* BookParadise/Sources/Views/Components/AppIntentsConfigView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/AppIntentsConfigView.swift; sourceTree = "<group>"; };
+		B10001032345678900000103 /* BookParadise/Sources/Models/MenuBarCompanionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/MenuBarCompanionModel.swift; sourceTree = "<group>"; };
+		B10001042345678900000104 /* BookParadise/Sources/Views/Components/MenuBarCompanionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/MenuBarCompanionView.swift; sourceTree = "<group>"; };
 		B31F051912C52A30FC0ADD33 /* BookParadise/Sources/Models/BingoAndCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BingoAndCycle.swift; sourceTree = "<group>"; };
 		C10000012345678900000001 /* BookParadiseWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BookParadiseWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C10000022345678900000002 /* BookParadise/Sources/Widgets/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BookParadise/Sources/Widgets/Info.plist; sourceTree = "<group>"; };
@@ -430,6 +450,16 @@
 				B10000922345678900000092 /* BookParadise/Sources/Views/Components/QuoteSemanticClusterView.swift */,
 				B10000932345678900000093 /* BookParadise/Sources/Models/WorldbuildingLoreVaultModel.swift */,
 				B10000942345678900000094 /* BookParadise/Sources/Views/Components/WorldbuildingLoreVaultView.swift */,
+				B10000952345678900000095 /* BookParadise/Sources/Models/InteractiveReadingWidgetModel.swift */,
+				B10000962345678900000096 /* BookParadise/Sources/Views/Components/InteractiveReadingWidgetView.swift */,
+				B10000972345678900000097 /* BookParadise/Sources/Models/ReadingLiveActivityModel.swift */,
+				B10000982345678900000098 /* BookParadise/Sources/Views/Components/ReadingLiveActivityView.swift */,
+				B10000992345678900000099 /* BookParadise/Sources/Services/CoreSpotlightIndexer.swift */,
+				B10001002345678900000100 /* BookParadise/Sources/Views/Components/SpotlightSearchDebugView.swift */,
+				B10001012345678900000101 /* BookParadise/Sources/Models/BookAppIntentsModel.swift */,
+				B10001022345678900000102 /* BookParadise/Sources/Views/Components/AppIntentsConfigView.swift */,
+				B10001032345678900000103 /* BookParadise/Sources/Models/MenuBarCompanionModel.swift */,
+				B10001042345678900000104 /* BookParadise/Sources/Views/Components/MenuBarCompanionView.swift */,
 				C10000022345678900000002 /* BookParadise/Sources/Widgets/Info.plist */,
 			);
 			name = Sources;
@@ -657,6 +687,16 @@
 				A10000922345678900000092 /* BookParadise/Sources/Views/Components/QuoteSemanticClusterView.swift in Sources */,
 				A10000932345678900000093 /* BookParadise/Sources/Models/WorldbuildingLoreVaultModel.swift in Sources */,
 				A10000942345678900000094 /* BookParadise/Sources/Views/Components/WorldbuildingLoreVaultView.swift in Sources */,
+				A10000952345678900000095 /* BookParadise/Sources/Models/InteractiveReadingWidgetModel.swift in Sources */,
+				A10000962345678900000096 /* BookParadise/Sources/Views/Components/InteractiveReadingWidgetView.swift in Sources */,
+				A10000972345678900000097 /* BookParadise/Sources/Models/ReadingLiveActivityModel.swift in Sources */,
+				A10000982345678900000098 /* BookParadise/Sources/Views/Components/ReadingLiveActivityView.swift in Sources */,
+				A10000992345678900000099 /* BookParadise/Sources/Services/CoreSpotlightIndexer.swift in Sources */,
+				A10001002345678900000100 /* BookParadise/Sources/Views/Components/SpotlightSearchDebugView.swift in Sources */,
+				A10001012345678900000101 /* BookParadise/Sources/Models/BookAppIntentsModel.swift in Sources */,
+				A10001022345678900000102 /* BookParadise/Sources/Views/Components/AppIntentsConfigView.swift in Sources */,
+				A10001032345678900000103 /* BookParadise/Sources/Models/MenuBarCompanionModel.swift in Sources */,
+				A10001042345678900000104 /* BookParadise/Sources/Views/Components/MenuBarCompanionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -701,7 +741,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 36;
 				DERIVE_MACS_SYNTHESIZED_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
@@ -711,7 +751,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.4.0;
+				MARKETING_VERSION = 3.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -759,7 +799,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CODE_SIGNING_REQUIRED = NO;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 36;
 				DERIVE_MACS_SYNTHESIZED_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
@@ -769,7 +809,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.4.0;
+				MARKETING_VERSION = 3.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -786,7 +826,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CODE_SIGNING_REQUIRED = NO;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 36;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookParadise/Sources/Widgets/Info.plist;
@@ -796,7 +836,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.4.0;
+				MARKETING_VERSION = 3.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -813,7 +853,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 36;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookParadise/Sources/Widgets/Info.plist;
@@ -823,7 +863,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.4.0;
+				MARKETING_VERSION = 3.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
