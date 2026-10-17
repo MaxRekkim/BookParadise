@@ -12,6 +12,7 @@ public class ReadingSessionManager: ObservableObject {
     @Published public var activeBook: Book? = nil
     @Published public var startPage: Int = 0
     @Published public var sessionHistory: [ReadingSessionRecord] = []
+    public var sessions: [ReadingSessionRecord] { sessionHistory }
 
     private var timer: Timer?
 

@@ -220,7 +220,7 @@ public struct DashboardView: View {
             .onAppear {
                 RPGLevelManager.shared.syncWithLibrary(
                     books: viewModel.books,
-                    sessionsCount: sessionManager.sessions.count,
+                    sessionsCount: sessionManager.sessionHistory.count,
                     quotesCount: QuotesManager.shared.quotes.count
                 )
                 StreakManager.shared.checkStreakIntegrity()
