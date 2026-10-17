@@ -262,7 +262,7 @@ public struct LibraryView: View {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 160), spacing: 12)], spacing: 16) {
                 ForEach(viewModel.filteredBooks) { book in
                     NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: 8) {
                             ZStack(alignment: .topTrailing) {
                                 BookCoverView(
                                     coverURL: book.cleanCoverURL,
@@ -290,19 +290,20 @@ public struct LibraryView: View {
                                 }
                             }
                             
-                            Text(book.title)
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(.primary)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.leading)
-                                .frame(height: 32, alignment: .topLeading)
-                            
-                            Text(book.author)
-                                .font(.system(size: 10))
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                                .frame(alignment: .leading)
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(book.title)
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.primary)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.leading)
+                                
+                                Text(book.author)
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                            }
+                            .frame(height: 44, alignment: .topLeading)
                         }
                         .contentShape(Rectangle())
                     }
