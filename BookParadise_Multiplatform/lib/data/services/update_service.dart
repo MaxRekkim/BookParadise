@@ -10,7 +10,7 @@ class UpdateService extends ChangeNotifier {
 
   final String _repoOwner = 'MaxRekkim';
   final String _repoName = 'BookParadise';
-  final String currentVersion = '3.0.0';
+  final String currentVersion = '3.0.1';
 
   bool _isChecking = false;
   bool get isChecking => _isChecking;

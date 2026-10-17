@@ -28,7 +28,7 @@ func assertTrue(_ condition: Bool, _ message: String = "", file: String = #file,
 }
 
 print("=======================================================")
-print("🧪 Running BookParadise v3.0.0 Comprehensive Test Suite")
+print("🧪 Running BookParadise v3.0.1 Comprehensive Test Suite")
 print("=======================================================")
 
 // -----------------------------------------------------------------------------
@@ -303,7 +303,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v3.0.0 is solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v3.0.1 is solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")

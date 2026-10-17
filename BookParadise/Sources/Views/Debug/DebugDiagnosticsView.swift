@@ -5,7 +5,7 @@ import WidgetKit
 import UIKit
 #endif
 
-/// Интерактивная панель разработчика и диагностики для отладки всех подсистем v3.0.0
+/// Интерактивная панель разработчика и диагностики для отладки всех подсистем v3.0.1
 public struct DebugDiagnosticsView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var theme = ThemeManager.shared
@@ -335,7 +335,7 @@ public struct DebugDiagnosticsView: View {
                 LabeledContent("Версия ОС", value: UIDevice.current.systemVersion)
                 LabeledContent("Модель", value: UIDevice.current.model)
                 LabeledContent("Бандл", value: Bundle.main.bundleIdentifier ?? "н/д")
-                LabeledContent("Версия приложения", value: "\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "3.0.0") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "30"))")
+                LabeledContent("Версия приложения", value: "\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "3.0.1") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "31"))")
             }
             .font(.subheadline)
             .padding()
