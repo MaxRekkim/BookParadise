@@ -28,6 +28,7 @@ public struct BookDetailView: View {
     @State private var isShowingLendSheet: Bool = false
     @State private var isShowingNewNoteSheet: Bool = false
     @State private var selectedNoteForEdit: ReadingNote? = nil
+    @State private var isShowingSpotifyCard: Bool = false
 
     public init(viewModel: LibraryViewModel, bookId: Int) {
         self.viewModel = viewModel
@@ -191,6 +192,22 @@ public struct BookDetailView: View {
                             .cornerRadius(10)
                         }
                     }
+
+                    // Кнопка генерации карточки итогов в стиле Spotify
+                    Button(action: { isShowingSpotifyCard = true }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "sparkles.rectangle.stack.fill")
+                                .font(.subheadline)
+                            Text("Поделиться карточкой (Spotify Style)")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                        }
+                        .foregroundColor(theme.primaryAccent)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .background(theme.primaryAccent.opacity(0.12))
+                        .cornerRadius(10)
+                    }
                 }
                 .padding()
                 .background(Color(UIColor.secondarySystemGroupedBackground))
@@ -335,6 +352,10 @@ public struct BookDetailView: View {
                     }
                 }
             }
+        }
+        .sheet(isPresented: $isShowingSpotifyCard) {
+            BookSpotifyShareCardView(book: book)
+                .macSheetFrame()
         }
     }
 

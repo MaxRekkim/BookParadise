@@ -111,52 +111,61 @@ jobs:
           cp "BookParadise-${VERSION}.ipa" "BookParadise.ipa"
           rm -rf Payload
 
-      # --- MACOS (NATIVE RAYCAST/LINEAR COCOA WEBKIT APP, DMG & PKG) ---
-      - name: Build macOS App (Native BookParadise_Mac DMG & PKG)
+      # --- MACOS (NATIVE MAC CATALYST APP, DMG & PKG) ---
+      - name: Build macOS App (Mac Catalyst Release)
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project "${{ steps.find-project.outputs.project_path }}" \
+            -scheme BookParadise \
+            -configuration Release \
+            -destination 'generic/platform=macOS,variant=Mac Catalyst' \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            BUILD_DIR="${{ github.workspace }}/build-mac" 2>&1 | tee xcode-mac.log
+
+      - name: Report macOS Build Failure
+        if: failure()
+        run: |
+          echo "::error::macOS Build Failed:"
+          grep -E "error:|fatal error:" xcode-mac.log | head -n 25 | while IFS= read -r line; do
+            echo "::error::$line"
+          done || true
+
+      - name: Package macOS App into .dmg and .pkg
         run: |
           VERSION="${{ steps.get-version.outputs.version }}"
-          cd BookParadise_Mac
-          npm install
-          npm run build
-          
-          APP_NAME="BookParadise"
-          APP_BUNDLE="BookParadise.app"
-          rm -rf "$APP_BUNDLE"
-          mkdir -p "${APP_BUNDLE}/Contents/MacOS"
-          mkdir -p "${APP_BUNDLE}/Contents/Resources"
-          
-          clang -O2 -fobjc-arc \
-            -arch arm64 -arch x86_64 \
-            -framework Cocoa \
-            -framework WebKit \
-            macos-runner/main.m \
-            -o "${APP_BUNDLE}/Contents/MacOS/${APP_NAME}"
-          chmod +x "${APP_BUNDLE}/Contents/MacOS/${APP_NAME}"
-          
-          cp macos-runner/Info.plist "${APP_BUNDLE}/Contents/Info.plist"
-          cp -r dist "${APP_BUNDLE}/Contents/Resources/"
-          if [ -f macos-runner/AppIcon.icns ]; then
-            cp macos-runner/AppIcon.icns "${APP_BUNDLE}/Contents/Resources/AppIcon.icns"
-            echo "✅ Bundled AppIcon.icns into Contents/Resources/"
+          MAC_APP_PATH=$(find build-mac -name "BookParadise.app" -type d | head -n 1)
+          if [ -z "$MAC_APP_PATH" ]; then
+            echo "Error: BookParadise.app not found in build-mac!"
+            exit 1
           fi
-          
-          # Sign bundle and clear quarantine attributes
-          codesign --force --deep --sign - "${APP_BUNDLE}"
-          xattr -cr "${APP_BUNDLE}"
-          
+          echo "Found macOS Catalyst app at: $MAC_APP_PATH"
+
+          # Ensure AppIcon.icns is in Resources for macOS Finder
+          if [ -f BookParadise/Resources/AppIcon.icns ]; then
+            cp BookParadise/Resources/AppIcon.icns "${MAC_APP_PATH}/Contents/Resources/AppIcon.icns" || true
+            cp BookParadise/Resources/AppIcon.icns "${MAC_APP_PATH}/Contents/Resources/AppIcon" || true
+            echo "✅ Injected AppIcon.icns into Catalyst Contents/Resources/"
+          fi
+
+          # Ad-hoc sign and remove quarantine
+          codesign --force --deep --sign - "$MAC_APP_PATH"
+          xattr -cr "$MAC_APP_PATH"
+
           # PKG
           mkdir -p pkg_root
-          cp -r "${APP_BUNDLE}" pkg_root/
-          pkgbuild --root pkg_root --identifier com.maxim.bookparadise.mac --version "$VERSION" --install-location /Applications "../BookParadise-${VERSION}.pkg"
+          cp -r "$MAC_APP_PATH" pkg_root/
+          pkgbuild --root pkg_root --identifier com.maxim.bookparadise.mac --version "$VERSION" --install-location /Applications "BookParadise-${VERSION}.pkg"
           rm -rf pkg_root
-          
+
           # DMG
           mkdir -p dmg_staging
-          cp -r "${APP_BUNDLE}" dmg_staging/
+          cp -r "$MAC_APP_PATH" dmg_staging/
           ln -s /Applications dmg_staging/Applications
-          hdiutil create -volname "BookParadise" -srcfolder dmg_staging -ov -format UDZO "../BookParadise-${VERSION}.dmg"
+          hdiutil create -volname "BookParadise" -srcfolder dmg_staging -ov -format UDZO "BookParadise-${VERSION}.dmg"
           rm -rf dmg_staging
-          cd ..
 
       # --- ARTIFACTS ---
       - name: Upload iOS IPA Artifact

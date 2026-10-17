@@ -55,13 +55,7 @@ public struct MainTabView: View {
     public init() {}
     
     public var body: some View {
-        Group {
-            #if targetEnvironment(macCatalyst) || os(macOS)
-            macOSLayout
-            #else
-            iOSLayout
-            #endif
-        }
+        iOSLayout
         .confirmationDialog("Быстрое действие", isPresented: $quickActionSheetPresented, titleVisibility: .visible) {
             Button("Добавить новую книгу") {
                 isShowingAddBook = true
@@ -143,9 +137,6 @@ public struct MainTabView: View {
             contentForSelectedTab
         }
         .navigationSplitViewStyle(.balanced)
-        .onMacExitCommand {
-            exit(0)
-        }
     }
     
     private func sidebarItem(tab: AppTab, badge: String? = nil) -> some View {

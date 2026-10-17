@@ -73,6 +73,7 @@
 		A10000422345678900000042 /* NotesJournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000422345678900000042 /* NotesJournalView.swift */; };
 		A10000432345678900000043 /* DesktopHoverEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000432345678900000043 /* DesktopHoverEffect.swift */; };
 		A10000442345678900000044 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000442345678900000044 /* UpdateManager.swift */; };
+		A10000452345678900000045 /* BookSpotifyShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000452345678900000045 /* BookSpotifyShareCardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -144,6 +145,7 @@
 		B10000422345678900000042 /* NotesJournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/NotesJournalView.swift; sourceTree = "<group>"; };
 		B10000432345678900000043 /* DesktopHoverEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/DesktopHoverEffect.swift; sourceTree = "<group>"; };
 		B10000442345678900000044 /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/UpdateManager.swift; sourceTree = "<group>"; };
+		B10000452345678900000045 /* BookSpotifyShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/BookSpotifyShareCardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -235,6 +237,7 @@
 				B10000422345678900000042 /* NotesJournalView.swift */,
 				B10000432345678900000043 /* DesktopHoverEffect.swift */,
 				B10000442345678900000044 /* UpdateManager.swift */,
+				B10000452345678900000045 /* BookSpotifyShareCardView.swift */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -380,6 +383,7 @@
 				A10000422345678900000042 /* NotesJournalView.swift in Sources */,
 				A10000432345678900000043 /* DesktopHoverEffect.swift in Sources */,
 				A10000442345678900000044 /* UpdateManager.swift in Sources */,
+				A10000452345678900000045 /* BookSpotifyShareCardView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -446,7 +450,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -455,7 +459,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.12.0;
+				MARKETING_VERSION = 2.13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -472,7 +476,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -481,7 +485,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.12.0;
+				MARKETING_VERSION = 2.13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;

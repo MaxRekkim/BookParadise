@@ -10,6 +10,10 @@ public struct ReadingWrappedView: View {
 
     public var onDismiss: (() -> Void)? = nil
 
+    @State private var renderedPosterImage: UIImage? = nil
+    @State private var isPosterCopied: Bool = false
+    @State private var isPhotoSaved: Bool = false
+
     public init(viewModel: LibraryViewModel, onDismiss: (() -> Void)? = nil) {
         self.viewModel = viewModel
         self.onDismiss = onDismiss
@@ -116,25 +120,70 @@ public struct ReadingWrappedView: View {
                     // Карточка-постер
                     posterCard
 
-                    // Кнопка «Поделиться»
-                    ShareLink(item: shareSummaryText) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "square.and.arrow.up")
-                            Text("Поделиться книжными итогами")
+                    // Кнопки шеринга карточки-постера
+                    VStack(spacing: 12) {
+                        // 1. Скопировать постер (PNG)
+                        Button(action: copyPosterToClipboard) {
+                            HStack {
+                                Image(systemName: isPosterCopied ? "checkmark.circle.fill" : "doc.on.clipboard.fill")
+                                Text(isPosterCopied ? "Постер скопирован в буфер!" : "Скопировать постер (PNG)")
+                            }
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(isPosterCopied ? Color.green : theme.primaryAccent)
+                            .cornerRadius(14)
+                            .shadow(color: (isPosterCopied ? Color.green : theme.primaryAccent).opacity(0.3), radius: 6, y: 3)
                         }
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
-                        .background(
-                            LinearGradient(
-                                colors: [theme.primaryAccent, theme.secondaryAccent],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .cornerRadius(14)
-                        .shadow(color: theme.primaryAccent.opacity(0.3), radius: 6, y: 3)
+                        .buttonStyle(.plain)
+
+                        // 2. Поделиться изображением постера
+                        if let img = renderedPosterImage {
+                            ShareLink(
+                                item: Image(uiImage: img),
+                                preview: SharePreview("Книжные итоги 2026", image: Image(uiImage: img))
+                            ) {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "square.and.arrow.up")
+                                    Text("Поделиться картинкой постера")
+                                }
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(theme.primaryAccent)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(theme.primaryAccent.opacity(0.12))
+                                .cornerRadius(12)
+                            }
+                        }
+
+                        // 3. Сохранить в Фото
+                        Button(action: savePosterToPhotos) {
+                            HStack {
+                                Image(systemName: isPhotoSaved ? "checkmark" : "photo.on.rectangle.angled")
+                                Text(isPhotoSaved ? "Сохранено в Фото!" : "Сохранить постер в Фото")
+                            }
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(Color(UIColor.label))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(Color(UIColor.secondarySystemGroupedBackground))
+                            .cornerRadius(12)
+                        }
+                        .buttonStyle(.plain)
+
+                        // 4. Резервный текстовый шеринг
+                        ShareLink(item: shareSummaryText) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "text.bubble")
+                                Text("Поделиться как текст")
+                            }
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        }
+                        .padding(.top, 4)
                     }
                     .padding(.horizontal)
 
@@ -157,6 +206,9 @@ public struct ReadingWrappedView: View {
                 handleDismiss()
             }
             .interactiveDismissDisabled(false)
+            .onAppear {
+                generatePosterImage()
+            }
         }
     }
 
@@ -306,5 +358,47 @@ public struct ReadingWrappedView: View {
         .padding(.vertical, 8)
         .background(Color(UIColor.tertiarySystemGroupedBackground))
         .cornerRadius(12)
+    }
+
+    // MARK: - Рендеринг постера в изображение
+    @MainActor
+    private func renderPoster() -> UIImage? {
+        let renderer = ImageRenderer(content: posterCard.frame(width: 360))
+        #if targetEnvironment(macCatalyst)
+        renderer.scale = 2.0
+        #else
+        renderer.scale = UIScreen.main.scale
+        #endif
+        return renderer.uiImage
+    }
+
+    @MainActor
+    private func generatePosterImage() {
+        if let img = renderPoster() {
+            self.renderedPosterImage = img
+        }
+    }
+
+    @MainActor
+    private func copyPosterToClipboard() {
+        let img = renderedPosterImage ?? renderPoster()
+        if let img = img {
+            UIPasteboard.general.image = img
+            isPosterCopied = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                isPosterCopied = false
+            }
+        }
+    }
+
+    @MainActor
+    private func savePosterToPhotos() {
+        let img = renderedPosterImage ?? renderPoster()
+        guard let img = img else { return }
+        UIImageWriteToSavedPhotosAlbum(img, nil, nil, nil)
+        isPhotoSaved = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            isPhotoSaved = false
+        }
     }
 }

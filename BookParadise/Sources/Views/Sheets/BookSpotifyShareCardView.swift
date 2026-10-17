@@ -1,0 +1,438 @@
+import SwiftUI
+import UIKit
+
+/// Темы оформления карточки в стиле Spotify
+public enum SpotifyCardTheme: String, CaseIterable, Identifiable {
+    case spotifyDark = "spotify_dark"
+    case royalWine = "royal_wine"
+    case neonWrapped = "neon_wrapped"
+    case vintageParchment = "vintage_parchment"
+
+    public var id: String { rawValue }
+
+    public var title: String {
+        switch self {
+        case .spotifyDark: return "Spotify Dark"
+        case .royalWine: return "Королевский Бордо"
+        case .neonWrapped: return "Neon Wrapped"
+        case .vintageParchment: return "Пергамент"
+        }
+    }
+
+    public var gradient: LinearGradient {
+        switch self {
+        case .spotifyDark:
+            return LinearGradient(
+                colors: [Color(red: 0.08, green: 0.16, blue: 0.12), Color(red: 0.05, green: 0.05, blue: 0.07)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        case .royalWine:
+            return LinearGradient(
+                colors: [Color(red: 0.32, green: 0.08, blue: 0.14), Color(red: 0.10, green: 0.03, blue: 0.05)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        case .neonWrapped:
+            return LinearGradient(
+                colors: [Color(red: 0.38, green: 0.05, blue: 0.55), Color(red: 0.05, green: 0.15, blue: 0.35)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        case .vintageParchment:
+            return LinearGradient(
+                colors: [Color(red: 0.95, green: 0.92, blue: 0.85), Color(red: 0.88, green: 0.84, blue: 0.74)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
+    }
+
+    public var accentColor: Color {
+        switch self {
+        case .spotifyDark: return Color(red: 0.11, green: 0.84, blue: 0.38) // Spotify Green
+        case .royalWine: return Color(red: 0.85, green: 0.25, blue: 0.35)
+        case .neonWrapped: return Color(red: 0.00, green: 0.92, blue: 0.95) // Cyan
+        case .vintageParchment: return Color(red: 0.55, green: 0.35, blue: 0.15)
+        }
+    }
+
+    public var textColor: Color {
+        switch self {
+        case .vintageParchment: return Color(red: 0.15, green: 0.12, blue: 0.10)
+        default: return .white
+        }
+    }
+
+    public var subtitleColor: Color {
+        switch self {
+        case .vintageParchment: return Color(red: 0.40, green: 0.35, blue: 0.30)
+        default: return Color.white.opacity(0.7)
+        }
+    }
+}
+
+/// Модальное окно генерации и шеринга красивой Spotify-style карточки книги
+public struct BookSpotifyShareCardView: View {
+    public let book: Book
+    public var customQuote: String? = nil
+    public var onDismiss: (() -> Void)? = nil
+
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var theme = ThemeManager.shared
+
+    @State private var selectedTheme: SpotifyCardTheme = .spotifyDark
+    @State private var renderedCardImage: UIImage? = nil
+    @State private var isCopied: Bool = false
+    @State private var isSavedToPhotos: Bool = false
+
+    public init(book: Book, customQuote: String? = nil, onDismiss: (() -> Void)? = nil) {
+        self.book = book
+        self.customQuote = customQuote
+        self.onDismiss = onDismiss
+    }
+
+    public var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 20) {
+                    // 1. Интерактивное превью карточки
+                    spotifyCard
+                        .padding(.horizontal, 20)
+                        .padding(.top, 10)
+
+                    // 2. Селектор тем оформления карточки
+                    themeSelector
+                        .padding(.horizontal, 20)
+
+                    // 3. Блок действий шеринга
+                    actionButtons
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 30)
+                }
+            }
+            .background(Color(UIColor.systemGroupedBackground))
+            .navigationTitle("Карточка итогов")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Готово") {
+                        onDismiss?()
+                        dismiss()
+                    }
+                    .font(.headline)
+                    .foregroundColor(theme.primaryAccent)
+                }
+            }
+            .onAppear {
+                generateCardImage()
+            }
+        }
+    }
+
+    // MARK: - Дизайн Spotify-карточки
+    private var spotifyCard: some View {
+        VStack(spacing: 16) {
+            // Верхняя плашка
+            HStack {
+                HStack(spacing: 6) {
+                    Image(systemName: "sparkles")
+                        .font(.caption2)
+                        .foregroundColor(selectedTheme.accentColor)
+                    Text("КНИЖНЫЙ РАЙ • ИТОГИ")
+                        .font(.system(size: 10, weight: .heavy, design: .monospaced))
+                        .foregroundColor(selectedTheme.subtitleColor)
+                }
+
+                Spacer()
+
+                Text("2026")
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundColor(selectedTheme.subtitleColor)
+            }
+
+            // Обложка с 3D-тенью
+            BookCoverView(
+                coverURL: book.cleanCoverURL,
+                title: book.title,
+                author: book.author,
+                width: 170,
+                height: 250,
+                cornerRadius: 14
+            )
+            .shadow(color: Color.black.opacity(0.45), radius: 18, x: 0, y: 10)
+            .padding(.vertical, 6)
+
+            // Название книги и автор
+            VStack(spacing: 4) {
+                Text(book.title)
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundColor(selectedTheme.textColor)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+
+                Text(book.author)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(selectedTheme.subtitleColor)
+            }
+
+            // Звезды рейтинга
+            if book.rating > 0 {
+                HStack(spacing: 3) {
+                    ForEach(1...5, id: \.self) { star in
+                        Image(systemName: star <= book.rating ? "star.fill" : "star")
+                            .font(.system(size: 13))
+                            .foregroundColor(star <= book.rating ? Color.yellow : Color.gray.opacity(0.4))
+                    }
+                }
+            }
+
+            // Spotify-подобный звуковой/читательский визуалайзер
+            soundwaveVisualizer
+
+            // Статистические плашки (Bento)
+            HStack(spacing: 8) {
+                statPill(
+                    title: "СТРАНИЦЫ",
+                    value: "\(book.pagesRead) / \(book.totalPages)",
+                    icon: "book.pages.fill"
+                )
+
+                statPill(
+                    title: "ПРОГРЕСС",
+                    value: "\(Int(book.progressPercent))%",
+                    icon: "chart.line.uptrend.xyaxis"
+                )
+
+                statPill(
+                    title: "СТАТУС",
+                    value: book.status.title,
+                    icon: book.status == .read ? "checkmark.seal.fill" : "bookmark.fill"
+                )
+            }
+
+            // Цитата (если передана)
+            if let q = customQuote, !q.isEmpty {
+                VStack(spacing: 4) {
+                    Text("«\(q)»")
+                        .font(.system(size: 12, weight: .medium, design: .serif))
+                        .italic()
+                        .foregroundColor(selectedTheme.textColor.opacity(0.9))
+                        .multilineTextAlignment(.center)
+                        .lineLimit(3)
+                        .padding(.horizontal, 10)
+                }
+                .padding(.top, 4)
+            }
+
+            Divider()
+                .background(selectedTheme.subtitleColor.opacity(0.2))
+
+            // Нижний штрихкод / брендинг в стиле Spotify
+            HStack {
+                HStack(spacing: 4) {
+                    ForEach(0..<18, id: \.self) { idx in
+                        RoundedRectangle(cornerRadius: 1)
+                            .fill(selectedTheme.accentColor)
+                            .frame(width: 2.5, height: [12, 18, 8, 22, 14, 10, 20, 16, 24, 14, 18, 12, 22, 8, 16, 20, 10, 14][idx % 18])
+                    }
+                }
+
+                Spacer()
+
+                HStack(spacing: 4) {
+                    Image(systemName: "books.vertical.fill")
+                        .font(.system(size: 10))
+                        .foregroundColor(selectedTheme.accentColor)
+                    Text("BookParadise")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundColor(selectedTheme.textColor)
+                }
+            }
+            .padding(.top, 2)
+        }
+        .padding(20)
+        .frame(maxWidth: 360)
+        .background(
+            RoundedRectangle(cornerRadius: 22)
+                .fill(selectedTheme.gradient)
+                .shadow(color: Color.black.opacity(0.2), radius: 16, x: 0, y: 8)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(selectedTheme.accentColor.opacity(0.3), lineWidth: 1)
+        )
+    }
+
+    private var soundwaveVisualizer: some View {
+        HStack(spacing: 3) {
+            ForEach(0..<24, id: \.self) { i in
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(selectedTheme.accentColor.opacity(i % 3 == 0 ? 0.9 : 0.5))
+                    .frame(width: 3, height: [6, 12, 18, 10, 24, 16, 8, 20, 14, 22, 12, 16, 20, 10, 24, 14, 18, 8, 12, 22, 16, 10, 18, 8][i % 24])
+            }
+        }
+        .frame(height: 26)
+        .padding(.vertical, 2)
+    }
+
+    private func statPill(title: String, value: String, icon: String) -> some View {
+        VStack(spacing: 2) {
+            HStack(spacing: 3) {
+                Image(systemName: icon)
+                    .font(.system(size: 8))
+                    .foregroundColor(selectedTheme.accentColor)
+                Text(title)
+                    .font(.system(size: 8, weight: .bold, design: .monospaced))
+                    .foregroundColor(selectedTheme.subtitleColor)
+            }
+            Text(value)
+                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .foregroundColor(selectedTheme.textColor)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 6)
+        .background(Color.black.opacity(0.18))
+        .cornerRadius(10)
+    }
+
+    // MARK: - Переключатель тем
+    private var themeSelector: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Стиль карточки")
+                .font(.caption)
+                .fontWeight(.bold)
+                .foregroundColor(.secondary)
+                .textCase(.uppercase)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(SpotifyCardTheme.allCases) { item in
+                        Button(action: {
+                            withAnimation(.spring(response: 0.3)) {
+                                selectedTheme = item
+                                generateCardImage()
+                            }
+                        }) {
+                            HStack(spacing: 6) {
+                                Circle()
+                                    .fill(item.accentColor)
+                                    .frame(width: 10, height: 10)
+                                Text(item.title)
+                                    .font(.caption)
+                                    .fontWeight(selectedTheme == item ? .bold : .medium)
+                                    .foregroundColor(selectedTheme == item ? .white : Color(UIColor.label))
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(selectedTheme == item ? theme.primaryAccent : Color(UIColor.secondarySystemGroupedBackground))
+                            .cornerRadius(12)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Кнопки действий
+    private var actionButtons: some View {
+        VStack(spacing: 12) {
+            // 1. Скопировать изображение в буфер обмена
+            Button(action: copyImageToClipboard) {
+                HStack {
+                    Image(systemName: isCopied ? "checkmark.circle.fill" : "doc.on.clipboard.fill")
+                    Text(isCopied ? "Скопировано в буфер обмена!" : "Скопировать карточку (PNG)")
+                }
+                .font(.headline)
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(isCopied ? Color.green : theme.primaryAccent)
+                .cornerRadius(14)
+                .shadow(color: (isCopied ? Color.green : theme.primaryAccent).opacity(0.3), radius: 6, y: 3)
+            }
+            .buttonStyle(.plain)
+
+            // 2. Системный экспорт через ShareLink
+            if let img = renderedCardImage {
+                ShareLink(
+                    item: Image(uiImage: img),
+                    preview: SharePreview("Итоги: «\(book.title)»", image: Image(uiImage: img))
+                ) {
+                    HStack {
+                        Image(systemName: "square.and.arrow.up")
+                        Text("Поделиться в Telegram / Stories...")
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(theme.primaryAccent)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(theme.primaryAccent.opacity(0.12))
+                    .cornerRadius(12)
+                }
+            }
+
+            // 3. Сохранить в галерею Фото
+            Button(action: saveToPhotos) {
+                HStack {
+                    Image(systemName: isSavedToPhotos ? "checkmark" : "photo.on.rectangle.angled")
+                    Text(isSavedToPhotos ? "Сохранено в Фото!" : "Сохранить в Фотопленку")
+                }
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .foregroundColor(Color(UIColor.label))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+                .background(Color(UIColor.secondarySystemGroupedBackground))
+                .cornerRadius(12)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    // MARK: - Рендеринг и сохранение
+    @MainActor
+    private func renderCard() -> UIImage? {
+        let renderer = ImageRenderer(content: spotifyCard.frame(width: 360))
+        #if targetEnvironment(macCatalyst)
+        renderer.scale = 2.0
+        #else
+        renderer.scale = UIScreen.main.scale
+        #endif
+        return renderer.uiImage
+    }
+
+    @MainActor
+    private func generateCardImage() {
+        if let img = renderCard() {
+            self.renderedCardImage = img
+        }
+    }
+
+    @MainActor
+    private func copyImageToClipboard() {
+        let img = renderedCardImage ?? renderCard()
+        if let img = img {
+            UIPasteboard.general.image = img
+            isCopied = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                isCopied = false
+            }
+        }
+    }
+
+    @MainActor
+    private func saveToPhotos() {
+        let img = renderedCardImage ?? renderCard()
+        guard let img = img else { return }
+        UIImageWriteToSavedPhotosAlbum(img, nil, nil, nil)
+        isSavedToPhotos = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            isSavedToPhotos = false
+        }
+    }
+}
