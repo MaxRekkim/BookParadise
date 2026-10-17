@@ -1,7 +1,7 @@
 name: book_paradise
 description: "Книжный Рай — Нативное мультиплатформенное приложение для чтения, библиотеки и учета книг (Android & Windows)"
 publish_to: "none"
-version: 3.6.0+37
+version: 4.0.0+40
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

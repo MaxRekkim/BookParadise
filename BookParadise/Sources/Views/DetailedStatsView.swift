@@ -163,7 +163,25 @@ public struct DetailedStatsView: View {
                         .padding(.horizontal)
                 }
 
-                // Группа 6: Оценки и логи
+                // Группа 6: The Sovereign Sanctuary 4.0 (Wave 7: v4.0.0)
+                Group {
+                    SanctuaryMasterOverviewView()
+                        .padding(.horizontal)
+
+                    SanctuaryAtmosphereConductorView()
+                        .padding(.horizontal)
+
+                    CognitiveFlowStateView()
+                        .padding(.horizontal)
+
+                    SovereignVaultSecurityView()
+                        .padding(.horizontal)
+
+                    LiteraryPantheonView()
+                        .padding(.horizontal)
+                }
+
+                // Группа 7: Оценки и логи
                 Group {
                     ratingsAndMasterpiecesCard
                         .padding(.horizontal)
