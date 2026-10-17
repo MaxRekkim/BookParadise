@@ -74,6 +74,16 @@
 		A10000432345678900000043 /* DesktopHoverEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000432345678900000043 /* DesktopHoverEffect.swift */; };
 		A10000442345678900000044 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000442345678900000044 /* UpdateManager.swift */; };
 		A10000452345678900000045 /* BookSpotifyShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000452345678900000045 /* BookSpotifyShareCardView.swift */; };
+		A10000462345678900000046 /* StreakModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000462345678900000046 /* StreakModel.swift */; };
+		A10000472345678900000047 /* StreakManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000472345678900000047 /* StreakManager.swift */; };
+		A10000482345678900000048 /* RPGLevelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000482345678900000048 /* RPGLevelModel.swift */; };
+		A10000492345678900000049 /* RPGLevelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000492345678900000049 /* RPGLevelManager.swift */; };
+		A10000502345678900000050 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000502345678900000050 /* HapticManager.swift */; };
+		A10000512345678900000051 /* EPUBReaderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000512345678900000051 /* EPUBReaderService.swift */; };
+		A10000522345678900000052 /* EPUBReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000522345678900000052 /* EPUBReaderView.swift */; };
+		A10000532345678900000053 /* RPGDashboardCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000532345678900000053 /* RPGDashboardCard.swift */; };
+		A10000542345678900000054 /* ReadingHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000542345678900000054 /* ReadingHeatmapView.swift */; };
+		A10000552345678900000055 /* SoundscapeMixerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000552345678900000055 /* SoundscapeMixerSheet.swift */; };
 		C10000032345678900000003 /* BookParadiseWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C10000012345678900000001 /* BookParadiseWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C10000042345678900000004 /* WidgetDataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000092345678900000009 /* WidgetDataExporter.swift */; };
 		C10000052345678900000005 /* BookParadiseWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000102345678900000010 /* BookParadiseWidget.swift */; };
@@ -173,6 +183,16 @@
 		B10000432345678900000043 /* DesktopHoverEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/DesktopHoverEffect.swift; sourceTree = "<group>"; };
 		B10000442345678900000044 /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/UpdateManager.swift; sourceTree = "<group>"; };
 		B10000452345678900000045 /* BookSpotifyShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/BookSpotifyShareCardView.swift; sourceTree = "<group>"; };
+		B10000462345678900000046 /* StreakModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/StreakModel.swift; sourceTree = "<group>"; };
+		B10000472345678900000047 /* StreakManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/StreakManager.swift; sourceTree = "<group>"; };
+		B10000482345678900000048 /* RPGLevelModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/RPGLevelModel.swift; sourceTree = "<group>"; };
+		B10000492345678900000049 /* RPGLevelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/RPGLevelManager.swift; sourceTree = "<group>"; };
+		B10000502345678900000050 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/HapticManager.swift; sourceTree = "<group>"; };
+		B10000512345678900000051 /* EPUBReaderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/EPUBReaderService.swift; sourceTree = "<group>"; };
+		B10000522345678900000052 /* EPUBReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/EPUBReaderView.swift; sourceTree = "<group>"; };
+		B10000532345678900000053 /* RPGDashboardCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/RPGDashboardCard.swift; sourceTree = "<group>"; };
+		B10000542345678900000054 /* ReadingHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ReadingHeatmapView.swift; sourceTree = "<group>"; };
+		B10000552345678900000055 /* SoundscapeMixerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift; sourceTree = "<group>"; };
 		C10000012345678900000001 /* BookParadiseWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BookParadiseWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C10000022345678900000002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BookParadise/Sources/Widgets/Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -274,6 +294,16 @@
 				B10000432345678900000043 /* DesktopHoverEffect.swift */,
 				B10000442345678900000044 /* UpdateManager.swift */,
 				B10000452345678900000045 /* BookSpotifyShareCardView.swift */,
+				B10000462345678900000046 /* StreakModel.swift */,
+				B10000472345678900000047 /* StreakManager.swift */,
+				B10000482345678900000048 /* RPGLevelModel.swift */,
+				B10000492345678900000049 /* RPGLevelManager.swift */,
+				B10000502345678900000050 /* HapticManager.swift */,
+				B10000512345678900000051 /* EPUBReaderService.swift */,
+				B10000522345678900000052 /* EPUBReaderView.swift */,
+				B10000532345678900000053 /* RPGDashboardCard.swift */,
+				B10000542345678900000054 /* ReadingHeatmapView.swift */,
+				B10000552345678900000055 /* SoundscapeMixerSheet.swift */,
 				C10000022345678900000002 /* Info.plist */,
 			);
 			name = Sources;
@@ -452,6 +482,16 @@
 				A10000432345678900000043 /* DesktopHoverEffect.swift in Sources */,
 				A10000442345678900000044 /* UpdateManager.swift in Sources */,
 				A10000452345678900000045 /* BookSpotifyShareCardView.swift in Sources */,
+				A10000462345678900000046 /* StreakModel.swift in Sources */,
+				A10000472345678900000047 /* StreakManager.swift in Sources */,
+				A10000482345678900000048 /* RPGLevelModel.swift in Sources */,
+				A10000492345678900000049 /* RPGLevelManager.swift in Sources */,
+				A10000502345678900000050 /* HapticManager.swift in Sources */,
+				A10000512345678900000051 /* EPUBReaderService.swift in Sources */,
+				A10000522345678900000052 /* EPUBReaderView.swift in Sources */,
+				A10000532345678900000053 /* RPGDashboardCard.swift in Sources */,
+				A10000542345678900000054 /* ReadingHeatmapView.swift in Sources */,
+				A10000552345678900000055 /* SoundscapeMixerSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -535,7 +575,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -544,7 +584,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.13.2;
+				MARKETING_VERSION = 3.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -561,7 +601,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -570,7 +610,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.13.2;
+				MARKETING_VERSION = 3.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -586,7 +626,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Sources/Widgets/Info.plist";
@@ -596,7 +636,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.13.2;
+				MARKETING_VERSION = 3.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.maxim.bookparadise.widget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -613,7 +653,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Sources/Widgets/Info.plist";
@@ -623,7 +663,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 2.13.2;
+				MARKETING_VERSION = 3.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.maxim.bookparadise.widget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

@@ -18,6 +18,7 @@ public struct DashboardView: View {
     @State private var isShowingAddBook: Bool = false
     @State private var isShowingNotesJournal: Bool = false
     @State private var isShowingSearchSheet: Bool = false
+    @State private var isShowingSoundscapeMixer: Bool = false
     @ObservedObject private var updateManager = UpdateManager.shared
     
     public init(viewModel: LibraryViewModel) {
@@ -35,7 +36,11 @@ public struct DashboardView: View {
                                 .padding(.horizontal)
                         }
 
-                        // 0. Мотивация дня и прогресс годовой цели
+                        // 0.1. RPG Уровни читателя и Стрики (v3.0)
+                        RPGDashboardCard()
+                            .padding(.horizontal)
+
+                        // 0.2. Мотивация дня и прогресс годовой цели
                         DailyMotivationBanner(viewModel: viewModel)
                             .padding(.horizontal)
 
@@ -122,6 +127,14 @@ public struct DashboardView: View {
                                 .foregroundColor(theme.primaryAccent)
                         }
                         
+                        Button(action: {
+                            isShowingSoundscapeMixer = true
+                            HapticManager.shared.lightTap()
+                        }) {
+                            Image(systemName: SoundscapeManager.shared.isPlaying ? "waveform" : "headphones")
+                                .foregroundColor(SoundscapeManager.shared.isPlaying ? theme.primaryAccent : .secondary)
+                        }
+
                         Button(action: { isShowingSettings = true }) {
                             Image(systemName: "gearshape.fill")
                                 .foregroundColor(theme.primaryAccent)
@@ -199,6 +212,18 @@ public struct DashboardView: View {
                     )
                 }
                 .macSheetFrame(large: true)
+            }
+            .sheet(isPresented: $isShowingSoundscapeMixer) {
+                SoundscapeMixerSheet()
+                    .macSheetFrame()
+            }
+            .onAppear {
+                RPGLevelManager.shared.syncWithLibrary(
+                    books: viewModel.books,
+                    sessionsCount: sessionManager.sessions.count,
+                    quotesCount: QuotesManager.shared.quotes.count
+                )
+                StreakManager.shared.checkStreakIntegrity()
             }
             .refreshable {
                 await viewModel.syncWithCloud()

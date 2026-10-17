@@ -20,6 +20,8 @@ public struct ReadingSessionView: View {
         self.book = book
     }
 
+    @State private var isShowingMixerSheet: Bool = false
+
     private var timeString: String {
         let hours = sessionManager.elapsedSeconds / 3600
         let minutes = (sessionManager.elapsedSeconds % 3600) / 60
@@ -78,6 +80,10 @@ public struct ReadingSessionView: View {
             }
             .sheet(isPresented: $isShowingFinishDialog) {
                 finishSessionSheet
+            }
+            .sheet(isPresented: $isShowingMixerSheet) {
+                SoundscapeMixerSheet()
+                    .macSheetFrame()
             }
         }
     }
@@ -290,6 +296,25 @@ public struct ReadingSessionView: View {
                         }
                         .buttonStyle(.plain)
                     }
+
+                    Button(action: {
+                        isShowingMixerSheet = true
+                        HapticManager.shared.lightTap()
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.caption)
+                            Text("Микшер")
+                                .font(.caption)
+                                .fontWeight(.bold)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(Color(red: 0.52, green: 0.14, blue: 0.20).opacity(0.15))
+                        .foregroundColor(Color(red: 0.52, green: 0.14, blue: 0.20))
+                        .cornerRadius(10)
+                    }
+                    .buttonStyle(.plain)
                 }
                 .padding(.horizontal, 4)
             }
@@ -385,7 +410,12 @@ public struct ReadingSessionView: View {
                         if let endPage = Int(endPageInput) {
                             let rec = sessionManager.completeSession(endPage: endPage)
                             self.completedRecord = rec
+                            let pagesGained = max(0, endPage - book.pagesRead)
+                            let durationMins = max(1, sessionManager.elapsedSeconds / 60)
                             viewModel.updateBookProgress(bookId: book.id, pagesRead: endPage)
+                            StreakManager.shared.recordActivity(pages: pagesGained, minutes: durationMins)
+                            RPGLevelManager.shared.addXP(pagesGained * 2 + 30, reason: "Сессия чтения")
+                            HapticManager.shared.success()
                             if soundscapeManager.currentMode != .none {
                                 AchievementManager.shared.markSoundscapeUsed()
                             }

@@ -84,6 +84,10 @@ public struct DetailedStatsView: View {
                 velocityMetricsGrid
                     .padding(.horizontal)
 
+                // 2.5. Тепловая карта активности чтения (Heatmap 24x7)
+                ReadingHeatmapView()
+                    .padding(.horizontal)
+
                 // 3. Формат чтения: Бумажные vs Электронные книги
                 formatComparisonCard
                     .padding(.horizontal)

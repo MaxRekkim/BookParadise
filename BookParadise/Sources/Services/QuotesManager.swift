@@ -27,6 +27,18 @@ public class QuotesManager: ObservableObject {
         quotes.insert(newQuote, at: 0)
         saveQuotes()
         AchievementManager.shared.recalculateAll()
+        RPGLevelManager.shared.addXP(15, reason: "Новая цитата")
+        StreakManager.shared.recordActivity(pages: 1, minutes: 2)
+    }
+
+    public func addQuote(text: String, bookTitle: String, author: String, page: Int?, tags: [String]? = nil) {
+        let noteString = [author, "«\(bookTitle)»"].joined(separator: " — ")
+        let newQuote = BookQuote(bookId: 1, text: text, pageNumber: page, dateAdded: Date(), note: noteString)
+        quotes.insert(newQuote, at: 0)
+        saveQuotes()
+        AchievementManager.shared.recalculateAll()
+        RPGLevelManager.shared.addXP(15, reason: "Новая цитата")
+        StreakManager.shared.recordActivity(pages: 1, minutes: 2)
     }
 
     public func deleteQuote(id: UUID) {

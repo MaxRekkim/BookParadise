@@ -9,6 +9,7 @@ public enum SoundscapeType: String, CaseIterable, Identifiable {
     case fireplace = "fireplace"
     case coffeehouse = "coffeehouse"
     case forest = "forest"
+    case customMix = "customMix"
 
     public var id: String { rawValue }
 
@@ -19,6 +20,7 @@ public enum SoundscapeType: String, CaseIterable, Identifiable {
         case .fireplace: return "Камин в библиотеке"
         case .coffeehouse: return "Уютная кофейня"
         case .forest: return "Лесной бриз"
+        case .customMix: return "Свой микс (Студия)"
         }
     }
 
@@ -29,6 +31,7 @@ public enum SoundscapeType: String, CaseIterable, Identifiable {
         case .fireplace: return "flame.fill"
         case .coffeehouse: return "cup.and.saucer.fill"
         case .forest: return "leaf.fill"
+        case .customMix: return "slider.horizontal.3"
         }
     }
 
@@ -39,8 +42,19 @@ public enum SoundscapeType: String, CaseIterable, Identifiable {
         case .fireplace: return .orange
         case .coffeehouse: return Color(red: 0.6, green: 0.4, blue: 0.2)
         case .forest: return .green
+        case .customMix: return Color(red: 0.52, green: 0.14, blue: 0.20)
         }
     }
+}
+
+public struct SoundscapePreset: Identifiable {
+    public let id = UUID()
+    public let name: String
+    public let icon: String
+    public let rain: Float
+    public let fire: Float
+    public let coffee: Float
+    public let forest: Float
 }
 
 @MainActor
@@ -49,11 +63,25 @@ public class SoundscapeManager: ObservableObject {
 
     @Published public var currentMode: SoundscapeType = .none
     @Published public var isPlaying: Bool = false
-    @Published public var volume: Float = 0.5 {
+
+    // Каналы микшера (0.0 ... 1.0)
+    @Published public var rainVolume: Float = 0.6
+    @Published public var fireplaceVolume: Float = 0.0
+    @Published public var coffeehouseVolume: Float = 0.0
+    @Published public var forestVolume: Float = 0.0
+
+    @Published public var volume: Float = 0.6 {
         didSet {
             engine?.mainMixerNode.outputVolume = volume
         }
     }
+
+    public let presets: [SoundscapePreset] = [
+        SoundscapePreset(name: "Только дождь", icon: "cloud.heavyrain.fill", rain: 0.8, fire: 0.0, coffee: 0.0, forest: 0.0),
+        SoundscapePreset(name: "У камина в грозу", icon: "flame.fill", rain: 0.4, fire: 0.75, coffee: 0.0, forest: 0.0),
+        SoundscapePreset(name: "Кофейня в ливень", icon: "cup.and.saucer.fill", rain: 0.5, fire: 0.0, coffee: 0.7, forest: 0.0),
+        SoundscapePreset(name: "Лесной домик", icon: "leaf.fill", rain: 0.2, fire: 0.5, coffee: 0.0, forest: 0.75)
+    ]
 
     private var engine: AVAudioEngine?
     private var sourceNode: AVAudioSourceNode?
@@ -61,10 +89,6 @@ public class SoundscapeManager: ObservableObject {
     private init() {}
 
     public func setMode(_ mode: SoundscapeType) {
-        if mode == currentMode && isPlaying {
-            return
-        }
-
         if mode == .none {
             stop()
             currentMode = .none
@@ -72,16 +96,49 @@ public class SoundscapeManager: ObservableObject {
         }
 
         currentMode = mode
-        startEngine(for: mode)
+        switch mode {
+        case .rain:
+            applyVolumes(rain: 0.8, fire: 0, coffee: 0, forest: 0)
+        case .fireplace:
+            applyVolumes(rain: 0, fire: 0.8, coffee: 0, forest: 0)
+        case .coffeehouse:
+            applyVolumes(rain: 0, fire: 0, coffee: 0.8, forest: 0)
+        case .forest:
+            applyVolumes(rain: 0, fire: 0, coffee: 0, forest: 0.8)
+        case .customMix, .none:
+            break
+        }
+
+        if !isPlaying {
+            startEngine()
+        }
+    }
+
+    public func applyPreset(_ preset: SoundscapePreset) {
+        currentMode = .customMix
+        applyVolumes(rain: preset.rain, fire: preset.fire, coffee: preset.coffee, forest: preset.forest)
+        if !isPlaying {
+            startEngine()
+        }
+        HapticManager.shared.lightTap()
+    }
+
+    public func applyVolumes(rain: Float, fire: Float, coffee: Float, forest: Float) {
+        self.rainVolume = rain
+        self.fireplaceVolume = fire
+        self.coffeehouseVolume = coffee
+        self.forestVolume = forest
     }
 
     public func togglePlayback() {
         if isPlaying {
             stop()
-        } else if currentMode != .none {
-            startEngine(for: currentMode)
         } else {
-            setMode(.rain)
+            if currentMode == .none {
+                setMode(.rain)
+            } else {
+                startEngine()
+            }
         }
     }
 
@@ -94,7 +151,7 @@ public class SoundscapeManager: ObservableObject {
         isPlaying = false
     }
 
-    private func startEngine(for mode: SoundscapeType) {
+    private func startEngine() {
         stop()
 
         do {
@@ -107,61 +164,69 @@ public class SoundscapeManager: ObservableObject {
             let newEngine = AVAudioEngine()
             let format = newEngine.outputNode.outputFormat(forBus: 0)
 
-            // Процедурный генератор натурального звука (0 байт внешних ассетов)
-            var lastSample: Float = 0.0
+            // Процедурный мульти-канальный генератор
+            var rainSampleState: Float = 0.0
+            var fireSampleState: Float = 0.0
+            var coffeeSampleState: Float = 0.0
+            var forestSampleState: Float = 0.0
             var crackleCounter: Int = 0
             var lfoPhase: Float = 0.0
 
-            let node = AVAudioSourceNode { _, _, frameCount, audioBufferList -> OSStatus in
+            let node = AVAudioSourceNode { [weak self] _, _, frameCount, audioBufferList -> OSStatus in
+                guard let self = self else { return noErr }
                 let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
                 let sampleRate = Float(format.sampleRate > 0 ? format.sampleRate : 44100.0)
+
+                let currentRain = self.rainVolume
+                let currentFire = self.fireplaceVolume
+                let currentCoffee = self.coffeehouseVolume
+                let currentForest = self.forestVolume
 
                 for frame in 0..<Int(frameCount) {
                     lfoPhase += 1.0 / sampleRate
                     if lfoPhase > 1000.0 { lfoPhase = 0.0 }
 
-                    var sample: Float = 0.0
+                    var mixedSample: Float = 0.0
 
-                    switch mode {
-                    case .none:
-                        sample = 0.0
-
-                    case .rain:
-                        // Фильтрованный коричневый шум + модуляция волн дождя
+                    // 1. Дождь
+                    if currentRain > 0.01 {
                         let white = Float.random(in: -1.0...1.0)
-                        lastSample = (lastSample + (0.02 * white)) / 1.02
+                        rainSampleState = (rainSampleState + (0.02 * white)) / 1.02
                         let wave = 0.8 + 0.2 * sin(lfoPhase * 0.4)
-                        sample = lastSample * 3.5 * wave
-
-                    case .fireplace:
-                        // Теплый низкочастотный гул + случайные потрескивания искр
-                        let white = Float.random(in: -1.0...1.0)
-                        lastSample = (lastSample + (0.015 * white)) / 1.015
-                        var crackle: Float = 0.0
-                        crackleCounter += 1
-                        if crackleCounter > 8000 && Float.random(in: 0...1) < 0.003 {
-                            crackle = Float.random(in: 0.3...0.8) * (Float.random(in: 0...1) > 0.5 ? 1 : -1)
-                            crackleCounter = 0
-                        }
-                        sample = (lastSample * 2.5) + crackle
-
-                    case .coffeehouse:
-                        // Мягкий рассеянный шум помещения с мягкими обертонами
-                        let white = Float.random(in: -1.0...1.0)
-                        lastSample = (lastSample + (0.01 * white)) / 1.01
-                        let breath = 0.85 + 0.15 * sin(lfoPhase * 0.25)
-                        sample = lastSample * 2.8 * breath
-
-                    case .forest:
-                        // Шелест листвы и бриз (плавный модулированный розовый шум)
-                        let white = Float.random(in: -1.0...1.0)
-                        lastSample = (lastSample + (0.03 * white)) / 1.03
-                        let wind = 0.7 + 0.3 * sin(lfoPhase * 0.18)
-                        sample = lastSample * 3.0 * wind
+                        mixedSample += (rainSampleState * 3.2 * wave) * currentRain
                     }
 
-                    // Ограничиваем пики
-                    let clamped = max(-1.0, min(1.0, sample))
+                    // 2. Камин
+                    if currentFire > 0.01 {
+                        let white = Float.random(in: -1.0...1.0)
+                        fireSampleState = (fireSampleState + (0.015 * white)) / 1.015
+                        var crackle: Float = 0.0
+                        crackleCounter += 1
+                        if crackleCounter > 8000 && Float.random(in: 0...1) < 0.0035 {
+                            crackle = Float.random(in: 0.3...0.85) * (Float.random(in: 0...1) > 0.5 ? 1 : -1)
+                            crackleCounter = 0
+                        }
+                        mixedSample += ((fireSampleState * 2.4) + crackle) * currentFire
+                    }
+
+                    // 3. Кофейня
+                    if currentCoffee > 0.01 {
+                        let white = Float.random(in: -1.0...1.0)
+                        coffeeSampleState = (coffeeSampleState + (0.01 * white)) / 1.01
+                        let breath = 0.85 + 0.15 * sin(lfoPhase * 0.25)
+                        mixedSample += (coffeeSampleState * 2.6 * breath) * currentCoffee
+                    }
+
+                    // 4. Лес
+                    if currentForest > 0.01 {
+                        let white = Float.random(in: -1.0...1.0)
+                        forestSampleState = (forestSampleState + (0.03 * white)) / 1.03
+                        let wind = 0.7 + 0.3 * sin(lfoPhase * 0.18)
+                        mixedSample += (forestSampleState * 2.8 * wind) * currentForest
+                    }
+
+                    // Лимитер
+                    let clamped = max(-1.0, min(1.0, mixedSample))
 
                     for buffer in ablPointer {
                         let buf: UnsafeMutableBufferPointer<Float> = UnsafeMutableBufferPointer(buffer)

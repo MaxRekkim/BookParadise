@@ -29,6 +29,7 @@ public struct BookDetailView: View {
     @State private var isShowingNewNoteSheet: Bool = false
     @State private var selectedNoteForEdit: ReadingNote? = nil
     @State private var isShowingSpotifyCard: Bool = false
+    @State private var isShowingInAppReader: Bool = false
 
     public init(viewModel: LibraryViewModel, bookId: Int) {
         self.viewModel = viewModel
@@ -357,6 +358,9 @@ public struct BookDetailView: View {
             BookSpotifyShareCardView(book: book)
                 .macSheetFrame()
         }
+        .fullScreenCover(isPresented: $isShowingInAppReader) {
+            EPUBReaderView(book: book, viewModel: viewModel)
+        }
     }
 
     // MARK: - Секция Заметок Markdown
@@ -512,6 +516,24 @@ public struct BookDetailView: View {
                     .background(theme.primaryAccent.opacity(0.06))
                     .cornerRadius(10)
 
+                    // Главная кнопка встроенного чтения
+                    Button(action: {
+                        isShowingInAppReader = true
+                        HapticManager.shared.lightTap()
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "book.pages.fill")
+                            Text("Читать в приложении (Reader 3.0)")
+                        }
+                        .font(.subheadline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 11)
+                        .background(theme.primaryAccent)
+                        .cornerRadius(10)
+                    }
+
                     HStack(spacing: 8) {
                         Button(action: {
                             if let url = eBookStorage.fileURL(for: book.id) {
@@ -519,16 +541,16 @@ public struct BookDetailView: View {
                             }
                         }) {
                             HStack(spacing: 4) {
-                                Image(systemName: "book.fill")
-                                Text("Читать")
+                                Image(systemName: "arrow.up.forward.app")
+                                Text("Системный")
                             }
-                            .font(.subheadline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundColor(theme.primaryAccent)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
-                            .background(theme.primaryAccent)
-                            .cornerRadius(10)
+                            .padding(.vertical, 8)
+                            .background(theme.primaryAccent.opacity(0.1))
+                            .cornerRadius(8)
                         }
 
                         if let fileURL = eBookStorage.fileURL(for: book.id) {
@@ -541,13 +563,13 @@ public struct BookDetailView: View {
                                     Image(systemName: "paperplane.fill")
                                     Text("На Kindle")
                                 }
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
+                                .font(.caption)
+                                .fontWeight(.medium)
                                 .foregroundColor(theme.primaryAccent)
                                 .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
-                                .background(theme.primaryAccent.opacity(0.12))
-                                .cornerRadius(10)
+                                .padding(.vertical, 8)
+                                .background(theme.primaryAccent.opacity(0.1))
+                                .cornerRadius(8)
                             }
                         }
 
@@ -555,11 +577,11 @@ public struct BookDetailView: View {
                             eBookStorage.removeBookFile(bookId: book.id)
                         }) {
                             Image(systemName: "trash")
-                                .font(.subheadline)
+                                .font(.caption)
                                 .foregroundColor(.red)
-                                .padding(10)
+                                .padding(8)
                                 .background(Color.red.opacity(0.1))
-                                .cornerRadius(10)
+                                .cornerRadius(8)
                         }
                     }
                 }

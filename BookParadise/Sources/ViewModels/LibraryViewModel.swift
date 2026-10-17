@@ -185,8 +185,19 @@ public class LibraryViewModel: ObservableObject {
         }
         
         // Optimistic UI: мгновенно обновляем модель
+        let previousStatus = books[index].status
         books[index] = updated
         
+        let pageDiff = max(0, clampedPages - oldPages)
+        if pageDiff > 0 {
+            StreakManager.shared.recordActivity(pages: pageDiff, minutes: max(1, pageDiff / 2))
+            RPGLevelManager.shared.addXP(pageDiff * 2, reason: "Прочитанные страницы")
+        }
+        if updated.status == .read && previousStatus != .read {
+            RPGLevelManager.shared.addXP(150, reason: "Книга полностью прочитана!")
+            HapticManager.shared.levelUp()
+        }
+
         // Пересчитываем процент серии, если книга входит в цикл
         if updated.hasCycle {
             recalculateCyclePercent(for: updated.cycleName)
