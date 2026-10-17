@@ -29,6 +29,7 @@ public struct BookDetailView: View {
     @State private var isShowingShareCard: Bool = false
     @State private var isShowingInAppReader: Bool = false
     @State private var isShowingBookBeam: Bool = false
+    @State private var isShowing3DInspector: Bool = false
 
     public init(viewModel: LibraryViewModel, bookId: Int) {
         self.viewModel = viewModel
@@ -56,12 +57,16 @@ public struct BookDetailView: View {
             VStack(spacing: 20) {
                 // Верхний блок с крупной обложкой
                 HStack(alignment: .top, spacing: 18) {
-                    BookCoverView(
+                    Spatial3DBookCoverView(
                         coverURL: book.cleanCoverURL,
                         title: book.title,
                         author: book.author,
                         genre: book.genre,
-                        cornerRadius: 12
+                        cornerRadius: 12,
+                        enableTapToInspect: true,
+                        onInspect: {
+                            isShowing3DInspector = true
+                        }
                     )
                     .frame(width: 125, height: 185)
 
@@ -370,6 +375,10 @@ public struct BookDetailView: View {
         .sheet(isPresented: $isShowingShareCard) {
             BookShareCardView(book: book)
                 .macSheetFrame()
+        }
+        .sheet(isPresented: $isShowing3DInspector) {
+            Spatial3DFolioInspectorSheet(book: book)
+                .macSheetFrame(large: true)
         }
         .fullScreenCover(isPresented: $isShowingInAppReader) {
             EPUBReaderView(book: book, viewModel: viewModel)

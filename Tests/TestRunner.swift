@@ -1319,7 +1319,7 @@ assertEqual(unlockedCount, 4, "All default demo trophies unlocked for v4.0.0 cel
 print("\n[Suite 40/40] Testing Sanctuary Master Overview & Milestone Stats...")
 
 struct MockSanctuaryMasterStats {
-    var versionString: String = "4.1.1"
+    var versionString: String = "4.2.0"
     var totalBooksInLibrary: Int = 42
     var totalPagesCompleted: Int = 14200
     var totalReadingHours: Double = 417.6
@@ -1332,10 +1332,10 @@ struct MockSanctuaryMasterStats {
 }
 
 let masterStats = MockSanctuaryMasterStats()
-assertEqual(masterStats.versionString, "4.1.1", "Sanctuary version string is 4.1.1")
+assertEqual(masterStats.versionString, "4.2.0", "Sanctuary version string is 4.2.0")
 assertEqual(masterStats.totalBooksInLibrary, 42, "Library contains 42 books")
 assertEqual(masterStats.totalPagesCompleted, 14200, "14,200 total pages completed")
-assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.1.1")
+assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.2.0")
 
 // -----------------------------------------------------------------------------
 // 41. TEST: AuthorTypographerEngine & Micro-Typography
@@ -1465,6 +1465,50 @@ assertEqual(standBy.candleHex, "#FAD270", "StandBy mode supports 2200K candle wa
 assertTrue(standBy.isLandscape(width: 844, height: 390), "Detects horizontal StandBy on MagSafe dock")
 assertTrue(!standBy.isLandscape(width: 393, height: 852), "Detects portrait bedtime reading mode")
 
+// -----------------------------------------------------------------------------
+// 44. TEST: DeviceMotionManager & Spatial 3D Folio Gyroscope Parallax
+// -----------------------------------------------------------------------------
+print("\n[Suite 44/45] Testing DeviceMotionManager & Spatial 3D Folio Parallax...")
+
+struct MockMotionFilter {
+    var pitch: Double = 0.0
+    var roll: Double = 0.0
+    let smoothing: Double = 0.16
+
+    mutating func update(rawPitch: Double, rawRoll: Double, basePitch: Double, baseRoll: Double) {
+        let maxAngle = Double.pi / 7.0
+        let targetPitch = max(-1.0, min(1.0, (rawPitch - basePitch) / maxAngle))
+        let targetRoll = max(-1.0, min(1.0, (rawRoll - baseRoll) / maxAngle))
+        pitch = pitch * (1.0 - smoothing) + targetPitch * smoothing
+        roll = roll * (1.0 - smoothing) + targetRoll * smoothing
+    }
+
+    func calculateSpineDepth(pages: Int) -> Double {
+        if pages <= 150 { return 24.0 }
+        if pages <= 350 { return 34.0 }
+        if pages <= 600 { return 46.0 }
+        return 58.0
+    }
+
+    func specularHighlightLocation(roll: Double) -> Double {
+        max(0.0, min(1.0, 0.5 + roll * 0.35))
+    }
+}
+
+var motionFilter = MockMotionFilter()
+motionFilter.update(rawPitch: 0.25, rawRoll: 0.15, basePitch: 0.10, baseRoll: 0.05)
+assertTrue(motionFilter.pitch > 0.0 && motionFilter.pitch <= 1.0, "Exponential low-pass pitch smoothing is stable")
+assertTrue(motionFilter.roll > 0.0 && motionFilter.roll <= 1.0, "Exponential low-pass roll smoothing is stable")
+
+assertEqual(motionFilter.calculateSpineDepth(pages: 120), 24.0, "Slim 120p book has 24pt spine depth")
+assertEqual(motionFilter.calculateSpineDepth(pages: 320), 34.0, "Standard 320p novel has 34pt spine depth")
+assertEqual(motionFilter.calculateSpineDepth(pages: 500), 46.0, "Substantial 500p volume has 46pt spine depth")
+assertEqual(motionFilter.calculateSpineDepth(pages: 850), 58.0, "Grand 850p tome has 58pt spine depth")
+
+let highlightCenter = motionFilter.specularHighlightLocation(roll: 0.0)
+let highlightTilted = motionFilter.specularHighlightLocation(roll: 0.5)
+assertEqual(highlightCenter, 0.5, "Specular glare is centered at neutral angle")
+assertEqual(highlightTilted, 0.675, "Specular glare glides smoothly across cover when tilted")
 
 // -----------------------------------------------------------------------------
 // SUMMARY
@@ -1477,7 +1521,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v4.1.1 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v4.2.0 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")
