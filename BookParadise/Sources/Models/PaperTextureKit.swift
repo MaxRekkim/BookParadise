@@ -1,4 +1,5 @@
 import SwiftUI
+import Darwin
 
 /// Палитра и текстурный шейдер бумаги (PaperTextureKit)
 /// Воссоздает тактильные визуальные свойства различных видов бумаги и режим истинного OLED.
@@ -109,7 +110,7 @@ public struct PaperNoiseOverlay: View {
             while y < size.height {
                 var x: CGFloat = 0
                 while x < size.width {
-                    let hash = sin(x * 12.9898 + y * 78.233) * 43758.5453
+                    let hash = Darwin.sin(Double(x) * 12.9898 + Double(y) * 78.233) * 43758.5453
                     let isFiber = hash.truncatingRemainder(dividingBy: 1.0) > 0.88
                     if isFiber {
                         let rect = CGRect(x: x, y: y, width: 1.5, height: 1.5)

@@ -1,4 +1,5 @@
 import SwiftUI
+import Darwin
 
 /// Пульт бинаурального фокуса и умного таймера затухания (Soundscape Binaural Sheet)
 /// Генерирует звуковые частоты для синхронизации мозговых ритмов во время чтения.
@@ -146,7 +147,7 @@ public struct BrainwaveOscilloscopeView: View {
                     let x = CGFloat(i) * dx
                     let relativeX = Double(i) / Double(points)
                     let currentPhase = isRunning ? timeline.date.timeIntervalSinceReferenceDate * (frequency * 0.25) : 0
-                    let y = midY + CGFloat(sin(relativeX * .pi * 4 + currentPhase)) * amplitude
+                    let y = midY + CGFloat(Darwin.sin(Double(relativeX) * Double.pi * 4.0 + currentPhase)) * amplitude
 
                     if i == 0 {
                         path.move(to: CGPoint(x: x, y: y))
