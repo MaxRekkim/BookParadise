@@ -380,8 +380,8 @@ public struct BookDetailView: View {
     }
 
     private func makeBookBeamPayload(for book: Book) -> BookBeamPayload {
-        let firstQuote = quotesManager.quotesForBook(bookId: book.id).first?.text
-        let stars = book.rating?.starCount ?? 5
+        let firstQuote = quotesManager.quotes(for: book.id).first?.text
+        let stars = book.rating?.numericScore ?? 5
         return BookBeamPayload(
             bookTitle: book.title,
             author: book.author,
