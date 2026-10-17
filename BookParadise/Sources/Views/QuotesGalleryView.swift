@@ -53,6 +53,14 @@ public struct QuotesGalleryView: View {
         } else {
             dismiss()
         }
+        #if canImport(UIKit)
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }?
+            .rootViewController?
+            .dismiss(animated: true, completion: nil)
+        #endif
     }
     
     public var body: some View {
@@ -77,9 +85,14 @@ public struct QuotesGalleryView: View {
                                 .fontWeight(.bold)
                                 .foregroundColor(theme.primaryAccent)
                         }
+                        .keyboardShortcut(.cancelAction)
                     }
                 }
             }
+            .onExitCommand {
+                handleDismiss()
+            }
+            .interactiveDismissDisabled(false)
             .sheet(item: $selectedQuoteForShare) { wrapper in
                 QuoteCardShareView(quote: wrapper.quote, book: wrapper.book, onDismiss: {
                     selectedQuoteForShare = nil

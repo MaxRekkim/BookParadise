@@ -265,9 +265,6 @@ public struct BookDetailView: View {
                 // Заметки и конспекты Markdown
                 notesSection(for: book)
 
-                // Трекер одолженных книг (Lending & Borrowing)
-                lendingSection(for: book)
-
                 // Экспорт в Markdown для Obsidian / Notion
                 exportSection(for: book)
 

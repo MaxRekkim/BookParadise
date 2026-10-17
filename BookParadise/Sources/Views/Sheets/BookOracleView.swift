@@ -14,11 +14,30 @@ public struct BookOracleView: View {
     @State private var recommendation: BookRecommendation? = nil
     @State private var isRolling: Bool = false
 
+    public var onDismiss: (() -> Void)? = nil
     public var onStartReading: ((Book) -> Void)? = nil
 
-    public init(viewModel: LibraryViewModel, onStartReading: ((Book) -> Void)? = nil) {
+    public init(viewModel: LibraryViewModel, onDismiss: (() -> Void)? = nil, onStartReading: ((Book) -> Void)? = nil) {
         self.viewModel = viewModel
+        self.onDismiss = onDismiss
         self.onStartReading = onStartReading
+    }
+
+    private func handleDismiss() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        if let onDismiss = onDismiss {
+            onDismiss()
+        } else {
+            dismiss()
+        }
+        #if canImport(UIKit)
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }?
+            .rootViewController?
+            .dismiss(animated: true, completion: nil)
+        #endif
     }
 
     public var body: some View {
@@ -53,10 +72,16 @@ public struct BookOracleView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Готово") { dismiss() }
-                        .fontWeight(.semibold)
+                    Button("Готово") { handleDismiss() }
+                        .fontWeight(.bold)
+                        .foregroundColor(theme.primaryAccent)
+                        .keyboardShortcut(.cancelAction)
                 }
             }
+            .onExitCommand {
+                handleDismiss()
+            }
+            .interactiveDismissDisabled(false)
             .onAppear {
                 generateRecommendation()
             }

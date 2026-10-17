@@ -5,7 +5,6 @@ import Charts
 public struct DashboardView: View {
     @ObservedObject public var viewModel: LibraryViewModel
     @ObservedObject private var theme = ThemeManager.shared
-    @ObservedObject private var lendingManager = LendingManager.shared
     @ObservedObject private var achievementManager = AchievementManager.shared
     @ObservedObject private var sessionManager = ReadingSessionManager.shared
     @State private var bookToUpdateProgress: Book? = nil
@@ -13,7 +12,6 @@ public struct DashboardView: View {
     @State private var isShowingSettings: Bool = false
     @State private var isShowingDetailedStats: Bool = false
     @State private var isShowingQuotes: Bool = false
-    @State private var isShowingLending: Bool = false
     @State private var isShowingAchievements: Bool = false
     @State private var isShowingOracle: Bool = false
     @State private var isShowingWrapped: Bool = false
@@ -34,18 +32,12 @@ public struct DashboardView: View {
                         DailyMotivationBanner(viewModel: viewModel)
                             .padding(.horizontal)
 
-                        // 0.5. Книги у друзей (если есть активные записи)
-                        if !lendingManager.activeRecords.isEmpty {
-                            lendingBanner
-                                .padding(.horizontal)
-                        }
-
                         // 0.7. Капсула Времени (Литературные воспоминания)
                         TimeCapsuleCard(viewModel: viewModel) { book in
                             bookForReadingSession = book
                         }
                         .padding(.horizontal)
-
+                        
                         // 0.8. Книжный Оракул-Сомелье (Карточка подсказки)
                         oracleQuickBanner
                             .padding(.horizontal)
@@ -85,32 +77,10 @@ public struct DashboardView: View {
                         analyticsChartsSection
                             .padding(.horizontal)
                         
-                        #if targetEnvironment(macCatalyst) || os(macOS)
-                        Spacer(minLength: 85)
-                        #else
-                        Spacer(minLength: 95)
-                        #endif
+                        Spacer(minLength: 90)
                     }
                     .padding(.top, 8)
                 }
-                
-                #if targetEnvironment(macCatalyst) || os(macOS)
-                // Плавающий док быстрых действий только для macOS/десктопа (где нет нижнего таббара)
-                FloatingQuickDockView(
-                    viewModel: viewModel,
-                    onSearchTapped: { isShowingSearchSheet = true },
-                    onAddBookTapped: { isShowingAddBook = true },
-                    onTimerTapped: {
-                        if let first = viewModel.readingNowBooks.first ?? viewModel.books.first {
-                            bookForReadingSession = first
-                        }
-                    },
-                    onQuotesTapped: { isShowingQuotes = true },
-                    onOracleTapped: { isShowingOracle = true },
-                    onNotesTapped: { isShowingNotesJournal = true }
-                )
-                .padding(.bottom, 16)
-                #endif
             }
             .background(Color(UIColor.systemGroupedBackground))
             .navigationTitle("Книжный Рай")
@@ -153,40 +123,64 @@ public struct DashboardView: View {
                 }
             }
             .sheet(isPresented: $isShowingNotesJournal) {
-                NotesJournalView(viewModel: viewModel)
+                NotesJournalView(viewModel: viewModel, onDismiss: {
+                    isShowingNotesJournal = false
+                })
+                .macSheetFrame(large: true)
             }
             .sheet(isPresented: $isShowingOracle) {
-                BookOracleView(viewModel: viewModel) { book in
+                BookOracleView(viewModel: viewModel, onDismiss: {
+                    isShowingOracle = false
+                }) { book in
                     bookForReadingSession = book
                 }
+                .macSheetFrame()
             }
             .sheet(isPresented: $isShowingWrapped) {
-                ReadingWrappedView(viewModel: viewModel)
+                ReadingWrappedView(viewModel: viewModel, onDismiss: {
+                    isShowingWrapped = false
+                })
+                .macSheetFrame(large: true)
             }
             .sheet(isPresented: $isShowingAchievements) {
-                AchievementsView()
+                AchievementsView(onDismiss: {
+                    isShowingAchievements = false
+                })
+                .macSheetFrame()
             }
             .sheet(isPresented: $isShowingQuotes) {
                 QuotesGalleryView(viewModel: viewModel, onDismiss: {
                     isShowingQuotes = false
                 })
+                .macSheetFrame(large: true)
             }
             .sheet(item: $bookToUpdateProgress) { book in
-                ProgressUpdateSheet(viewModel: viewModel, book: book)
+                ProgressUpdateSheet(viewModel: viewModel, book: book, onDismiss: {
+                    bookToUpdateProgress = nil
+                })
+                .macSheetFrame()
             }
             .sheet(item: $bookForReadingSession) { book in
                 ReadingSessionView(viewModel: viewModel, book: book)
+                    .macSheetFrame(large: true)
             }
             .sheet(isPresented: $isShowingAddBook) {
                 AddBookSheet(viewModel: viewModel)
+                    .macSheetFrame(large: true)
             }
             .sheet(isPresented: $isShowingSettings) {
-                SettingsView(viewModel: viewModel)
+                SettingsView(viewModel: viewModel, onDismiss: {
+                    isShowingSettings = false
+                })
+                .macSheetFrame(large: true)
             }
             .sheet(isPresented: $isShowingDetailedStats) {
                 NavigationStack {
-                    DetailedStatsView(viewModel: viewModel)
+                    DetailedStatsView(viewModel: viewModel, onDismiss: {
+                        isShowingDetailedStats = false
+                    })
                 }
+                .macSheetFrame(large: true)
             }
             .sheet(isPresented: $isShowingSearchSheet) {
                 NavigationStack {
@@ -197,58 +191,12 @@ public struct DashboardView: View {
                         onDismiss: { isShowingSearchSheet = false }
                     )
                 }
-            }
-            .sheet(isPresented: $isShowingLending) {
-                LendingListView()
+                .macSheetFrame(large: true)
             }
             .refreshable {
                 await viewModel.syncWithCloud()
             }
         }
-    }
-    
-    // MARK: - 0.5. Баннер книг у друзей
-    private var lendingBanner: some View {
-        Button(action: { isShowingLending = true }) {
-            HStack(spacing: 12) {
-                Image(systemName: "person.2.circle.fill")
-                    .font(.title2)
-                    .foregroundColor(theme.primaryAccent)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Книги у друзей: \(lendingManager.activeRecords.count)")
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                        .foregroundColor(.primary)
-
-                    let overdue = lendingManager.overdueRecords.count
-                    if overdue > 0 {
-                        Text("⚠️ Просрочено к возврату: \(overdue)")
-                            .font(.caption2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.red)
-                    } else {
-                        Text("Все книги под контролем")
-                            .font(.caption2)
-                            .foregroundColor(.secondary)
-                    }
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .padding(14)
-            .background(Color(UIColor.secondarySystemGroupedBackground))
-            .cornerRadius(14)
-            .overlay(
-                RoundedRectangle(cornerRadius: 14)
-                    .stroke(theme.primaryAccent.opacity(0.3), lineWidth: 1)
-            )
-        }
-        .buttonStyle(.plain)
     }
 
     // MARK: - 1. Читаю сейчас

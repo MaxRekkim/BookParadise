@@ -7,8 +7,28 @@ public struct AchievementsView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var selectedCategory: AchievementCategory? = nil
+    public var onDismiss: (() -> Void)? = nil
 
-    public init() {}
+    public init(onDismiss: (() -> Void)? = nil) {
+        self.onDismiss = onDismiss
+    }
+
+    private func handleDismiss() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        if let onDismiss = onDismiss {
+            onDismiss()
+        } else {
+            dismiss()
+        }
+        #if canImport(UIKit)
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }?
+            .rootViewController?
+            .dismiss(animated: true, completion: nil)
+        #endif
+    }
 
     private var filteredAchievements: [ReadingAchievement] {
         if let cat = selectedCategory {
@@ -49,10 +69,16 @@ public struct AchievementsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Готово") { dismiss() }
-                        .fontWeight(.semibold)
+                    Button("Готово") { handleDismiss() }
+                        .fontWeight(.bold)
+                        .foregroundColor(theme.primaryAccent)
+                        .keyboardShortcut(.cancelAction)
                 }
             }
+            .onExitCommand {
+                handleDismiss()
+            }
+            .interactiveDismissDisabled(false)
             .onAppear {
                 achievementManager.recalculateAll()
             }

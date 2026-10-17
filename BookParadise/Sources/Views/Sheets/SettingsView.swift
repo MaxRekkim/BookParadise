@@ -18,10 +18,28 @@ public struct SettingsView: View {
     @State private var isShowingImporter: Bool = false
     @State private var importAlertMessage: String? = nil
     @State private var isShowingImportAlert: Bool = false
-    @State private var isShowingLending: Bool = false
+    public var onDismiss: (() -> Void)? = nil
     
-    public init(viewModel: LibraryViewModel) {
+    public init(viewModel: LibraryViewModel, onDismiss: (() -> Void)? = nil) {
         self.viewModel = viewModel
+        self.onDismiss = onDismiss
+    }
+    
+    private func handleDismiss() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        if let onDismiss = onDismiss {
+            onDismiss()
+        } else {
+            dismiss()
+        }
+        #if canImport(UIKit)
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }?
+            .rootViewController?
+            .dismiss(animated: true, completion: nil)
+        #endif
     }
     
     public var body: some View {
@@ -224,33 +242,6 @@ public struct SettingsView: View {
                     }
                 }
 
-                // MARK: - Книги у друзей
-                Section(header: Text("Книги у друзей"), footer: Text("Контролируйте книги, которые вы одолжили друзьям или взяли почитать.")) {
-                    Button(action: { isShowingLending = true }) {
-                        HStack {
-                            Image(systemName: "person.2.fill")
-                                .foregroundColor(theme.primaryAccent)
-                            Text("Управление отданными книгами")
-                                .foregroundColor(.primary)
-                            Spacer()
-                            let activeCount = LendingManager.shared.activeRecords.count
-                            if activeCount > 0 {
-                                Text("\(activeCount)")
-                                    .font(.caption)
-                                    .fontWeight(.bold)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 2)
-                                    .background(theme.primaryAccent.opacity(0.15))
-                                    .foregroundColor(theme.primaryAccent)
-                                    .clipShape(Capsule())
-                            }
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                }
-
                 // MARK: - Экспорт в Markdown (Obsidian / Notion)
                 Section(header: Text("Экспорт в Markdown (Obsidian / Notion)"), footer: Text("Экспортирует весь каталог ваших книг и цитаты в сводный файл Markdown для вашей персональной базы знаний (PKM).")) {
                     if let catalogFile = generateCatalogMarkdownFile() {
@@ -292,12 +283,16 @@ public struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Готово") { dismiss() }
+                    Button("Готово") { handleDismiss() }
+                        .fontWeight(.bold)
+                        .foregroundColor(theme.primaryAccent)
+                        .keyboardShortcut(.cancelAction)
                 }
             }
-            .sheet(isPresented: $isShowingLending) {
-                LendingListView()
+            .onExitCommand {
+                handleDismiss()
             }
+            .interactiveDismissDisabled(false)
             .fileImporter(
                 isPresented: $isShowingImporter,
                 allowedContentTypes: [.json],

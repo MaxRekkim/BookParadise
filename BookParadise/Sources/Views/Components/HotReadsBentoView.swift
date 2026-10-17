@@ -47,103 +47,125 @@ public struct HotReadsBentoView: View {
         }
     }
     
+    @ObservedObject private var theme = ThemeManager.shared
+    
     private func bentoCard(for book: Book, index: Int) -> some View {
-        let isTerracotta = index % 3 == 1
-        let isEmerald = index % 3 == 2
-        let bgColor = isTerracotta
-            ? Color(red: 0.77, green: 0.31, blue: 0.16)
-            : isEmerald
-                ? Color(red: 0.12, green: 0.27, blue: 0.22)
-                : Color(red: 0.11, green: 0.12, blue: 0.14)
-        
         let remainingTime = sessionManager.estimatedTimeToFinish(remainingPages: book.remainingPages).displayString
         let percent = Int(book.progressPercent)
         
         return VStack(alignment: .leading, spacing: 10) {
-            // Кликабельная область для перехода к карточке книги
+            // Кликабельная область для перехода к деталям книги
             NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
-                VStack(alignment: .leading, spacing: 10) {
-                    // Верхний статус времени
+                VStack(alignment: .leading, spacing: 8) {
+                    // 1. Верхний статус времени чтения и стрелка перехода
                     HStack {
                         HStack(spacing: 4) {
                             Image(systemName: "timer")
-                                .font(.system(size: 10))
+                                .font(.system(size: 10, weight: .bold))
                             Text(remainingTime)
                                 .font(.system(size: 10, weight: .bold))
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.8)
                         }
-                        .foregroundColor(.white.opacity(0.85))
+                        .foregroundColor(theme.primaryAccent)
                         .padding(.horizontal, 7)
                         .padding(.vertical, 3)
-                        .background(Color.white.opacity(0.16))
+                        .background(theme.primaryAccent.opacity(0.12))
                         .cornerRadius(7)
                         
                         Spacer()
                         
                         Image(systemName: "arrow.up.right")
                             .font(.system(size: 10, weight: .bold))
-                            .foregroundColor(.white.opacity(0.7))
+                            .foregroundColor(theme.primaryAccent)
                             .padding(5)
-                            .background(Color.white.opacity(0.12))
+                            .background(theme.primaryAccent.opacity(0.12))
                             .clipShape(Circle())
                     }
                     
-                    Spacer(minLength: 4)
-                    
-                    // Название и автор
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(book.title)
-                            .font(.subheadline)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.leading)
+                    // 2. Обложка + Название, автор и прогресс
+                    HStack(alignment: .top, spacing: 10) {
+                        BookCoverView(
+                            coverURL: book.cleanCoverURL,
+                            title: book.title,
+                            author: book.author,
+                            width: 50,
+                            height: 75
+                        )
+                        .cornerRadius(6)
+                        .shadow(color: Color.black.opacity(0.15), radius: 3, x: 0, y: 2)
                         
-                        Text(book.author)
-                            .font(.caption2)
-                            .foregroundColor(.white.opacity(0.7))
-                            .lineLimit(1)
-                    }
-                    
-                    // Прогресс бар
-                    HStack(spacing: 8) {
-                        ProgressView(value: book.progressPercent / 100.0)
-                            .tint(.white)
-                            .background(Color.white.opacity(0.2))
-                        
-                        Text("\(percent)%")
-                            .font(.system(size: 11, weight: .heavy, design: .rounded))
-                            .foregroundColor(.white)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(book.title)
+                                .font(.system(size: 13, weight: .bold))
+                                .foregroundColor(Color(UIColor.label))
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
+                            
+                            Text(book.author)
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                            
+                            Spacer(minLength: 4)
+                            
+                            // Кастомный плавный Capsule-прогрессбар без прямоугольных системных текстур
+                            VStack(alignment: .leading, spacing: 3) {
+                                GeometryReader { pGeo in
+                                    ZStack(alignment: .leading) {
+                                        Capsule()
+                                            .fill(Color(UIColor.tertiarySystemFill))
+                                        Capsule()
+                                            .fill(theme.primaryAccent)
+                                            .frame(width: max(4, pGeo.size.width * CGFloat(min(1.0, book.progressPercent / 100.0))))
+                                    }
+                                }
+                                .frame(height: 5)
+                                
+                                HStack {
+                                    Text("\(percent)%")
+                                        .font(.system(size: 10, weight: .heavy, design: .rounded))
+                                        .foregroundColor(theme.primaryAccent)
+                                    Spacer()
+                                    Text("\(book.currentPage)/\(book.totalPages) стр.")
+                                        .font(.system(size: 9, weight: .semibold))
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
                     }
                 }
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             
-            // Кнопка Быстрый старт чтения (без коллизии с NavigationLink)
+            // 3. Кнопка Быстрый старт чтения
             Button(action: {
                 selectedBookForSession = book
             }) {
-                HStack(spacing: 4) {
+                HStack(spacing: 5) {
                     Image(systemName: "play.fill")
-                        .font(.system(size: 9))
-                    Text("Продолжить")
+                        .font(.system(size: 10))
+                    Text("Продолжить чтение")
                         .font(.system(size: 11, weight: .bold))
                 }
-                .foregroundColor(.white)
+                .foregroundColor(theme.primaryAccent)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 6)
-                .background(Color.white.opacity(0.22))
+                .background(theme.primaryAccent.opacity(0.12))
                 .cornerRadius(8)
             }
             .buttonStyle(.plain)
         }
-        .padding(14)
-        .frame(width: 230, height: 175)
-        .background(bgColor)
+        .padding(12)
+        .frame(width: 280, height: 180)
+        .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(18)
-        .shadow(color: Color.black.opacity(0.12), radius: 6, x: 0, y: 3)
-        .desktopHover(scale: 1.03, yOffset: -3)
+        .overlay(
+            RoundedRectangle(cornerRadius: 18)
+                .stroke(theme.primaryAccent.opacity(0.15), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+        .desktopHover(scale: 1.02, yOffset: -2)
     }
 }

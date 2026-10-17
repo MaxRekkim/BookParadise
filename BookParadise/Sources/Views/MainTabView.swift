@@ -85,22 +85,26 @@ public struct MainTabView: View {
         }
         .sheet(isPresented: $isShowingAddBook) {
             AddBookSheet(viewModel: viewModel)
+                .macSheetFrame(large: true)
         }
         .sheet(isPresented: $isShowingQuickPageSelector) {
             QuickBookPickerSheet(viewModel: viewModel, mode: .updateProgress)
+                .macSheetFrame()
         }
         .sheet(isPresented: $isShowingSessionPicker) {
             QuickBookPickerSheet(viewModel: viewModel, mode: .readingSession)
+                .macSheetFrame()
         }
         .sheet(isPresented: $isShowingQuotePicker) {
             QuickBookPickerSheet(viewModel: viewModel, mode: .quoteScanner)
+                .macSheetFrame()
         }
     }
     
-    // MARK: - 1. НАСТОЛЬНЫЙ ИНТЕРФЕЙС ДЛЯ MACOS (САЙДБАР + ТУЛБАР)
+    // MARK: - 1. НАСТОЛЬНЫЙ ИНТЕРФЕЙС ДЛЯ MACOS (ПОСТОЯННЫЙ САЙДБАР + ТУЛБАР)
     #if targetEnvironment(macCatalyst) || os(macOS)
     private var macOSLayout: some View {
-        NavigationSplitView(columnVisibility: $columnVisibility) {
+        NavigationSplitView(columnVisibility: .constant(.all)) {
             List {
                 Section(header: Text("Книжный Рай")) {
                     sidebarItem(tab: .dashboard)
@@ -117,7 +121,7 @@ public struct MainTabView: View {
             }
             .listStyle(.sidebar)
             .navigationTitle("Книжный Рай")
-            .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 320)
+            .navigationSplitViewColumnWidth(min: 240, ideal: 270, max: 320)
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button(action: { isShowingAddBook = true }) {
@@ -139,6 +143,9 @@ public struct MainTabView: View {
             contentForSelectedTab
         }
         .navigationSplitViewStyle(.balanced)
+        .onExitCommand {
+            exit(0)
+        }
     }
     
     private func sidebarItem(tab: AppTab, badge: String? = nil) -> some View {
@@ -147,32 +154,39 @@ public struct MainTabView: View {
                 selectedTab = tab
             }
         }) {
-            HStack {
-                Label(tab.title, systemImage: tab.icon)
-                    .fontWeight(selectedTab == tab ? .semibold : .regular)
+            HStack(spacing: 10) {
+                Image(systemName: tab.icon)
+                    .font(.system(size: 15, weight: selectedTab == tab ? .bold : .medium))
+                    .foregroundColor(selectedTab == tab ? .white : theme.primaryAccent)
+                    .frame(width: 24, height: 24)
+                
+                Text(tab.title)
+                    .font(.system(size: 14, weight: selectedTab == tab ? .bold : .medium))
+                    .foregroundColor(selectedTab == tab ? .white : Color(UIColor.label))
+                
                 Spacer()
+                
                 if let badge = badge {
                     Text(badge)
                         .font(.caption2)
-                        .fontWeight(.semibold)
-                        .foregroundColor(selectedTab == tab ? theme.primaryAccent : .secondary)
-                        .padding(.horizontal, 6)
+                        .fontWeight(.bold)
+                        .foregroundColor(selectedTab == tab ? .white : theme.primaryAccent)
+                        .padding(.horizontal, 7)
                         .padding(.vertical, 2)
                         .background(
-                            (selectedTab == tab ? theme.primaryAccent : Color.secondary)
-                                .opacity(0.12)
+                            (selectedTab == tab ? Color.white.opacity(0.25) : theme.primaryAccent.opacity(0.12))
                         )
-                        .cornerRadius(6)
+                        .cornerRadius(8)
                 }
             }
-            .padding(.vertical, 4)
-            .padding(.horizontal, 6)
-            .background(selectedTab == tab ? theme.primaryAccent.opacity(0.12) : Color.clear)
-            .cornerRadius(8)
-            .foregroundColor(selectedTab == tab ? theme.primaryAccent : .primary)
+            .padding(.vertical, 7)
+            .padding(.horizontal, 10)
+            .background(selectedTab == tab ? theme.primaryAccent : Color.clear)
+            .cornerRadius(10)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .desktopHover(scale: 1.02, yOffset: -1)
     }
     #endif
     
@@ -357,8 +371,13 @@ struct QuickBookPickerSheet: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Закрыть") { dismiss() }
+                        .keyboardShortcut(.cancelAction)
                 }
             }
+            .onExitCommand {
+                dismiss()
+            }
+            .interactiveDismissDisabled(false)
             .sheet(item: $selectedBookForUpdate) { book in
                 ProgressUpdateSheet(viewModel: viewModel, book: book)
             }

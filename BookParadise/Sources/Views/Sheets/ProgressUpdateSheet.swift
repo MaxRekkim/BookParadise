@@ -6,14 +6,34 @@ public struct ProgressUpdateSheet: View {
     public let book: Book
     @Environment(\.dismiss) private var dismiss
     
+    public var onDismiss: (() -> Void)? = nil
+    
     @State private var pagesRead: Int
     @State private var selectedRating: BookRating?
     
-    public init(viewModel: LibraryViewModel, book: Book) {
+    public init(viewModel: LibraryViewModel, book: Book, onDismiss: (() -> Void)? = nil) {
         self.viewModel = viewModel
         self.book = book
+        self.onDismiss = onDismiss
         _pagesRead = State(initialValue: book.pagesRead)
         _selectedRating = State(initialValue: book.rating)
+    }
+    
+    private func handleDismiss() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        if let onDismiss = onDismiss {
+            onDismiss()
+        } else {
+            dismiss()
+        }
+        #if canImport(UIKit)
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }?
+            .rootViewController?
+            .dismiss(animated: true, completion: nil)
+        #endif
     }
     
     private var isFinished: Bool {
@@ -169,14 +189,24 @@ public struct ProgressUpdateSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Отмена") { dismiss() }
+                    Button("Отмена") { handleDismiss() }
+                        .keyboardShortcut(.cancelAction)
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Готово") { saveProgress() }
+                        .fontWeight(.bold)
+                        .keyboardShortcut(.defaultAction)
                 }
             }
+            .onExitCommand {
+                handleDismiss()
+            }
+            .interactiveDismissDisabled(false)
         }
     }
     
     private func saveProgress() {
         viewModel.updateProgress(for: book, newPages: pagesRead, rating: selectedRating)
-        dismiss()
+        handleDismiss()
     }
 }

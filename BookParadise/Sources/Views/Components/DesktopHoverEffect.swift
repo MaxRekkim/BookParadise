@@ -30,4 +30,18 @@ extension View {
     public func desktopHover(scale: CGFloat = 1.03, yOffset: CGFloat = -2) -> some View {
         self.modifier(DesktopHoverEffectModifier(scale: scale, yOffset: yOffset))
     }
+    
+    @ViewBuilder
+    public func macSheetFrame(large: Bool = false) -> some View {
+        #if targetEnvironment(macCatalyst) || os(macOS)
+        if large {
+            self.frame(minWidth: 780, idealWidth: 880, maxWidth: 1100, minHeight: 620, idealHeight: 740, maxHeight: 920)
+        } else {
+            self.frame(minWidth: 560, idealWidth: 640, maxWidth: 820, minHeight: 480, idealHeight: 560, maxHeight: 750)
+        }
+        #else
+        self
+        #endif
+    }
 }
+

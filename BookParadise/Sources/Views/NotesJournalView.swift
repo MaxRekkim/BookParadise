@@ -5,13 +5,34 @@ public struct NotesJournalView: View {
     @ObservedObject private var noteStore = ReadingNoteStore.shared
     @ObservedObject private var theme = ThemeManager.shared
     
+    @Environment(\.dismiss) private var dismiss
+    public var onDismiss: (() -> Void)? = nil
+    
     @State private var searchText: String = ""
     @State private var selectedTag: String? = nil
     @State private var selectedNoteForEditing: ReadingNote? = nil
     @State private var showingNewNoteSheet: Bool = false
     
-    public init(viewModel: LibraryViewModel) {
+    public init(viewModel: LibraryViewModel, onDismiss: (() -> Void)? = nil) {
         self.viewModel = viewModel
+        self.onDismiss = onDismiss
+    }
+    
+    private func handleDismiss() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        if let onDismiss = onDismiss {
+            onDismiss()
+        } else {
+            dismiss()
+        }
+        #if canImport(UIKit)
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }?
+            .rootViewController?
+            .dismiss(animated: true, completion: nil)
+        #endif
     }
     
     private var allTags: [String] {
@@ -43,7 +64,7 @@ public struct NotesJournalView: View {
     public var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Строка поиска
+                // Строка поиска (зафиксирована вверху, не съезжает)
                 HStack(spacing: 8) {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.secondary)
@@ -110,7 +131,16 @@ public struct NotesJournalView: View {
                 }
             }
             .navigationTitle("Дневник заметок (Studio)")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(action: handleDismiss) {
+                        Text("Готово")
+                            .fontWeight(.bold)
+                            .foregroundColor(theme.primaryAccent)
+                    }
+                    .keyboardShortcut(.cancelAction)
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: { showingNewNoteSheet = true }) {
                         Image(systemName: "square.and.pencil")
@@ -119,6 +149,10 @@ public struct NotesJournalView: View {
                     }
                 }
             }
+            .onExitCommand {
+                handleDismiss()
+            }
+            .interactiveDismissDisabled(false)
             .sheet(isPresented: $showingNewNoteSheet) {
                 MarkdownEditorView(viewModel: viewModel)
             }

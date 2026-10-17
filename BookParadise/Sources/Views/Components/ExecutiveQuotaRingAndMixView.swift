@@ -18,136 +18,157 @@ public struct ExecutiveQuotaRingAndMixView: View {
         return min(1.0, Double(readCount) / Double(annualGoal))
     }
     
+    @ObservedObject private var theme = ThemeManager.shared
+    
     public var body: some View {
         HStack(spacing: 12) {
-            // 1. Левая карточка: Кольцевой индикатор годовой цели (Emerald glow)
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("Цель года")
-                        .font(.caption2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white.opacity(0.8))
-                    
-                    Spacer()
-                    
-                    Image(systemName: "arrow.up.right")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.white.opacity(0.7))
-                        .padding(4)
-                        .background(Color.white.opacity(0.12))
-                        .clipShape(Circle())
-                }
-                
-                Spacer()
-                
-                ZStack {
-                    Circle()
-                        .stroke(Color.white.opacity(0.15), lineWidth: 7)
-                    
-                    Circle()
-                        .trim(from: 0, to: goalProgress)
-                        .stroke(
-                            Color(red: 0.90, green: 0.72, blue: 0.23),
-                            style: StrokeStyle(lineWidth: 7, lineCap: .round)
-                        )
-                        .rotationEffect(.degrees(-90))
-                    
-                    VStack(spacing: 1) {
-                        Text("\(Int(goalProgress * 100))%")
-                            .font(.system(size: 17, weight: .heavy, design: .rounded))
-                            .foregroundColor(.white)
+            // 1. Левая карточка: Кольцевой индикатор годовой цели (Интерактивная ссылка на Книжный вызов)
+            NavigationLink(destination: ReadingChallengeView(viewModel: viewModel)) {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Цель года")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color(UIColor.label))
                         
-                        Text("\(readCount)/\(annualGoal)")
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundColor(.white.opacity(0.7))
+                        Spacer()
+                        
+                        Image(systemName: "arrow.up.right")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(theme.primaryAccent)
+                            .padding(5)
+                            .background(theme.primaryAccent.opacity(0.12))
+                            .clipShape(Circle())
                     }
-                }
-                .frame(width: 80, height: 80)
-                .frame(maxWidth: .infinity)
-                
-                Spacer()
-                
-                Text("2026 Challenge")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundColor(.white.opacity(0.6))
-                    .frame(maxWidth: .infinity)
-            }
-            .padding(14)
-            .frame(width: 135, height: 180)
-            .background(Color(red: 0.12, green: 0.23, blue: 0.18))
-            .cornerRadius(18)
-            .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 3)
-            
-            // 2. Правая карточка: Спектр библиотеки (Library Mix Bar)
-            VStack(alignment: .leading, spacing: 6) {
-                HStack {
-                    Text("Спектр библиотеки")
-                        .font(.caption2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.secondary)
                     
                     Spacer()
                     
-                    Image(systemName: "arrow.up.right")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.secondary)
-                }
-                
-                Text("\(totalCount) книг")
-                    .font(.system(size: 20, weight: .heavy, design: .rounded))
-                    .foregroundColor(Color(UIColor.label))
-                
-                Text("в вашей коллекции")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-                
-                Spacer()
-                
-                // Мультисегментный бар
-                GeometryReader { geo in
-                    HStack(spacing: 2) {
-                        if totalCount > 0 {
-                            if readCount > 0 {
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color(red: 0.90, green: 0.72, blue: 0.23))
-                                    .frame(width: max(4, geo.size.width * CGFloat(readCount) / CGFloat(totalCount)))
-                            }
-                            if inProgressCount > 0 {
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color(red: 0.85, green: 0.33, blue: 0.18))
-                                    .frame(width: max(4, geo.size.width * CGFloat(inProgressCount) / CGFloat(totalCount)))
-                            }
-                            if plannedCount > 0 {
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color(red: 0.12, green: 0.23, blue: 0.18))
-                                    .frame(width: max(4, geo.size.width * CGFloat(plannedCount) / CGFloat(totalCount)))
-                            }
-                        } else {
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(Color.secondary.opacity(0.2))
-                                .frame(width: geo.size.width)
+                    ZStack {
+                        Circle()
+                            .stroke(theme.primaryAccent.opacity(0.15), lineWidth: 7)
+                        
+                        Circle()
+                            .trim(from: 0, to: goalProgress)
+                            .stroke(
+                                theme.primaryAccent,
+                                style: StrokeStyle(lineWidth: 7, lineCap: .round)
+                            )
+                            .rotationEffect(.degrees(-90))
+                        
+                        VStack(spacing: 1) {
+                            Text("\(Int(goalProgress * 100))%")
+                                .font(.system(size: 17, weight: .heavy, design: .rounded))
+                                .foregroundColor(Color(UIColor.label))
+                            
+                            Text("\(readCount)/\(annualGoal)")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundColor(.secondary)
                         }
                     }
-                }
-                .frame(height: 14)
-                
-                Spacer()
-                
-                // Легенда
-                HStack {
-                    legendItem(color: Color(red: 0.90, green: 0.72, blue: 0.23), title: "Прочитано", count: readCount)
+                    .frame(width: 80, height: 80)
+                    .frame(maxWidth: .infinity)
+                    
                     Spacer()
-                    legendItem(color: Color(red: 0.85, green: 0.33, blue: 0.18), title: "Читаю", count: inProgressCount)
-                    Spacer()
-                    legendItem(color: Color(red: 0.12, green: 0.23, blue: 0.18), title: "В планах", count: plannedCount)
+                    
+                    HStack(spacing: 4) {
+                        Text("Книжный вызов")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundColor(theme.primaryAccent)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 8, weight: .bold))
+                            .foregroundColor(theme.primaryAccent)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
+                .padding(14)
+                .frame(width: 140, height: 180)
+                .background(Color(UIColor.secondarySystemGroupedBackground))
+                .cornerRadius(18)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18)
+                        .stroke(theme.primaryAccent.opacity(0.18), lineWidth: 1)
+                )
+                .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
             }
-            .padding(14)
-            .frame(maxWidth: .infinity)
-            .frame(height: 180)
-            .background(Color(UIColor.secondarySystemGroupedBackground))
-            .cornerRadius(18)
-            .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+            .buttonStyle(.plain)
+            
+            // 2. Правая карточка: Спектр библиотеки (Library Mix Bar)
+            NavigationLink(destination: FilteredBooksView(
+                title: "В библиотеке",
+                books: viewModel.books,
+                viewModel: viewModel
+            )) {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("Спектр библиотеки")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.secondary)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "arrow.up.right")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Text("\(totalCount) книг")
+                        .font(.system(size: 20, weight: .heavy, design: .rounded))
+                        .foregroundColor(Color(UIColor.label))
+                    
+                    Text("в вашей коллекции")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    
+                    Spacer()
+                    
+                    // Мультисегментный бар
+                    GeometryReader { geo in
+                        HStack(spacing: 2) {
+                            if totalCount > 0 {
+                                if readCount > 0 {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color(red: 0.90, green: 0.72, blue: 0.23))
+                                        .frame(width: max(4, geo.size.width * CGFloat(readCount) / CGFloat(totalCount)))
+                                }
+                                if inProgressCount > 0 {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color(red: 0.85, green: 0.33, blue: 0.18))
+                                        .frame(width: max(4, geo.size.width * CGFloat(inProgressCount) / CGFloat(totalCount)))
+                                }
+                                if plannedCount > 0 {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(theme.primaryAccent)
+                                        .frame(width: max(4, geo.size.width * CGFloat(plannedCount) / CGFloat(totalCount)))
+                                }
+                            } else {
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.secondary.opacity(0.2))
+                                    .frame(width: geo.size.width)
+                            }
+                        }
+                    }
+                    .frame(height: 14)
+                    
+                    Spacer()
+                    
+                    // Легенда
+                    HStack {
+                        legendItem(color: Color(red: 0.90, green: 0.72, blue: 0.23), title: "Прочитано", count: readCount)
+                        Spacer()
+                        legendItem(color: Color(red: 0.85, green: 0.33, blue: 0.18), title: "Читаю", count: inProgressCount)
+                        Spacer()
+                        legendItem(color: theme.primaryAccent, title: "В планах", count: plannedCount)
+                    }
+                }
+                .padding(14)
+                .frame(maxWidth: .infinity)
+                .frame(height: 180)
+                .background(Color(UIColor.secondarySystemGroupedBackground))
+                .cornerRadius(18)
+                .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 3)
+            }
+            .buttonStyle(.plain)
         }
     }
     

@@ -4,11 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/services/theme_service.dart';
 import '../../data/services/google_sheets_service.dart';
-import '../../data/services/lending_service.dart';
 import '../../data/services/quotes_service.dart';
 import '../../data/services/markdown_export_service.dart';
 import '../view_models/library_view_model.dart';
-import 'lending_list_screen.dart';
 
 class SettingsDialog extends StatefulWidget {
   const SettingsDialog({super.key});
@@ -44,7 +42,6 @@ class _SettingsDialogState extends State<SettingsDialog> {
   @override
   Widget build(BuildContext context) {
     final themeService = context.watch<ThemeService>();
-    final lendingService = context.watch<LendingService>();
     final quotesService = context.watch<QuotesService>();
     final libraryVM = context.watch<LibraryViewModel>();
 
@@ -75,26 +72,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
             ),
             const Divider(height: 28),
 
-            // 2. Книги у друзей
-            const Text(
-              'КНИГИ У ДРУЗЕЙ (ТРЕКЕР ДОЛГОВ)',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8),
-            ),
-            const SizedBox(height: 8),
-            OutlinedButton.icon(
-              icon: const Icon(Icons.people_alt_outlined),
-              label: Text('Управление отданными книгами (${lendingService.activeRecords.length})'),
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const LendingListScreen()),
-                );
-              },
-            ),
-            const Divider(height: 28),
-
-            // 3. Экспорт в Markdown (Obsidian / Notion)
+            // 2. Экспорт в Markdown (Obsidian / Notion)
             const Text(
               'ЭКСПОРТ В MARKDOWN (OBSIDIAN / NOTION)',
               style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8),

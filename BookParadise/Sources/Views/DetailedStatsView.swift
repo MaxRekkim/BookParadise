@@ -8,9 +8,28 @@ public struct DetailedStatsView: View {
     @ObservedObject private var sessionManager = ReadingSessionManager.shared
     @AppStorage("annualGoalBooks") private var annualGoal: Int = 30
     @Environment(\.dismiss) private var dismiss
+    public var onDismiss: (() -> Void)? = nil
 
-    public init(viewModel: LibraryViewModel) {
+    public init(viewModel: LibraryViewModel, onDismiss: (() -> Void)? = nil) {
         self.viewModel = viewModel
+        self.onDismiss = onDismiss
+    }
+
+    private func handleDismiss() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        if let onDismiss = onDismiss {
+            onDismiss()
+        } else {
+            dismiss()
+        }
+        #if canImport(UIKit)
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }?
+            .rootViewController?
+            .dismiss(animated: true, completion: nil)
+        #endif
     }
 
     private var currentDayOfYear: Int {
@@ -88,9 +107,16 @@ public struct DetailedStatsView: View {
         .navigationTitle("Аналитика и статистика")
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button("Готово") { dismiss() }
+                Button("Готово") { handleDismiss() }
+                    .fontWeight(.bold)
+                    .foregroundColor(theme.primaryAccent)
+                    .keyboardShortcut(.cancelAction)
             }
         }
+        .onExitCommand {
+            handleDismiss()
+        }
+        .interactiveDismissDisabled(false)
     }
 
     // MARK: - 1. Годовая цель и математический прогноз
@@ -676,9 +702,15 @@ public struct FilteredBooksView: View {
                         onDismiss()
                     }
                     .fontWeight(.bold)
+                    .foregroundColor(theme.primaryAccent)
+                    .keyboardShortcut(.cancelAction)
                 }
             }
         }
+        .onExitCommand {
+            onDismiss?()
+        }
+        .interactiveDismissDisabled(false)
     }
 }
 

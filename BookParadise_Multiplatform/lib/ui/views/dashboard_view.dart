@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import '../view_models/library_view_model.dart';
 import '../../data/models/enums.dart';
 import '../../data/services/reading_session_service.dart';
-import '../../data/services/lending_service.dart';
 import '../widgets/daily_motivation_banner.dart';
 import '../widgets/book_cover_widget.dart';
 import 'book_detail_view.dart';
@@ -12,7 +11,6 @@ import 'reading_challenge_view.dart';
 import 'library_view.dart';
 import 'quotes_view.dart';
 import 'settings_dialog.dart';
-import 'lending_list_screen.dart';
 import 'achievements_screen.dart';
 import 'notes_journal_view.dart';
 import 'book_oracle_screen.dart';
@@ -30,7 +28,6 @@ class DashboardView extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<LibraryViewModel>();
     final sessionService = context.watch<ReadingSessionService>();
-    final lendingService = context.watch<LendingService>();
     final primaryAccent = Theme.of(context).colorScheme.primary;
 
     final inProgressBooks = viewModel.books.where((b) => b.readPages > 0 && !b.isFinished).toList();
@@ -124,42 +121,6 @@ class DashboardView extends StatelessWidget {
               ),
             ),
           ),
-
-          // 1.5. Баннер книг у друзей (если есть активные записи)
-          if (lendingService.activeRecords.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: Card(
-                color: Colors.orange.withOpacity(0.08),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  side: BorderSide(color: Colors.orange.withOpacity(0.3)),
-                ),
-                child: ListTile(
-                  leading: const Icon(Icons.people_alt, color: Colors.orange),
-                  title: Text(
-                    'Книги у друзей: ${lendingService.activeRecords.length}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                  ),
-                  subtitle: Text(
-                    lendingService.overdueRecords.isNotEmpty
-                        ? '⚠️ Просрочено к возврату: ${lendingService.overdueRecords.length}'
-                        : 'Все одолженные книги под контролем',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: lendingService.overdueRecords.isNotEmpty ? Colors.red : Colors.grey,
-                    ),
-                  ),
-                  trailing: const Icon(Icons.chevron_right, size: 20),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const LendingListScreen()),
-                    );
-                  },
-                ),
-              ),
-            ),
 
           // 2. Блок «Книги в фокусе (Hot Reads)»
           if (inProgressBooks.isNotEmpty)

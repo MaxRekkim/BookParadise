@@ -134,14 +134,21 @@ public struct ReadingChallengeView: View {
                                 }
                                 .fontWeight(.bold)
                                 .foregroundColor(theme.primaryAccent)
-                                .keyboardShortcut(.defaultAction)
+                                .keyboardShortcut(.cancelAction)
                             }
                         }
+                        .onExitCommand {
+                            handleDismiss()
+                        }
+                        .interactiveDismissDisabled(false)
                 }
             } else {
                 scrollContent
                     .navigationTitle("Книжный вызов 2026")
                     .navigationBarTitleDisplayMode(.inline)
+                    .onExitCommand {
+                        handleDismiss()
+                    }
             }
         }
         .sheet(item: $selectedBookForDetail) { book in
@@ -185,6 +192,14 @@ public struct ReadingChallengeView: View {
         } else {
             dismiss()
         }
+        #if canImport(UIKit)
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .first { $0.isKeyWindow }?
+            .rootViewController?
+            .dismiss(animated: true, completion: nil)
+        #endif
     }
 
     // MARK: - 1. Главная карточка прогресса (с запасом высоты)
