@@ -44,21 +44,21 @@ public struct BookSpineView: View {
     /// Выбор благородного переплета на основе жанра книги
     private var spineLeatherColors: [Color] {
         switch book.genre {
-        case .classic:
+        case .classicProse:
             return [Color(red: 0.42, green: 0.16, blue: 0.16), Color(red: 0.28, green: 0.10, blue: 0.10)] // Бордовый сафьян
         case .detective:
             return [Color(red: 0.16, green: 0.20, blue: 0.28), Color(red: 0.10, green: 0.12, blue: 0.18)] // Полуночный кобальт
-        case .sciFi:
+        case .sciFiAltHistory:
             return [Color(red: 0.18, green: 0.28, blue: 0.35), Color(red: 0.12, green: 0.18, blue: 0.24)] // Стальной сапфир
-        case .fantasy:
+        case .mysticGothic:
             return [Color(red: 0.16, green: 0.32, blue: 0.24), Color(red: 0.10, green: 0.22, blue: 0.16)] // Изумрудный шелк
-        case .biography:
+        case .romanceYA:
             return [Color(red: 0.38, green: 0.28, blue: 0.18), Color(red: 0.26, green: 0.18, blue: 0.12)] // Теплый орех
-        case .history:
+        case .psychologicalThriller, .trueCrime:
             return [Color(red: 0.40, green: 0.22, blue: 0.14), Color(red: 0.28, green: 0.14, blue: 0.08)] // Старинная охра
-        case .psychology, .philosophy:
+        case .philosophyPsychology:
             return [Color(red: 0.28, green: 0.24, blue: 0.32), Color(red: 0.18, green: 0.15, blue: 0.22)] // Королевский аметист
-        default:
+        case .modernProse:
             return [Color(red: 0.24, green: 0.25, blue: 0.28), Color(red: 0.15, green: 0.16, blue: 0.18)] // Сланцевый базальт
         }
     }
@@ -199,7 +199,7 @@ public struct BookSpineView: View {
         }
         .onTapGesture {
             guard isInteractive else { return }
-            HapticManager.shared.impact(style: .rigid)
+            HapticManager.shared.mediumTap()
             withAnimation {
                 isPulled.toggle()
             }
