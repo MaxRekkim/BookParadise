@@ -407,25 +407,26 @@ public struct LibraryView: View {
                     let chunks = chunkBooks(books, size: 8)
                     ForEach(Array(chunks.enumerated()), id: \.offset) { index, shelfBooks in
                         VStack(spacing: 0) {
-                            // Книги на полке
-                            HStack(alignment: .bottom, spacing: 3) {
-                                ForEach(shelfBooks) { book in
-                                    NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
-                                        BookSpineView(book: book)
-                                    }
-                                    .buttonStyle(.plain)
-                                    .contextMenu {
-                                        Button(action: { bookForProgressUpdate = book }) {
-                                            Label("Обновить прогресс", systemImage: "pencil")
+                            // Книги на полке с горизонтальной прокруткой для узких экранов
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(alignment: .bottom, spacing: 3) {
+                                    ForEach(shelfBooks) { book in
+                                        NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
+                                            BookSpineView(book: book)
                                         }
-                                        Button(action: { bookForPlan = book }) {
-                                            Label("Добавить в план", systemImage: "calendar.badge.plus")
+                                        .buttonStyle(.plain)
+                                        .contextMenu {
+                                            Button(action: { bookForProgressUpdate = book }) {
+                                                Label("Обновить прогресс", systemImage: "pencil")
+                                            }
+                                            Button(action: { bookForPlan = book }) {
+                                                Label("Добавить в план", systemImage: "calendar.badge.plus")
+                                            }
                                         }
                                     }
                                 }
-                                Spacer(minLength: 0)
+                                .padding(.horizontal, 16)
                             }
-                            .padding(.horizontal, 16)
 
                             // Деревянная полочная балка
                             shelfBeam

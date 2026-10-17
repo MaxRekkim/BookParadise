@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/book.dart';
 import '../../data/models/lending_record.dart';
+import '../../data/models/quote.dart';
 import '../../data/services/reading_session_service.dart';
 import '../../data/services/lending_service.dart';
 import '../../data/services/quotes_service.dart';
@@ -11,6 +12,7 @@ import '../view_models/library_view_model.dart';
 import '../widgets/book_cover_widget.dart';
 import 'reading_session_screen.dart';
 import 'lend_book_dialog.dart';
+import 'quotes_view.dart';
 
 class BookDetailView extends StatefulWidget {
   final Book book;
@@ -152,26 +154,70 @@ class _BookDetailViewState extends State<BookDetailView> {
                     ),
                   ],
                   const SizedBox(height: 14),
+
+                  // Большая кнопка «Сессия чтения»
+                  SizedBox(
+                    width: double.infinity,
+                    height: 44,
+                    child: FilledButton.icon(
+                      icon: const Icon(Icons.timer_outlined, size: 18),
+                      label: const Text(
+                        'Начать сессию чтения (Секундомер)',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      style: FilledButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: () {
+                        sessionService.startSession(book.id, book.readPages);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => ReadingSessionScreen(book: book)),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Кнопки «Изменить страницы» и «В план бинго» СТРОГО ОДИНАКОВОГО размера
                   Row(
                     children: [
                       Expanded(
-                        child: OutlinedButton.icon(
-                          icon: const Icon(Icons.edit, size: 16),
-                          label: const Text('Обновить прогресс'),
-                          onPressed: () => _showProgressDialog(context, viewModel, book),
+                        child: SizedBox(
+                          height: 44,
+                          child: OutlinedButton.icon(
+                            icon: const Icon(Icons.edit, size: 16),
+                            label: const Text(
+                              'Изменить страницы',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                            onPressed: () => _showProgressDialog(context, viewModel, book),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),
-                      FilledButton.icon(
-                        icon: const Icon(Icons.timer_outlined, size: 16),
-                        label: const Text('Сессия'),
-                        onPressed: () {
-                          sessionService.startSession(book.id, book.readPages);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => ReadingSessionScreen(book: book)),
-                          );
-                        },
+                      Expanded(
+                        child: SizedBox(
+                          height: 44,
+                          child: OutlinedButton.icon(
+                            icon: const Icon(Icons.calendar_month, size: 16),
+                            label: const Text(
+                              'В план бинго',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                            onPressed: () => _showPlanBingoDialog(context, viewModel, book),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -181,7 +227,7 @@ class _BookDetailViewState extends State<BookDetailView> {
           ),
           const SizedBox(height: 16),
 
-          // 3. Паспорт книги (Чистые заголовки БЕЗ букв столбцов таблицы A, D, E)
+          // 3. Паспорт книги
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -238,6 +284,10 @@ class _BookDetailViewState extends State<BookDetailView> {
           ),
           const SizedBox(height: 16),
 
+          // 4.5. Цитаты и заметки из книги (с персонализацией и карточками)
+          _buildQuotesSection(context, book),
+          const SizedBox(height: 16),
+
           // 5. Книга у друзей (Трекер долгов)
           _buildLendingSection(context, book),
           const SizedBox(height: 16),
@@ -291,6 +341,72 @@ class _BookDetailViewState extends State<BookDetailView> {
     );
   }
 
+  void _showPlanBingoDialog(BuildContext context, LibraryViewModel vm, Book book) {
+    const months = [
+      'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+      'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    ];
+    String selectedMonth = book.planMonth ?? months[DateTime.now().month - 1];
+    final daysController = TextEditingController(text: '${book.planDays ?? 21}');
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('В план чтения (Бинго)'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Месяц для прочтения:', style: TextStyle(fontSize: 13, color: Colors.grey)),
+              const SizedBox(height: 6),
+              DropdownButtonFormField<String>(
+                value: selectedMonth,
+                decoration: const InputDecoration(border: OutlineInputBorder()),
+                items: months.map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
+                onChanged: (val) {
+                  if (val != null) setDialogState(() => selectedMonth = val);
+                },
+              ),
+              const SizedBox(height: 14),
+              const Text('Планируемый срок (дней):', style: TextStyle(fontSize: 13, color: Colors.grey)),
+              const SizedBox(height: 6),
+              TextField(
+                controller: daysController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  suffixText: 'дн.',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Отмена'),
+            ),
+            FilledButton(
+              onPressed: () {
+                final days = int.tryParse(daysController.text) ?? 21;
+                final updated = book.copyWith(
+                  planMonth: selectedMonth,
+                  planDays: days,
+                );
+                vm.updateBook(updated);
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Книга «${book.title}» добавлена в план на $selectedMonth!')),
+                );
+              },
+              child: const Text('В план'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showReviewDialog(BuildContext context, LibraryViewModel vm, Book book) {
     final controller = TextEditingController(text: book.review ?? '');
     showDialog(
@@ -315,6 +431,265 @@ class _BookDetailViewState extends State<BookDetailView> {
             child: const Text('Сохранить'),
           ),
         ],
+      ),
+    );
+  }
+
+  // MARK: - Секция Цитат и заметок
+  Widget _buildQuotesSection(BuildContext context, Book book) {
+    final quotesService = context.watch<QuotesService>();
+    final bookQuotes = quotesService.quotes.where((q) => q.bookId == book.id).toList();
+    final primaryAccent = Theme.of(context).colorScheme.primary;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.format_quote, color: primaryAccent, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Цитаты и заметки (${bookQuotes.length})',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                FilledButton.tonalIcon(
+                  icon: const Icon(Icons.add, size: 16),
+                  label: const Text('Добавить', style: TextStyle(fontSize: 12)),
+                  onPressed: () => _showAddQuoteDialog(context, book),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (bookQuotes.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(Icons.edit_note, size: 36, color: Colors.grey.shade400),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Цитат из этой книги пока нет.',
+                        style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Нажмите «Добавить», чтобы сохранить понравившийся фрагмент или мысль.',
+                        style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: bookQuotes.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemBuilder: (context, index) {
+                  final q = bookQuotes[index];
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (_) => QuotePostcardSheet(quote: q, book: book),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.35),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.grey.withOpacity(0.15)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              if (q.pageNumber != null && q.pageNumber! > 0)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: primaryAccent.withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    'Стр. ${q.pageNumber}',
+                                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: primaryAccent),
+                                  ),
+                                ),
+                              const Spacer(),
+                              Icon(Icons.style_outlined, size: 14, color: Colors.grey.shade500),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            '«${q.text}»',
+                            style: const TextStyle(
+                              fontFamily: 'serif',
+                              fontStyle: FontStyle.italic,
+                              fontSize: 13,
+                              height: 1.35,
+                            ),
+                          ),
+                          if (q.note != null && q.note!.isNotEmpty) ...[
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                Icon(Icons.sticky_note_2_outlined, size: 13, color: Colors.grey.shade600),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    q.note!,
+                                    style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAddQuoteDialog(BuildContext context, Book book) {
+    final quotesService = context.read<QuotesService>();
+    final textController = TextEditingController();
+    final pageController = TextEditingController();
+    final noteController = TextEditingController();
+    bool hasNoteField = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('Новая цитата'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Текст цитаты *', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: textController,
+                  maxLines: 4,
+                  decoration: const InputDecoration(
+                    hintText: 'Введите цитату из книги...',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Text('Номер страницы:', style: TextStyle(fontSize: 13)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        controller: pageController,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          hintText: '42',
+                          isDense: true,
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // Возможность убирать/добавлять поле с заметкой
+                CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Добавить личную заметку', style: TextStyle(fontSize: 13)),
+                  value: hasNoteField,
+                  onChanged: (val) {
+                    setDialogState(() {
+                      hasNoteField = val ?? false;
+                      if (!hasNoteField) noteController.clear();
+                    });
+                  },
+                ),
+                if (hasNoteField) ...[
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: noteController,
+                    maxLines: 2,
+                    decoration: InputDecoration(
+                      hintText: 'Ваша личная мысль к цитате...',
+                      border: const OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.close, size: 16),
+                        tooltip: 'Убрать поле заметки',
+                        onPressed: () {
+                          setDialogState(() {
+                            hasNoteField = false;
+                            noteController.clear();
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Отмена'),
+            ),
+            FilledButton(
+              onPressed: () async {
+                final txt = textController.text.trim();
+                if (txt.isEmpty) return;
+                final page = int.tryParse(pageController.text.trim());
+                final note = hasNoteField ? noteController.text.trim() : null;
+
+                final quote = BookQuote(
+                  id: 'quote_${DateTime.now().millisecondsSinceEpoch}',
+                  bookId: book.id,
+                  text: txt,
+                  pageNumber: page,
+                  note: (note != null && note.isNotEmpty) ? note : null,
+                );
+
+                await quotesService.addQuote(quote);
+                if (ctx.mounted) Navigator.pop(ctx);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Цитата успешно добавлена!')),
+                  );
+                }
+              },
+              child: const Text('Сохранить'),
+            ),
+          ],
+        ),
       ),
     );
   }

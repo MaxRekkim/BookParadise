@@ -155,22 +155,22 @@ class _QuotesViewState extends State<QuotesView> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (sheetContext) => _QuotePostcardSheet(quote: quote, book: book),
+      builder: (sheetContext) => QuotePostcardSheet(quote: quote, book: book),
     );
   }
 }
 
-class _QuotePostcardSheet extends StatefulWidget {
+class QuotePostcardSheet extends StatefulWidget {
   final BookQuote quote;
   final dynamic book;
 
-  const _QuotePostcardSheet({required this.quote, required this.book});
+  const QuotePostcardSheet({super.key, required this.quote, required this.book});
 
   @override
-  State<_QuotePostcardSheet> createState() => _QuotePostcardSheetState();
+  State<QuotePostcardSheet> createState() => _QuotePostcardSheetState();
 }
 
-class _QuotePostcardSheetState extends State<_QuotePostcardSheet> {
+class _QuotePostcardSheetState extends State<QuotePostcardSheet> {
   int _selectedThemeIndex = 0;
   late bool _showNote;
 
