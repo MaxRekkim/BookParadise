@@ -70,11 +70,13 @@ public struct QuotesGalleryView: View {
             .navigationTitle("Цитаты и заметки (\(quotesManager.quotes.count))")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(action: handleDismiss) {
-                        Text("Готово")
-                            .fontWeight(.bold)
-                            .foregroundColor(theme.primaryAccent)
+                if onDismiss != nil {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button(action: handleDismiss) {
+                            Text("Готово")
+                                .fontWeight(.bold)
+                                .foregroundColor(theme.primaryAccent)
+                        }
                     }
                 }
             }
@@ -127,7 +129,9 @@ public struct QuotesGalleryView: View {
                         .desktopHover(scale: 1.015, yOffset: -2)
                 }
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.top, 8)
+            .padding(.bottom, 90)
         }
     }
     

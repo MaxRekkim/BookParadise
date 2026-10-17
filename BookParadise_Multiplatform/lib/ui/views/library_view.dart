@@ -241,9 +241,9 @@ class LibraryView extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     book.title,
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, height: 1.2),
                   ),
                   Text(
                     book.author,

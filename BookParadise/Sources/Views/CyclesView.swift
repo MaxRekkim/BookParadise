@@ -43,7 +43,9 @@ public struct CyclesView: View {
                             cycleCard(cycle)
                         }
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                    .padding(.bottom, 90)
                 }
             }
             .background(Color(UIColor.systemGroupedBackground))

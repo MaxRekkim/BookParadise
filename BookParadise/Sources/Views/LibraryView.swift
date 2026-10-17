@@ -294,12 +294,15 @@ public struct LibraryView: View {
                                 .font(.caption)
                                 .fontWeight(.medium)
                                 .foregroundColor(.primary)
-                                .lineLimit(1)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
+                                .frame(height: 32, alignment: .topLeading)
                             
                             Text(book.author)
                                 .font(.system(size: 10))
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
+                                .frame(alignment: .leading)
                         }
                         .contentShape(Rectangle())
                     }
@@ -315,7 +318,8 @@ public struct LibraryView: View {
                 }
             }
             .padding(.horizontal)
-            .padding(.vertical, 12)
+            .padding(.top, 12)
+            .padding(.bottom, 90)
         }
     }
     

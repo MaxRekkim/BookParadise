@@ -179,29 +179,37 @@ public struct MainTabView: View {
     // MARK: - 2. МОБИЛЬНЫЙ ИНТЕРФЕЙС ДЛЯ IPHONE / IPAD (ТАББАР)
     private var iOSLayout: some View {
         ZStack(alignment: .bottom) {
-            TabView(selection: $selectedTab) {
+            ZStack {
                 DashboardView(viewModel: viewModel)
-                    .tag(AppTab.dashboard)
-                
+                    .opacity(selectedTab == .dashboard ? 1 : 0)
+                    .allowsHitTesting(selectedTab == .dashboard)
+
                 LibraryView(viewModel: viewModel)
-                    .tag(AppTab.library)
-                
+                    .opacity(selectedTab == .library ? 1 : 0)
+                    .allowsHitTesting(selectedTab == .library)
+
                 DetailedStatsView(viewModel: viewModel)
-                    .tag(AppTab.stats)
-                
+                    .opacity(selectedTab == .stats ? 1 : 0)
+                    .allowsHitTesting(selectedTab == .stats)
+
                 BingoView(viewModel: viewModel)
-                    .tag(AppTab.bingo)
-                
+                    .opacity(selectedTab == .bingo ? 1 : 0)
+                    .allowsHitTesting(selectedTab == .bingo)
+
                 CyclesView(viewModel: viewModel)
-                    .tag(AppTab.cycles)
-                
+                    .opacity(selectedTab == .cycles ? 1 : 0)
+                    .allowsHitTesting(selectedTab == .cycles)
+
                 QuotesGalleryView(viewModel: viewModel)
-                    .tag(AppTab.quotes)
+                    .opacity(selectedTab == .quotes ? 1 : 0)
+                    .allowsHitTesting(selectedTab == .quotes)
+
+                SettingsView(viewModel: viewModel)
+                    .opacity(selectedTab == .settings ? 1 : 0)
+                    .allowsHitTesting(selectedTab == .settings)
             }
-            .safeAreaInset(edge: .bottom) {
-                Color.clear.frame(height: 60)
-            }
-            
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
             customTabBar
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
@@ -275,11 +283,14 @@ public struct MainTabView: View {
                 selectedTab = tab
             }
         }) {
-            VStack(spacing: 4) {
+            VStack(spacing: 3) {
                 Image(systemName: tab.icon)
                     .font(.system(size: 20))
                 Text(tab.title)
                     .font(.system(size: 10, weight: .medium))
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+                    .minimumScaleFactor(0.8)
             }
             .foregroundColor(selectedTab == tab ? theme.primaryAccent : .secondary)
             .frame(maxWidth: .infinity)

@@ -66,7 +66,7 @@ public struct BingoView: View {
                         }
                         .padding(.top, 8)
                         
-                        Spacer(minLength: 40)
+                        Spacer(minLength: 90)
                     }
                     .padding()
                 }

@@ -587,54 +587,85 @@ public struct FilteredBooksView: View {
         }
     }
 
-    public var body: some View {
-        ScrollView {
-            if displayedBooks.isEmpty {
-                VStack(spacing: 12) {
-                    Spacer(minLength: 60)
-                    Image(systemName: "books.vertical")
-                        .font(.system(size: 44))
-                        .foregroundColor(.secondary.opacity(0.6))
-                    Text("Книг не найдено")
-                        .font(.headline)
+    private var searchBarView: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.secondary)
+            TextField("Поиск среди \(books.count) книг...", text: $searchText)
+                .textFieldStyle(.plain)
+            if !searchText.isEmpty {
+                Button(action: { searchText = "" }) {
+                    Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.secondary)
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-            } else {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 160), spacing: 12)], spacing: 16) {
-                    ForEach(displayedBooks) { book in
-                        NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                BookCoverView(
-                                    coverURL: book.cleanCoverURL,
-                                    title: book.title,
-                                    author: book.author,
-                                    genre: book.genre,
-                                    cornerRadius: 8
-                                )
-                                .frame(height: 150)
-
-                                Text(book.title)
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .lineLimit(1)
-                                    .foregroundColor(Color(UIColor.label))
-
-                                Text(book.author)
-                                    .font(.caption2)
-                                    .foregroundColor(.secondary)
-                                    .lineLimit(1)
-                            }
-                        }
-                        .buttonStyle(.plain)
-                        .desktopHover(scale: 1.04, yOffset: -2)
-                    }
-                }
-                .padding()
+                .buttonStyle(.plain)
             }
         }
-        .searchable(text: $searchText, prompt: "Поиск среди \(books.count) книг...")
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(10)
+        .padding(.horizontal, 16)
+        .padding(.top, 8)
+        .padding(.bottom, 6)
+    }
+
+    public var body: some View {
+        VStack(spacing: 0) {
+            searchBarView
+
+            ScrollView {
+                if displayedBooks.isEmpty {
+                    VStack(spacing: 12) {
+                        Spacer(minLength: 60)
+                        Image(systemName: "books.vertical")
+                            .font(.system(size: 44))
+                            .foregroundColor(.secondary.opacity(0.6))
+                        Text("Книг не найдено")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                } else {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 160), spacing: 12)], spacing: 16) {
+                        ForEach(displayedBooks) { book in
+                            NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    BookCoverView(
+                                        coverURL: book.cleanCoverURL,
+                                        title: book.title,
+                                        author: book.author,
+                                        genre: book.genre,
+                                        cornerRadius: 8
+                                    )
+                                    .frame(height: 150)
+
+                                    Text(book.title)
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color(UIColor.label))
+                                        .lineLimit(2)
+                                        .multilineTextAlignment(.leading)
+                                        .frame(height: 32, alignment: .topLeading)
+
+                                    Text(book.author)
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                        .lineLimit(1)
+                                        .frame(alignment: .leading)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .desktopHover(scale: 1.04, yOffset: -2)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 6)
+                    .padding(.bottom, 90)
+                }
+            }
+        }
         .background(Color(UIColor.systemGroupedBackground))
         .navigationTitle("\(title) (\(books.count))")
         .navigationBarTitleDisplayMode(.inline)

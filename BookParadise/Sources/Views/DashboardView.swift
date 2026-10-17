@@ -85,12 +85,17 @@ public struct DashboardView: View {
                         analyticsChartsSection
                             .padding(.horizontal)
                         
+                        #if targetEnvironment(macCatalyst) || os(macOS)
                         Spacer(minLength: 85)
+                        #else
+                        Spacer(minLength: 95)
+                        #endif
                     }
                     .padding(.top, 8)
                 }
                 
-                // Плавающий док быстрых действий (Floating Quick Navigation Dock)
+                #if targetEnvironment(macCatalyst) || os(macOS)
+                // Плавающий док быстрых действий только для macOS/десктопа (где нет нижнего таббара)
                 FloatingQuickDockView(
                     viewModel: viewModel,
                     onSearchTapped: { isShowingSearchSheet = true },
@@ -105,6 +110,7 @@ public struct DashboardView: View {
                     onNotesTapped: { isShowingNotesJournal = true }
                 )
                 .padding(.bottom, 16)
+                #endif
             }
             .background(Color(UIColor.systemGroupedBackground))
             .navigationTitle("Книжный Рай")
