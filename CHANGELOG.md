@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [2.13.1] — 2026-10-17
+
+### Добавлено и исправлено (Working App Icon Switcher, WidgetKit Previews & Desktop Widgets)
+- **Полноценная работа смены иконки приложения (Alternative App Icons)**:
+  - Сгенерированы и добавлены в ресурсы приложения наборы иконок для всех 5 альтернативных тем (`@2x` 120x120 и `@3x` 180x180):
+    - **Королевский Бордо** (`AppIcon-Wine`)
+    - **Полночный Индиго** (`AppIcon-Midnight`)
+    - **Киберпанк Неон** (`AppIcon-Cyberpunk`)
+    - **Старинный Пергамент** (`AppIcon-Parchment`)
+    - **OLED Obsidian** (`AppIcon-Dark`)
+  - В `Info.plist` зарегистрированы системные словари `CFBundleIcons` и `CFBundleIcons~ipad` с привязкой к файлам иконок. Теперь `UIApplication.shared.supportsAlternateIcons` возвращает `true`, а смена иконки работает нативно.
+  - В `SettingsView.swift` добавлен индикатор активной иконки (галочка) и сохранение выбранного стиля.
+- **Виджеты на рабочий стол (Desktop & Home Screen Widgets)**:
+  - В настройках добавлен раздел **«Виджеты на рабочий стол (WidgetKit)»**:
+    - Интерактивное живое превью Маленького (1x1) и Среднего (2x1) виджетов с текущей читаемой книгой, обложкой, прогрессом и целью года.
+    - Кнопка принудительной синхронизации данных с `WidgetDataExporter` и перезагрузки таймлайнов WidgetKit.
+    - Для macOS добавлена возможность открывать компактный плавающий мини-виджет прямо на рабочем столе Mac.
+
 ## [2.13.0] — 2026-10-17
 
 ### Добавлено и улучшено (Native Mac Catalyst UI Parity, Spotify-Style Share Cards & Poster PNG Export)

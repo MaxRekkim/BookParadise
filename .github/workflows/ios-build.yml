@@ -106,6 +106,7 @@ jobs:
             exit 1
           fi
           echo "Found iOS app at: $APP_PATH"
+          cp BookParadise/Resources/AppIcon-*.png "$APP_PATH/" || true
           cp -r "$APP_PATH" Payload/
           zip -r "BookParadise-${VERSION}.ipa" Payload
           cp "BookParadise-${VERSION}.ipa" "BookParadise.ipa"
@@ -149,6 +150,7 @@ jobs:
             cp BookParadise/Resources/AppIcon.icns "${MAC_APP_PATH}/Contents/Resources/AppIcon" || true
             echo "✅ Injected AppIcon.icns into Catalyst Contents/Resources/"
           fi
+          cp BookParadise/Resources/AppIcon-*.png "${MAC_APP_PATH}/Contents/Resources/" || true
 
           # Ad-hoc sign and remove quarantine
           codesign --force --deep --sign - "$MAC_APP_PATH"

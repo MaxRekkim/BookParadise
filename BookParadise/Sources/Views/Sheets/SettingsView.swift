@@ -8,6 +8,9 @@ public struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     
     @AppStorage("kindleEmail") private var kindleEmail: String = ""
+    @AppStorage("currentAppIconKey") private var currentAppIconKey: String = "AppIcon-Default"
+    @State private var isWidgetExported: Bool = false
+    @State private var isShowingDesktopWidgetSheet: Bool = false
     @State private var webAppURL: String = ""
     @State private var isTestingConnection: Bool = false
     @State private var testResultMessage: String? = nil
@@ -81,7 +84,7 @@ public struct SettingsView: View {
                 }
 
                 // MARK: - Иконка приложения (App Icon)
-                Section(header: Text("Иконка приложения"), footer: Text("Выберите альтернативный значок приложения для домашнего экрана iOS и панели задач.")) {
+                Section(header: Text("Иконка приложения"), footer: Text("Выберите альтернативный значок приложения для домашнего экрана iOS и панели задач macOS.")) {
                     ForEach([
                         ("AppIcon-Default", "Изумрудный Лес", Color(red: 0.05, green: 0.58, blue: 0.41)),
                         ("AppIcon-Wine", "Королевский Бордо", Color(red: 0.55, green: 0.16, blue: 0.22)),
@@ -91,15 +94,21 @@ public struct SettingsView: View {
                         ("AppIcon-Dark", "OLED Obsidian", Color(red: 0.15, green: 0.15, blue: 0.15))
                     ], id: \.0) { iconKey, iconName, iconColor in
                         Button(action: {
-                            #if canImport(UIKit)
                             let targetIcon = iconKey == "AppIcon-Default" ? nil : iconKey
+                            #if canImport(UIKit)
                             if UIApplication.shared.supportsAlternateIcons {
                                 UIApplication.shared.setAlternateIconName(targetIcon) { error in
                                     if let error = error {
                                         print("Ошибка смены иконки: \(error.localizedDescription)")
+                                    } else {
+                                        currentAppIconKey = iconKey
                                     }
                                 }
+                            } else {
+                                currentAppIconKey = iconKey
                             }
+                            #else
+                            currentAppIconKey = iconKey
                             #endif
                         }) {
                             HStack(spacing: 12) {
@@ -123,10 +132,95 @@ public struct SettingsView: View {
                                 }
                                 
                                 Spacer()
+
+                                if currentAppIconKey == iconKey {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(theme.primaryAccent)
+                                        .font(.subheadline)
+                                }
                             }
                         }
                         .buttonStyle(.plain)
                     }
+                }
+
+                // MARK: - Виджеты на рабочий стол (WidgetKit)
+                Section(header: Text("Виджеты на рабочий стол (WidgetKit)"), footer: Text("Интерактивный виджет отображает книгу в процессе чтения, процент выполнения и прогресс годовой цели.")) {
+                    VStack(alignment: .leading, spacing: 14) {
+                        // Живое превью виджетов
+                        let currentBook = viewModel.books.first(where: { $0.status == .inProgress })
+                        let readCount = viewModel.books.filter { $0.status == .read }.count
+                        let snapshot = WidgetDataSnapshot(
+                            currentBook: currentBook != nil ? WidgetBookSnapshot(book: currentBook!) : nil,
+                            totalReadCount: readCount,
+                            annualGoal: 50
+                        )
+                        let entry = BookParadiseEntry(date: Date(), snapshot: snapshot)
+
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text("Маленький (1x1)")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                    BookParadiseSmallWidgetView(entry: entry)
+                                        .frame(width: 155, height: 155)
+                                        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                                        .shadow(color: Color.black.opacity(0.12), radius: 8, x: 0, y: 4)
+                                }
+
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text("Средний (2x1)")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                    BookParadiseMediumWidgetView(entry: entry)
+                                        .frame(width: 320, height: 155)
+                                        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                                        .shadow(color: Color.black.opacity(0.12), radius: 8, x: 0, y: 4)
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+
+                        // Кнопка синхронизации данных с WidgetKit
+                        Button(action: {
+                            WidgetDataExporter.shared.export(books: viewModel.books)
+                            isWidgetExported = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                                isWidgetExported = false
+                            }
+                        }) {
+                            HStack {
+                                Image(systemName: isWidgetExported ? "checkmark.circle.fill" : "arrow.triangle.2.circlepath")
+                                Text(isWidgetExported ? "Данные виджетов обновлены!" : "Обновить данные для виджетов")
+                            }
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(isWidgetExported ? Color.green : theme.primaryAccent)
+                            .cornerRadius(10)
+                        }
+                        .buttonStyle(.plain)
+
+                        #if targetEnvironment(macCatalyst) || os(macOS)
+                        Button(action: { isShowingDesktopWidgetSheet = true }) {
+                            HStack {
+                                Image(systemName: "macwindow.on.rectangle")
+                                Text("Открыть плавающий виджет на Mac")
+                            }
+                            .font(.subheadline)
+                            .foregroundColor(theme.primaryAccent)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .background(theme.primaryAccent.opacity(0.12))
+                            .cornerRadius(10)
+                        }
+                        .buttonStyle(.plain)
+                        #endif
+                    }
+                    .padding(.vertical, 4)
                 }
 
                 // MARK: - Отправка на Kindle
@@ -471,6 +565,45 @@ public struct SettingsView: View {
                 Button("OK", role: .cancel) { }
             } message: {
                 Text(importAlertMessage ?? "")
+            }
+            .sheet(isPresented: $isShowingDesktopWidgetSheet) {
+                NavigationStack {
+                    VStack(spacing: 20) {
+                        Text("Плавающий виджет рабочего стола")
+                            .font(.headline)
+                            .padding(.top)
+
+                        let currentBook = viewModel.books.first(where: { $0.status == .inProgress })
+                        let readCount = viewModel.books.filter { $0.status == .read }.count
+                        let snapshot = WidgetDataSnapshot(
+                            currentBook: currentBook != nil ? WidgetBookSnapshot(book: currentBook!) : nil,
+                            totalReadCount: readCount,
+                            annualGoal: 50
+                        )
+                        let entry = BookParadiseEntry(date: Date(), snapshot: snapshot)
+
+                        BookParadiseMediumWidgetView(entry: entry)
+                            .frame(width: 320, height: 155)
+                            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                            .shadow(color: Color.black.opacity(0.15), radius: 10, y: 5)
+
+                        Text("Виджет обновляется автоматически при изменении прочитанных страниц в библиотеке.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+
+                        Button("Закрыть") {
+                            isShowingDesktopWidgetSheet = false
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(theme.primaryAccent)
+                        .padding(.bottom)
+                    }
+                    .padding()
+                    .frame(width: 380, height: 320)
+                }
+                .macSheetFrame()
             }
             .onAppear {
                 webAppURL = GoogleSheetsAPIService.shared.apiURLString
