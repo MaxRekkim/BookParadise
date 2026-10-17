@@ -15,6 +15,7 @@ import { AddBookModal } from './components/Modals/AddBookModal';
 import { SettingsModal } from './components/Modals/SettingsModal';
 import { ShareCardModal } from './components/Modals/ShareCardModal';
 import { DesktopMiniWidget } from './components/DesktopMiniWidget';
+import { apiService } from './services/api';
 
 export function App() {
   // Основные данные приложения
@@ -46,6 +47,36 @@ export function App() {
   // Звуковой ландшафт
   const [soundscapePlaying, setSoundscapePlaying] = useState(false);
   const [soundscapeMode, setSoundscapeMode] = useState<'fireplace' | 'rain' | 'library' | 'cafe' | null>(null);
+
+  // Облачная синхронизация с Google Таблицей
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<string | null>(null);
+
+  const handleSyncLibrary = async () => {
+    setIsSyncing(true);
+    setSyncStatus('Синхронизация с Google Таблицей...');
+    try {
+      const result = await apiService.fetchLibrary();
+      if (result.success && result.books.length > 0) {
+        setBooks(result.books);
+        setSyncStatus(`Загружено ${result.books.length} книг!`);
+        setTimeout(() => setSyncStatus(null), 3500);
+      } else {
+        setSyncStatus(result.error ? `Ошибка: ${result.error}` : 'Не удалось получить данные');
+        setTimeout(() => setSyncStatus(null), 4000);
+      }
+    } catch (e) {
+      setSyncStatus('Ошибка соединения');
+      setTimeout(() => setSyncStatus(null), 4000);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  // Автоматическая фоновая синхронизация при первом старте
+  useEffect(() => {
+    handleSyncLibrary();
+  }, []);
 
   // Сохранение в LocalStorage при изменениях
   useEffect(() => {
@@ -256,6 +287,9 @@ export function App() {
         onOpenAddModal={() => setIsAddModalOpen(true)}
         soundscapeActive={soundscapePlaying}
         appIcon={appIcon}
+        onSync={handleSyncLibrary}
+        isSyncing={isSyncing}
+        syncStatus={syncStatus}
       />
 
       {/* Окно с нативным тайтлбаром и контентом */}

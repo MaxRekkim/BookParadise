@@ -28,13 +28,16 @@ chmod +x "${APP_BUNDLE}/Contents/MacOS/${APP_NAME}"
 echo "=== 4. Копирование ресурсов и манифеста Info.plist ==="
 cp "${DIR}/macos-runner/Info.plist" "${APP_BUNDLE}/Contents/Info.plist"
 cp -r "${DIR}/dist" "${APP_BUNDLE}/Contents/Resources/"
+if [ -f "${DIR}/macos-runner/AppIcon.icns" ]; then
+  cp "${DIR}/macos-runner/AppIcon.icns" "${APP_BUNDLE}/Contents/Resources/AppIcon.icns"
+fi
 
 echo "=== 4.1. Подпись бандла (ad-hoc codesign) и снятие атрибутов карантина ==="
 codesign --force --deep --sign - "${APP_BUNDLE}"
 xattr -cr "${APP_BUNDLE}"
 
 echo "=== 5. Создание инсталлятора PKG ==="
-VERSION="2.12.0"
+VERSION="2.12.1"
 PKG_NAME="BookParadise-${VERSION}.pkg"
 rm -rf pkg_root "$PKG_NAME"
 mkdir -p pkg_root

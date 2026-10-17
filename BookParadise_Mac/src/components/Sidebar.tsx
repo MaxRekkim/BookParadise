@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavigationTab, AppIconId } from '../types';
-import { LayoutDashboard, BookMarked, Trophy, BookOpen, Volume2, Settings, Plus, Sparkles } from 'lucide-react';
+import { LayoutDashboard, BookMarked, Trophy, BookOpen, Volume2, Settings, Plus, Sparkles, RefreshCw, Cloud } from 'lucide-react';
 
 interface SidebarProps {
   currentTab: NavigationTab;
@@ -11,6 +11,9 @@ interface SidebarProps {
   onOpenAddModal: () => void;
   soundscapeActive: boolean;
   appIcon?: AppIconId;
+  onSync?: () => void;
+  isSyncing?: boolean;
+  syncStatus?: string | null;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -22,6 +25,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenAddModal,
   soundscapeActive,
   appIcon = 'emerald',
+  onSync,
+  isSyncing = false,
+  syncStatus,
 }) => {
   const getIconGradient = (icon: AppIconId) => {
     switch (icon) {
@@ -143,8 +149,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </nav>
       </div>
 
-      {/* Нижняя плашка с настройками */}
-      <div className="p-4 border-t border-white/10 bg-[#141418]">
+      {/* Нижняя плашка с синхронизацией и настройками */}
+      <div className="p-3 border-t border-white/10 bg-[#141418] space-y-1">
+        {onSync && (
+          <button
+            type="button"
+            onClick={onSync}
+            disabled={isSyncing}
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer disabled:opacity-50"
+            title="Синхронизировать с Google Таблицей"
+          >
+            <div className="flex items-center gap-2.5">
+              <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin text-emerald-400' : 'text-neutral-400'}`} />
+              <span className="truncate">{isSyncing ? 'Синхронизация...' : 'Синхронизировать'}</span>
+            </div>
+            <Cloud className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
+          </button>
+        )}
+
+        {syncStatus && (
+          <div className="px-2 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[11px] text-emerald-400 truncate">
+            {syncStatus}
+          </div>
+        )}
+
         <button
           type="button"
           onClick={() => onSelectTab('settings')}
