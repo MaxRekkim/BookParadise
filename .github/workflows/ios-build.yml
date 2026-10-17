@@ -473,12 +473,36 @@ jobs:
           git add manifest.plist
           git diff --staged --quiet || (git commit -m "chore(release): update manifest.plist to v${{ steps.release-info.outputs.version }} [skip ci]" && git push origin HEAD:main)
 
+      - name: Extract Release Notes for current version
+        run: |
+          python3 -c "
+          import re
+          version = '${{ steps.release-info.outputs.version }}'
+          try:
+              with open('CHANGELOG.md', 'r', encoding='utf-8') as f:
+                  content = f.read()
+              pattern = rf'## \[{re.escape(version)}\].*?(?=\n## \[|\n---\n## \[|\Z)'
+              match = re.search(pattern, content, re.DOTALL)
+              if match:
+                  notes = match.group(0).strip()
+                  if notes.endswith('---'):
+                      notes = notes[:-3].strip()
+              else:
+                  notes = f'### Релиз v{version}\n\nСм. список изменений в CHANGELOG.md'
+          except Exception as e:
+              notes = f'### Релиз v{version}\n\nУспешная мультиплатформенная сборка v{version}.'
+          with open('RELEASE_NOTES.md', 'w', encoding='utf-8') as f:
+              f.write(notes + '\n')
+          "
+          echo "=== Release Notes for v${{ steps.release-info.outputs.version }} ==="
+          cat RELEASE_NOTES.md
+
       - name: Publish GitHub Release with all 4 platforms
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.release-info.outputs.tag }}
           name: "Книжный Рай ${{ steps.release-info.outputs.tag }} (iOS, macOS, Android, Windows)"
-          body_path: CHANGELOG.md
+          body_path: RELEASE_NOTES.md
           files: |
             dist-release/BookParadise*.ipa
             dist-release/BookParadise-*.dmg
