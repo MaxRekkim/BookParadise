@@ -32,7 +32,7 @@ public final class UpdateManager: ObservableObject {
     @Published public var releasePageURL: URL? = nil
     
     private init() {
-        self.currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "3.3.0"
+        self.currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "3.4.0"
     }
     
     // MARK: - Проверка обновлений через GitHub Releases API

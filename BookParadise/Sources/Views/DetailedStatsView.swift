@@ -112,6 +112,22 @@ public struct DetailedStatsView: View {
                 DNFAnalyticsCardView(books: viewModel.books)
                     .padding(.horizontal)
 
+                // 4.5. Литературная Онтология и Глубинные связи (Wave 4)
+                CharacterRelationshipGraphView()
+                    .padding(.horizontal)
+
+                BookChronologyTimelineView()
+                    .padding(.horizontal)
+
+                AuthorInfluenceMatrixView()
+                    .padding(.horizontal)
+
+                QuoteSemanticClusterView()
+                    .padding(.horizontal)
+
+                WorldbuildingLoreVaultView()
+                    .padding(.horizontal)
+
                 // 5. Оценки и галерея Шедевров
                 ratingsAndMasterpiecesCard
                     .padding(.horizontal)

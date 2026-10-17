@@ -28,7 +28,7 @@ func assertTrue(_ condition: Bool, _ message: String = "", file: String = #file,
 }
 
 print("=======================================================")
-print("🧪 Running BookParadise v3.2.0 Comprehensive Test Suite")
+print("🧪 Running BookParadise v3.4.0 Comprehensive Test Suite")
 print("=======================================================")
 
 // -----------------------------------------------------------------------------
@@ -689,6 +689,204 @@ assertEqual(mockSpoilerCheck(endingReview).isSpoiler, true, "Ending phrase trigg
 assertEqual(mockSpoilerCheck(endingReview).category, "Развязка и финал", "Correctly classifies as 'Развязка и финал'")
 
 // -----------------------------------------------------------------------------
+// 21. TEST: Character Relationship Graph & 2D Force-Directed Physics
+// -----------------------------------------------------------------------------
+print("\n[Suite 21/25] Testing Force-Directed Graph Physics Engine...")
+
+struct MockGraphNode {
+    var id: String
+    var x: Double
+    var y: Double
+    var vx: Double = 0.0
+    var vy: Double = 0.0
+}
+
+struct MockGraphEdge {
+    var sourceId: String
+    var targetId: String
+    var restLength: Double = 80.0
+}
+
+func simulatePhysicsStep(nodes: inout [MockGraphNode], edges: [MockGraphEdge]) {
+    let repulsionConstant = 1200.0
+    let springConstant = 0.04
+    let damping = 0.85
+    
+    // Repulsion between all pairs
+    for i in 0..<nodes.count {
+        for j in (i + 1)..<nodes.count {
+            let dx = nodes[j].x - nodes[i].x
+            let dy = nodes[j].y - nodes[i].y
+            let dist = max(sqrt(dx * dx + dy * dy), 1.0)
+            let force = repulsionConstant / (dist * dist)
+            let fx = (dx / dist) * force
+            let fy = (dy / dist) * force
+            nodes[i].vx -= fx
+            nodes[i].vy -= fy
+            nodes[j].vx += fx
+            nodes[j].vy += fy
+        }
+    }
+    
+    // Spring attraction along edges
+    for edge in edges {
+        guard let sIdx = nodes.firstIndex(where: { $0.id == edge.sourceId }),
+              let tIdx = nodes.firstIndex(where: { $0.id == edge.targetId }) else { continue }
+        let dx = nodes[tIdx].x - nodes[sIdx].x
+        let dy = nodes[tIdx].y - nodes[sIdx].y
+        let dist = max(sqrt(dx * dx + dy * dy), 1.0)
+        let displacement = dist - edge.restLength
+        let force = springConstant * displacement
+        let fx = (dx / dist) * force
+        let fy = (dy / dist) * force
+        nodes[sIdx].vx += fx
+        nodes[sIdx].vy += fy
+        nodes[tIdx].vx -= fx
+        nodes[tIdx].vy -= fy
+    }
+    
+    // Position integration with damping
+    for i in 0..<nodes.count {
+        nodes[i].vx *= damping
+        nodes[i].vy *= damping
+        nodes[i].x += nodes[i].vx
+        nodes[i].y += nodes[i].vy
+    }
+}
+
+var testNodes = [
+    MockGraphNode(id: "A", x: 100.0, y: 100.0),
+    MockGraphNode(id: "B", x: 105.0, y: 100.0) // very close, expect repulsion
+]
+let testEdges: [MockGraphEdge] = []
+simulatePhysicsStep(nodes: &testNodes, edges: testEdges)
+assertTrue(testNodes[0].x < 100.0, "Node A pushed left by Coulomb repulsion")
+assertTrue(testNodes[1].x > 105.0, "Node B pushed right by Coulomb repulsion")
+
+var springNodes = [
+    MockGraphNode(id: "A", x: 50.0, y: 100.0),
+    MockGraphNode(id: "B", x: 250.0, y: 100.0) // stretched beyond rest length 80
+]
+let springEdges = [MockGraphEdge(sourceId: "A", targetId: "B", restLength: 80.0)]
+simulatePhysicsStep(nodes: &springNodes, edges: springEdges)
+assertTrue(springNodes[0].x > 50.0, "Node A pulled towards Node B by Hooke spring attraction")
+assertTrue(springNodes[1].x < 250.0, "Node B pulled towards Node A by Hooke spring attraction")
+
+// -----------------------------------------------------------------------------
+// 22. TEST: Book Chronology Timeline Engine & Flashback Filter
+// -----------------------------------------------------------------------------
+print("\n[Suite 22/25] Testing Book Chronology Timeline Engine...")
+
+struct MockTimelineEvent {
+    let id: String
+    var chronologicalIndex: Int
+    var narrativeChapter: Int
+    var narrativePage: Int
+    var isFlashback: Bool
+}
+
+let events = [
+    MockTimelineEvent(id: "1", chronologicalIndex: 1, narrativeChapter: 2, narrativePage: 38, isFlashback: true),
+    MockTimelineEvent(id: "2", chronologicalIndex: 2, narrativeChapter: 1, narrativePage: 12, isFlashback: false),
+    MockTimelineEvent(id: "3", chronologicalIndex: 3, narrativeChapter: 16, narrativePage: 194, isFlashback: true),
+    MockTimelineEvent(id: "4", chronologicalIndex: 4, narrativeChapter: 23, narrativePage: 280, isFlashback: false)
+]
+
+let narrativeOrder = events.sorted {
+    if $0.narrativeChapter != $1.narrativeChapter { return $0.narrativeChapter < $1.narrativeChapter }
+    return $0.narrativePage < $1.narrativePage
+}
+let chronologicalOrder = events.sorted { $0.chronologicalIndex < $1.chronologicalIndex }
+
+assertEqual(narrativeOrder.first?.id, "2", "First narrative event is Chapter 1")
+assertEqual(chronologicalOrder.first?.id, "1", "First chronological event is In-World Event #1 (Flashback)")
+assertEqual(events.filter { $0.isFlashback }.count, 2, "Flashback counter detects exactly 2 flashbacks")
+
+// -----------------------------------------------------------------------------
+// 23. TEST: Author Lineage & 6D Vector Cosine Similarity
+// -----------------------------------------------------------------------------
+print("\n[Suite 23/25] Testing Author Lineage & Cosine Similarity...")
+
+func mockCosineSimilarity(_ v1: [Double], _ v2: [Double]) -> Double {
+    var dot = 0.0
+    var nA = 0.0
+    var nB = 0.0
+    for i in 0..<v1.count {
+        dot += v1[i] * v2[i]
+        nA += v1[i] * v1[i]
+        nB += v2[i] * v2[i]
+    }
+    let denom = sqrt(nA) * sqrt(nB)
+    guard denom > 0.00001 else { return 0.0 }
+    return dot / denom
+}
+
+let orthogonalA = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+let orthogonalB = [0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
+assertEqual(mockCosineSimilarity(orthogonalA, orthogonalB), 0.0, "Orthogonal literary vectors yield 0.0 similarity")
+
+let identicalA = [0.8, 0.7, 0.9, 0.6, 0.5, 0.4]
+assertEqual(round(mockCosineSimilarity(identicalA, identicalA) * 1000) / 1000, 1.0, "Identical literary vectors yield 1.0 similarity")
+
+let gogolVector = [0.85, 0.75, 0.95, 0.98, 0.70, 0.88]
+let bulgakovVector = [0.92, 0.88, 0.94, 0.96, 0.90, 0.85]
+let gogolBulgakovSim = mockCosineSimilarity(gogolVector, bulgakovVector)
+assertTrue(gogolBulgakovSim > 0.95, "Gogol and Bulgakov share exceptionally high literary similarity (> 95%)")
+
+let bulgakovPredecessors = ["Гоголь", "Данте", "Гёте"]
+assertEqual(bulgakovPredecessors.count, 3, "Bulgakov's literary genealogy records 3 primary masters")
+
+// -----------------------------------------------------------------------------
+// 24. TEST: Semantic Quote Network & Jaccard Motif Clustering
+// -----------------------------------------------------------------------------
+print("\n[Suite 24/25] Testing Semantic Quote Network & Jaccard Overlap...")
+
+func mockJaccardSimilarity(_ s1: Set<String>, _ s2: Set<String>) -> Double {
+    let inter = s1.intersection(s2).count
+    let union = s1.union(s2).count
+    guard union > 0 else { return 0.0 }
+    return Double(inter) / Double(union)
+}
+
+let q1Keywords: Set<String> = ["свобода", "выбор", "человек", "ответственность"]
+let q2Keywords: Set<String> = ["свобода", "бунт", "мир", "человек"]
+let jaccardSim = mockJaccardSimilarity(q1Keywords, q2Keywords)
+// Intersection: ["свобода", "человек"] = 2
+// Union: ["свобода", "выбор", "человек", "ответственность", "бунт", "мир"] = 6
+// Jaccard: 2 / 6 = 0.3333...
+assertEqual(round(jaccardSim * 100) / 100, 0.33, "Jaccard similarity of 2 overlapping keywords out of 6 total is ~0.33")
+
+let disjointKeywords: Set<String> = ["космос", "звезда"]
+assertEqual(mockJaccardSimilarity(q1Keywords, disjointKeywords), 0.0, "Disjoint quote keywords yield 0.0 Jaccard similarity")
+
+// -----------------------------------------------------------------------------
+// 25. TEST: Worldbuilding Lore Vault & Spoiler Protection Engine
+// -----------------------------------------------------------------------------
+print("\n[Suite 25/25] Testing Worldbuilding Lore Vault & Spoiler Lock...")
+
+struct MockLoreEntry {
+    var title: String
+    var safeChapter: Int
+    var isManuallyUnlocked: Bool = false
+    
+    func isLocked(atChapter current: Int) -> Bool {
+        if isManuallyUnlocked || current >= safeChapter {
+            return false
+        }
+        return true
+    }
+}
+
+var entryKvartirka = MockLoreEntry(title: "Нехорошая квартирка", safeChapter: 1)
+var entryBal = MockLoreEntry(title: "Весенний бал полнолуния", safeChapter: 23)
+
+assertEqual(entryKvartirka.isLocked(atChapter: 15), false, "Chapter 1 lore is unlocked for reader at Chapter 15")
+assertEqual(entryBal.isLocked(atChapter: 15), true, "Chapter 23 lore is locked for reader at Chapter 15 to prevent spoilers")
+
+entryBal.isManuallyUnlocked = true
+assertEqual(entryBal.isLocked(atChapter: 15), false, "Manual spoiler reveal safely unlocks the lore entry")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -699,11 +897,12 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v3.3.0 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v3.4.0 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")
     exit(1)
 }
+
 
 

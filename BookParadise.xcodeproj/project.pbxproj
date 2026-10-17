@@ -105,6 +105,16 @@
 		A10000822345678900000082 /* BookParadise/Sources/Views/Components/BookBeamShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000822345678900000082 /* BookParadise/Sources/Views/Components/BookBeamShareView.swift */; };
 		A10000832345678900000083 /* BookParadise/Sources/Services/SpoilerShieldEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000832345678900000083 /* BookParadise/Sources/Services/SpoilerShieldEngine.swift */; };
 		A10000842345678900000084 /* BookParadise/Sources/Views/Components/SpoilerShieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000842345678900000084 /* BookParadise/Sources/Views/Components/SpoilerShieldView.swift */; };
+		A10000852345678900000085 /* BookParadise/Sources/Models/CharacterRelationshipGraphModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000852345678900000085 /* BookParadise/Sources/Models/CharacterRelationshipGraphModel.swift */; };
+		A10000862345678900000086 /* BookParadise/Sources/Views/Components/CharacterRelationshipGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000862345678900000086 /* BookParadise/Sources/Views/Components/CharacterRelationshipGraphView.swift */; };
+		A10000872345678900000087 /* BookParadise/Sources/Models/BookChronologyTimelineModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000872345678900000087 /* BookParadise/Sources/Models/BookChronologyTimelineModel.swift */; };
+		A10000882345678900000088 /* BookParadise/Sources/Views/Components/BookChronologyTimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000882345678900000088 /* BookParadise/Sources/Views/Components/BookChronologyTimelineView.swift */; };
+		A10000892345678900000089 /* BookParadise/Sources/Models/AuthorInfluenceMatrixModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000892345678900000089 /* BookParadise/Sources/Models/AuthorInfluenceMatrixModel.swift */; };
+		A10000902345678900000090 /* BookParadise/Sources/Views/Components/AuthorInfluenceMatrixView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000902345678900000090 /* BookParadise/Sources/Views/Components/AuthorInfluenceMatrixView.swift */; };
+		A10000912345678900000091 /* BookParadise/Sources/Models/QuoteSemanticClusterModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000912345678900000091 /* BookParadise/Sources/Models/QuoteSemanticClusterModel.swift */; };
+		A10000922345678900000092 /* BookParadise/Sources/Views/Components/QuoteSemanticClusterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000922345678900000092 /* BookParadise/Sources/Views/Components/QuoteSemanticClusterView.swift */; };
+		A10000932345678900000093 /* BookParadise/Sources/Models/WorldbuildingLoreVaultModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000932345678900000093 /* BookParadise/Sources/Models/WorldbuildingLoreVaultModel.swift */; };
+		A10000942345678900000094 /* BookParadise/Sources/Views/Components/WorldbuildingLoreVaultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000942345678900000094 /* BookParadise/Sources/Views/Components/WorldbuildingLoreVaultView.swift */; };
 		A11C0DE123456789ABCDEF01 /* BookParadise/Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11C0DE223456789ABCDEF02 /* BookParadise/Resources/Assets.xcassets */; };
 		A2D01757B7FB30D83F71BC42 /* BookParadise/Sources/Views/LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF78C7237D080A6F64CE875 /* BookParadise/Sources/Views/LibraryView.swift */; };
 		AF6824F508686520BF8094D4 /* BookParadise/Sources/Views/MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9873C29434472930EC446CE /* BookParadise/Sources/Views/MainTabView.swift */; };
@@ -244,6 +254,16 @@
 		B10000822345678900000082 /* BookParadise/Sources/Views/Components/BookBeamShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/BookBeamShareView.swift; sourceTree = "<group>"; };
 		B10000832345678900000083 /* BookParadise/Sources/Services/SpoilerShieldEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/SpoilerShieldEngine.swift; sourceTree = "<group>"; };
 		B10000842345678900000084 /* BookParadise/Sources/Views/Components/SpoilerShieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/SpoilerShieldView.swift; sourceTree = "<group>"; };
+		B10000852345678900000085 /* BookParadise/Sources/Models/CharacterRelationshipGraphModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/CharacterRelationshipGraphModel.swift; sourceTree = "<group>"; };
+		B10000862345678900000086 /* BookParadise/Sources/Views/Components/CharacterRelationshipGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/CharacterRelationshipGraphView.swift; sourceTree = "<group>"; };
+		B10000872345678900000087 /* BookParadise/Sources/Models/BookChronologyTimelineModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BookChronologyTimelineModel.swift; sourceTree = "<group>"; };
+		B10000882345678900000088 /* BookParadise/Sources/Views/Components/BookChronologyTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/BookChronologyTimelineView.swift; sourceTree = "<group>"; };
+		B10000892345678900000089 /* BookParadise/Sources/Models/AuthorInfluenceMatrixModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/AuthorInfluenceMatrixModel.swift; sourceTree = "<group>"; };
+		B10000902345678900000090 /* BookParadise/Sources/Views/Components/AuthorInfluenceMatrixView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/AuthorInfluenceMatrixView.swift; sourceTree = "<group>"; };
+		B10000912345678900000091 /* BookParadise/Sources/Models/QuoteSemanticClusterModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/QuoteSemanticClusterModel.swift; sourceTree = "<group>"; };
+		B10000922345678900000092 /* BookParadise/Sources/Views/Components/QuoteSemanticClusterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/QuoteSemanticClusterView.swift; sourceTree = "<group>"; };
+		B10000932345678900000093 /* BookParadise/Sources/Models/WorldbuildingLoreVaultModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/WorldbuildingLoreVaultModel.swift; sourceTree = "<group>"; };
+		B10000942345678900000094 /* BookParadise/Sources/Views/Components/WorldbuildingLoreVaultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/WorldbuildingLoreVaultView.swift; sourceTree = "<group>"; };
 		B31F051912C52A30FC0ADD33 /* BookParadise/Sources/Models/BingoAndCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BingoAndCycle.swift; sourceTree = "<group>"; };
 		C10000012345678900000001 /* BookParadiseWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BookParadiseWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C10000022345678900000002 /* BookParadise/Sources/Widgets/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BookParadise/Sources/Widgets/Info.plist; sourceTree = "<group>"; };
@@ -400,6 +420,16 @@
 				B10000822345678900000082 /* BookParadise/Sources/Views/Components/BookBeamShareView.swift */,
 				B10000832345678900000083 /* BookParadise/Sources/Services/SpoilerShieldEngine.swift */,
 				B10000842345678900000084 /* BookParadise/Sources/Views/Components/SpoilerShieldView.swift */,
+				B10000852345678900000085 /* BookParadise/Sources/Models/CharacterRelationshipGraphModel.swift */,
+				B10000862345678900000086 /* BookParadise/Sources/Views/Components/CharacterRelationshipGraphView.swift */,
+				B10000872345678900000087 /* BookParadise/Sources/Models/BookChronologyTimelineModel.swift */,
+				B10000882345678900000088 /* BookParadise/Sources/Views/Components/BookChronologyTimelineView.swift */,
+				B10000892345678900000089 /* BookParadise/Sources/Models/AuthorInfluenceMatrixModel.swift */,
+				B10000902345678900000090 /* BookParadise/Sources/Views/Components/AuthorInfluenceMatrixView.swift */,
+				B10000912345678900000091 /* BookParadise/Sources/Models/QuoteSemanticClusterModel.swift */,
+				B10000922345678900000092 /* BookParadise/Sources/Views/Components/QuoteSemanticClusterView.swift */,
+				B10000932345678900000093 /* BookParadise/Sources/Models/WorldbuildingLoreVaultModel.swift */,
+				B10000942345678900000094 /* BookParadise/Sources/Views/Components/WorldbuildingLoreVaultView.swift */,
 				C10000022345678900000002 /* BookParadise/Sources/Widgets/Info.plist */,
 			);
 			name = Sources;
@@ -617,6 +647,16 @@
 				A10000822345678900000082 /* BookParadise/Sources/Views/Components/BookBeamShareView.swift in Sources */,
 				A10000832345678900000083 /* BookParadise/Sources/Services/SpoilerShieldEngine.swift in Sources */,
 				A10000842345678900000084 /* BookParadise/Sources/Views/Components/SpoilerShieldView.swift in Sources */,
+				A10000852345678900000085 /* BookParadise/Sources/Models/CharacterRelationshipGraphModel.swift in Sources */,
+				A10000862345678900000086 /* BookParadise/Sources/Views/Components/CharacterRelationshipGraphView.swift in Sources */,
+				A10000872345678900000087 /* BookParadise/Sources/Models/BookChronologyTimelineModel.swift in Sources */,
+				A10000882345678900000088 /* BookParadise/Sources/Views/Components/BookChronologyTimelineView.swift in Sources */,
+				A10000892345678900000089 /* BookParadise/Sources/Models/AuthorInfluenceMatrixModel.swift in Sources */,
+				A10000902345678900000090 /* BookParadise/Sources/Views/Components/AuthorInfluenceMatrixView.swift in Sources */,
+				A10000912345678900000091 /* BookParadise/Sources/Models/QuoteSemanticClusterModel.swift in Sources */,
+				A10000922345678900000092 /* BookParadise/Sources/Views/Components/QuoteSemanticClusterView.swift in Sources */,
+				A10000932345678900000093 /* BookParadise/Sources/Models/WorldbuildingLoreVaultModel.swift in Sources */,
+				A10000942345678900000094 /* BookParadise/Sources/Views/Components/WorldbuildingLoreVaultView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -661,7 +701,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DERIVE_MACS_SYNTHESIZED_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
@@ -671,7 +711,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.3.0;
+				MARKETING_VERSION = 3.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -719,7 +759,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CODE_SIGNING_REQUIRED = NO;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DERIVE_MACS_SYNTHESIZED_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
@@ -729,7 +769,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.3.0;
+				MARKETING_VERSION = 3.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -746,7 +786,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CODE_SIGNING_REQUIRED = NO;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookParadise/Sources/Widgets/Info.plist;
@@ -756,7 +796,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.3.0;
+				MARKETING_VERSION = 3.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -773,7 +813,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookParadise/Sources/Widgets/Info.plist;
@@ -783,7 +823,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 3.3.0;
+				MARKETING_VERSION = 3.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
