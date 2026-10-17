@@ -62,7 +62,7 @@ public struct ReadingChallengeView: View {
         guard !completedBooks.isEmpty else { return "Разное" }
         var counts: [String: Int] = [:]
         for book in completedBooks {
-            let g = book.genre.trimmingCharacters(in: .whitespacesAndNewlines)
+            let g = book.genre.rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
             if !g.isEmpty { counts[g, default: 0] += 1 }
         }
         return counts.max(by: { $0.value < $1.value })?.key ?? "Художественная литература"
