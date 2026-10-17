@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Book, Quote, Note } from '../../types';
+import { Book, Quote, Note, AppIconId } from '../../types';
 import { ModalWrapper } from './ModalWrapper';
 import { storageService } from '../../services/storage';
-import { Download, Upload, FileText, CheckCircle, Sparkles, Command } from 'lucide-react';
+import { Download, Upload, FileText, CheckCircle, Sparkles, Command, Check, Palette, BookOpen } from 'lucide-react';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -11,6 +11,8 @@ interface SettingsModalProps {
   quotes: Quote[];
   notes: Note[];
   onImportBooks: (imported: Book[]) => void;
+  currentAppIcon?: AppIconId;
+  onSelectAppIcon?: (icon: AppIconId) => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -20,9 +22,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   quotes,
   notes,
   onImportBooks,
+  currentAppIcon = 'emerald',
+  onSelectAppIcon,
 }) => {
   const [sheetsUrl, setSheetsUrl] = useState(storageService.getSheetsUrl());
+  const [selectedIcon, setSelectedIcon] = useState<AppIconId>(
+    (storageService.getAppIcon() as AppIconId) || currentAppIcon
+  );
   const [copied, setCopied] = useState(false);
+  const [iconChangedNotice, setIconChangedNotice] = useState(false);
 
   const handleExportMarkdown = () => {
     const md = storageService.exportMarkdown(books, quotes, notes);
@@ -50,6 +58,81 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       }
     };
     reader.readAsText(file);
+  };
+
+  const iconOptions: Array<{
+    id: AppIconId;
+    name: string;
+    subtitle: string;
+    gradient: string;
+    border: string;
+    accent: string;
+    badge: string;
+  }> = [
+    {
+      id: 'emerald',
+      name: 'Изумрудный Лес',
+      subtitle: 'Фирменный хвойный стиль macOS',
+      gradient: 'from-emerald-700 via-teal-800 to-emerald-950',
+      border: 'border-emerald-500/40',
+      accent: 'text-emerald-400',
+      badge: 'По умолчанию',
+    },
+    {
+      id: 'wine',
+      name: 'Королевский Бордо',
+      subtitle: 'Благородный винный бархат и золото',
+      gradient: 'from-rose-900 via-rose-950 to-neutral-950',
+      border: 'border-rose-500/40',
+      accent: 'text-rose-400',
+      badge: 'iOS Classic',
+    },
+    {
+      id: 'midnight',
+      name: 'Полночный Индиго',
+      subtitle: 'Глубокий космос со звездной пылью',
+      gradient: 'from-indigo-700 via-purple-900 to-slate-950',
+      border: 'border-indigo-500/40',
+      accent: 'text-indigo-400',
+      badge: 'Deep Night',
+    },
+    {
+      id: 'cyberpunk',
+      name: 'Киберпанк Неон',
+      subtitle: 'Футуристический дуэт фуксии и циана',
+      gradient: 'from-fuchsia-600 via-purple-800 to-cyan-800',
+      border: 'border-cyan-500/40',
+      accent: 'text-cyan-400',
+      badge: 'Glow Neo',
+    },
+    {
+      id: 'parchment',
+      name: 'Старинный Пергамент',
+      subtitle: 'Теплый кожаный переплет и крафт',
+      gradient: 'from-amber-800 via-[#2e1d13] to-[#120a06]',
+      border: 'border-amber-500/40',
+      accent: 'text-amber-400',
+      badge: 'Vintage',
+    },
+    {
+      id: 'dark',
+      name: 'OLED Obsidian',
+      subtitle: 'Лаконичный матовый черный монохром',
+      gradient: 'from-neutral-800 via-neutral-900 to-black',
+      border: 'border-neutral-500/40',
+      accent: 'text-neutral-200',
+      badge: 'Minimal',
+    },
+  ];
+
+  const handleSelectIcon = (iconId: AppIconId) => {
+    setSelectedIcon(iconId);
+    storageService.saveAppIcon(iconId);
+    if (onSelectAppIcon) {
+      onSelectAppIcon(iconId);
+    }
+    setIconChangedNotice(true);
+    setTimeout(() => setIconChangedNotice(false), 2500);
   };
 
   return (
@@ -123,6 +206,70 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             >
               {copied ? 'Сохранено!' : 'Сохранить'}
             </button>
+          </div>
+        </div>
+
+        {/* Кастомизация иконки приложения (App Icon Switcher) */}
+        <div className="p-5 rounded-xl bg-white/[0.03] border border-white/10 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Palette className="w-5 h-5 text-amber-400" />
+              <div>
+                <h3 className="text-sm font-semibold text-white">Иконка приложения</h3>
+                <span className="text-xs text-neutral-400 block">
+                  Стилизация в Dock, панели задач, ярлыке и шапке приложения
+                </span>
+              </div>
+            </div>
+            {iconChangedNotice && (
+              <span className="text-xs text-emerald-400 flex items-center gap-1 font-semibold animate-in fade-in duration-200">
+                <Check className="w-4 h-4" /> Иконка обновлена!
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+            {iconOptions.map((opt) => {
+              const isSelected = selectedIcon === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => handleSelectIcon(opt.id)}
+                  className={`flex items-center gap-3.5 p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                    isSelected
+                      ? `bg-white/10 ${opt.border} shadow-lg ring-1 ring-white/20`
+                      : 'bg-white/[0.02] border-white/5 hover:bg-white/[0.06] hover:border-white/15'
+                  }`}
+                >
+                  {/* Мини-иконка с градиентом и тиснением */}
+                  <div
+                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${opt.gradient} border border-white/20 flex items-center justify-center shrink-0 shadow-md relative overflow-hidden`}
+                  >
+                    <BookOpen className="w-6 h-6 text-white drop-shadow-md" />
+                    <span className="absolute bottom-1 right-1 w-2 h-2 rounded-full bg-white/40" />
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white truncate">{opt.name}</span>
+                      <span className="text-[10px] text-neutral-400 bg-white/5 px-1.5 py-0.5 rounded">
+                        {opt.badge}
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-neutral-400 block truncate mt-0.5">
+                      {opt.subtitle}
+                    </span>
+                  </div>
+
+                  {isSelected && (
+                    <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-white shrink-0">
+                      <Check className="w-3.5 h-3.5" />
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 

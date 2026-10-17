@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationTab } from '../types';
+import { NavigationTab, AppIconId } from '../types';
 import { LayoutDashboard, BookMarked, Trophy, BookOpen, Volume2, Settings, Plus, Sparkles } from 'lucide-react';
 
 interface SidebarProps {
@@ -10,6 +10,7 @@ interface SidebarProps {
   finishedCount: number;
   onOpenAddModal: () => void;
   soundscapeActive: boolean;
+  appIcon?: AppIconId;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -20,7 +21,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
   finishedCount,
   onOpenAddModal,
   soundscapeActive,
+  appIcon = 'emerald',
 }) => {
+  const getIconGradient = (icon: AppIconId) => {
+    switch (icon) {
+      case 'wine':
+        return 'from-rose-700 to-rose-950 shadow-rose-950/50';
+      case 'midnight':
+        return 'from-indigo-600 to-purple-950 shadow-indigo-950/50';
+      case 'cyberpunk':
+        return 'from-fuchsia-600 to-cyan-700 shadow-cyan-950/50';
+      case 'parchment':
+        return 'from-amber-700 to-amber-950 shadow-amber-950/50';
+      case 'dark':
+        return 'from-neutral-700 to-neutral-950 shadow-black/50';
+      case 'emerald':
+      default:
+        return 'from-emerald-600 to-teal-400 shadow-emerald-900/30';
+    }
+  };
   const menuItems = [
     {
       id: 'dashboard' as NavigationTab,
@@ -63,7 +82,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-4 space-y-6">
         {/* Шапка сайдбара с отступом под Traffic Lights */}
         <div className="pt-6 px-2 flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-900/30">
+          <div className={`w-8 h-8 rounded-xl bg-gradient-to-tr ${getIconGradient(appIcon)} flex items-center justify-center shadow-lg transition-all duration-300`}>
             <Sparkles className="w-4 h-4 text-white" />
           </div>
           <div>

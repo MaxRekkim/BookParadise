@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Book } from '../../types';
 import { ModalWrapper } from './ModalWrapper';
-import { Star, BookOpen, Trash2, Calendar, Award } from 'lucide-react';
+import { Star, BookOpen, Trash2, Calendar, Award, Share2 } from 'lucide-react';
 
 interface BookDetailModalProps {
   book: Book | null;
@@ -9,6 +9,7 @@ interface BookDetailModalProps {
   onClose: () => void;
   onUpdate: (updated: Book) => void;
   onDelete: (id: string) => void;
+  onShare?: (book: Book) => void;
 }
 
 export const BookDetailModal: React.FC<BookDetailModalProps> = ({
@@ -17,6 +18,7 @@ export const BookDetailModal: React.FC<BookDetailModalProps> = ({
   onClose,
   onUpdate,
   onDelete,
+  onShare,
 }) => {
   if (!book) return null;
 
@@ -217,16 +219,29 @@ export const BookDetailModal: React.FC<BookDetailModalProps> = ({
               <Trash2 className="w-4 h-4" />
               Удалить из библиотеки
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                handleSave();
-                onClose();
-              }}
-              className="px-5 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-lg active:scale-95 transition-all cursor-pointer"
-            >
-              Сохранить изменения
-            </button>
+            <div className="flex items-center gap-2">
+              {onShare && (
+                <button
+                  type="button"
+                  onClick={() => onShare(book)}
+                  className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-emerald-300 hover:text-white bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-lg transition-all cursor-pointer"
+                  title="Создать Spotify-карточку для Stories или соцсетей"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                  <span>Поделиться (Spotify Card)</span>
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  handleSave();
+                  onClose();
+                }}
+                className="px-5 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-500 rounded-lg shadow-lg active:scale-95 transition-all cursor-pointer"
+              >
+                Сохранить изменения
+              </button>
+            </div>
           </div>
         </div>
       </div>

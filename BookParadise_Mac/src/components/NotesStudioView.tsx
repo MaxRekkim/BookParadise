@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Quote, Note } from '../types';
-import { Quote as QuoteIcon, FileText, Plus, Search, Trash2 } from 'lucide-react';
+import { Quote as QuoteIcon, FileText, Plus, Search, Trash2, Share2 } from 'lucide-react';
 
 interface NotesStudioViewProps {
   quotes: Quote[];
@@ -9,6 +9,7 @@ interface NotesStudioViewProps {
   onAddNote: (n: Note) => void;
   onDeleteQuote: (id: string) => void;
   onDeleteNote: (id: string) => void;
+  onShareQuote?: (q: Quote) => void;
 }
 
 export const NotesStudioView: React.FC<NotesStudioViewProps> = ({
@@ -18,6 +19,7 @@ export const NotesStudioView: React.FC<NotesStudioViewProps> = ({
   onAddNote,
   onDeleteQuote,
   onDeleteNote,
+  onShareQuote,
 }) => {
   const [activeTab, setActiveTab] = useState<'quotes' | 'notes'>('quotes');
   const [searchQuery, setSearchQuery] = useState('');
@@ -272,14 +274,26 @@ export const NotesStudioView: React.FC<NotesStudioViewProps> = ({
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => onDeleteQuote(q.id)}
-                className="opacity-0 group-hover:opacity-100 p-2 text-neutral-500 hover:text-rose-400 hover:bg-white/5 rounded-lg transition-all h-fit cursor-pointer"
-                title="Удалить цитату"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all shrink-0">
+                {onShareQuote && (
+                  <button
+                    type="button"
+                    onClick={() => onShareQuote(q)}
+                    className="p-2 text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-all h-fit cursor-pointer"
+                    title="Создать Spotify Lyrics карточку для Stories"
+                  >
+                    <Share2 className="w-4 h-4" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => onDeleteQuote(q.id)}
+                  className="p-2 text-neutral-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all h-fit cursor-pointer"
+                  title="Удалить цитату"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           ))}
         </div>

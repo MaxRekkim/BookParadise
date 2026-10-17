@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Book, Quote, Note, Goal, NavigationTab } from './types';
+import { Book, Quote, Note, Goal, NavigationTab, AppIconId } from './types';
 import { storageService } from './services/storage';
 import { soundscape } from './services/soundscape';
 import { Sidebar } from './components/Sidebar';
@@ -13,6 +13,8 @@ import { CommandPalette } from './components/CommandPalette';
 import { BookDetailModal } from './components/Modals/BookDetailModal';
 import { AddBookModal } from './components/Modals/AddBookModal';
 import { SettingsModal } from './components/Modals/SettingsModal';
+import { ShareCardModal } from './components/Modals/ShareCardModal';
+import { DesktopMiniWidget } from './components/DesktopMiniWidget';
 
 export function App() {
   // Основные данные приложения
@@ -20,6 +22,9 @@ export function App() {
   const [quotes, setQuotes] = useState<Quote[]>(() => storageService.getQuotes());
   const [notes, setNotes] = useState<Note[]>(() => storageService.getNotes());
   const [goal, setGoal] = useState<Goal>(() => storageService.getGoal());
+  const [appIcon, setAppIcon] = useState<AppIconId>(
+    () => (storageService.getAppIcon() as AppIconId) || 'emerald'
+  );
 
   // Навигация
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
@@ -29,6 +34,11 @@ export function App() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [shareCardPayload, setShareCardPayload] = useState<{
+    book?: Book | null;
+    quote?: Quote | null;
+    goal?: Goal | null;
+  } | null>(null);
 
   // Звуковой ландшафт
   const [soundscapePlaying, setSoundscapePlaying] = useState(false);
@@ -50,6 +60,63 @@ export function App() {
   useEffect(() => {
     storageService.saveGoal(goal);
   }, [goal]);
+
+  // Динамическое обновление фавиконки приложения в соответствии с выбранной иконкой
+  useEffect(() => {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 64;
+      canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const grad = ctx.createLinearGradient(0, 0, 64, 64);
+        if (appIcon === 'wine') {
+          grad.addColorStop(0, '#9f1239');
+          grad.addColorStop(1, '#4c0519');
+        } else if (appIcon === 'midnight') {
+          grad.addColorStop(0, '#4338ca');
+          grad.addColorStop(1, '#1e1b4b');
+        } else if (appIcon === 'cyberpunk') {
+          grad.addColorStop(0, '#c026d3');
+          grad.addColorStop(1, '#0891b2');
+        } else if (appIcon === 'parchment') {
+          grad.addColorStop(0, '#b45309');
+          grad.addColorStop(1, '#451a03');
+        } else if (appIcon === 'dark') {
+          grad.addColorStop(0, '#404040');
+          grad.addColorStop(1, '#0a0a0a');
+        } else {
+          grad.addColorStop(0, '#059669');
+          grad.addColorStop(1, '#064e3b');
+        }
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(0, 0, 64, 64, 16);
+        } else {
+          ctx.rect(0, 0, 64, 64);
+        }
+        ctx.fill();
+
+        ctx.fillStyle = appIcon === 'wine' || appIcon === 'parchment' ? '#fbbf24' : '#ffffff';
+        ctx.fillRect(24, 14, 16, 36);
+        ctx.beginPath();
+        ctx.moveTo(24, 50);
+        ctx.lineTo(32, 42);
+        ctx.lineTo(40, 50);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        const link = (document.querySelector("link[rel*='icon']") as HTMLLinkElement) || document.createElement('link');
+        link.type = 'image/x-icon';
+        link.rel = 'shortcut icon';
+        link.href = canvas.toDataURL();
+        document.getElementsByTagName('head')[0].appendChild(link);
+      }
+    } catch {
+      // Ignore in non-browser context
+    }
+  }, [appIcon]);
 
   // Глобальные клавиатурные шорткаты macOS
   useEffect(() => {
@@ -167,6 +234,7 @@ export function App() {
         finishedCount={finishedCount}
         onOpenAddModal={() => setIsAddModalOpen(true)}
         soundscapeActive={soundscapePlaying}
+        appIcon={appIcon}
       />
 
       {/* Окно с нативным тайтлбаром и контентом */}
@@ -185,6 +253,8 @@ export function App() {
             onUpdateGoal={setGoal}
             onQuickAddPages={handleQuickAddPages}
             onNavigateToChallenge={() => setCurrentTab('challenge')}
+            onShareBook={(book) => setShareCardPayload({ book })}
+            onShareQuote={(quote) => setShareCardPayload({ quote })}
           />
         )}
 
@@ -202,6 +272,7 @@ export function App() {
             goal={goal}
             onSelectBook={(book) => setSelectedBook(book)}
             onUpdateGoal={setGoal}
+            onShareWrapped={() => setShareCardPayload({ goal })}
           />
         )}
 
@@ -213,6 +284,7 @@ export function App() {
             onAddNote={handleAddNote}
             onDeleteQuote={handleDeleteQuote}
             onDeleteNote={handleDeleteNote}
+            onShareQuote={(quote) => setShareCardPayload({ quote })}
           />
         )}
 
@@ -233,6 +305,7 @@ export function App() {
         onClose={() => setSelectedBook(null)}
         onUpdate={handleUpdateBook}
         onDelete={handleDeleteBook}
+        onShare={(book) => setShareCardPayload({ book })}
       />
 
       {/* Модальное окно добавления книги */}
@@ -250,6 +323,8 @@ export function App() {
         quotes={quotes}
         notes={notes}
         onImportBooks={(imported) => setBooks(imported)}
+        currentAppIcon={appIcon}
+        onSelectAppIcon={(icon) => setAppIcon(icon)}
       />
 
       {/* Command Palette (⌘K) */}
@@ -262,6 +337,28 @@ export function App() {
         onOpenAddModal={() => setIsAddModalOpen(true)}
         onToggleSoundscape={handleToggleSoundscape}
         onOpenSettings={() => setIsSettingsModalOpen(true)}
+      />
+
+      {/* Модальное окно генератора Spotify Share Cards */}
+      <ShareCardModal
+        isOpen={Boolean(shareCardPayload)}
+        onClose={() => setShareCardPayload(null)}
+        book={shareCardPayload?.book}
+        quote={shareCardPayload?.quote}
+        goal={shareCardPayload?.goal}
+        books={books}
+      />
+
+      {/* Плавающий настольный мини-виджет чтения */}
+      <DesktopMiniWidget
+        currentBook={books.find((b) => b.readPages > 0 && !b.isFinished) || books[0] || null}
+        goal={goal}
+        finishedCount={finishedCount}
+        soundscapeActive={soundscapePlaying}
+        onToggleSoundscape={handleToggleSoundscape}
+        onQuickAddPages={handleQuickAddPages}
+        onOpenBookDetail={(b) => setSelectedBook(b)}
+        onOpenShareCard={(b) => setShareCardPayload({ book: b })}
       />
     </div>
   );

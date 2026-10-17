@@ -7,6 +7,7 @@ const STORAGE_KEYS = {
   NOTES: 'bookparadise_notes_v2',
   GOAL: 'bookparadise_goal_v2',
   SHEETS_URL: 'bookparadise_sheets_url_v2',
+  APP_ICON: 'bookparadise_app_icon_v2',
 };
 
 export const storageService = {
@@ -84,6 +85,14 @@ export const storageService = {
 
   saveSheetsUrl(url: string) {
     localStorage.setItem(STORAGE_KEYS.SHEETS_URL, url);
+  },
+
+  getAppIcon(): string {
+    return localStorage.getItem(STORAGE_KEYS.APP_ICON) || 'emerald';
+  },
+
+  saveAppIcon(iconId: string) {
+    localStorage.setItem(STORAGE_KEYS.APP_ICON, iconId);
   },
 
   exportMarkdown(books: Book[], quotes: Quote[], notes: Note[]): string {

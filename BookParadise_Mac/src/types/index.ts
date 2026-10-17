@@ -44,3 +44,5 @@ export interface Goal {
 }
 
 export type NavigationTab = 'dashboard' | 'library' | 'challenge' | 'notes' | 'soundscape' | 'settings';
+
+export type AppIconId = 'emerald' | 'wine' | 'midnight' | 'cyberpunk' | 'parchment' | 'dark';

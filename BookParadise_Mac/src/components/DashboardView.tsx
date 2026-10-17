@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Book, Goal, Quote } from '../types';
-import { ChevronDown, ChevronUp, Plus, Minus, BookOpen, Star, Quote as QuoteIcon, ArrowUpRight, Flame, Sparkles } from 'lucide-react';
+import { ChevronDown, ChevronUp, Plus, Minus, BookOpen, Star, Quote as QuoteIcon, ArrowUpRight, Flame, Sparkles, Share2 } from 'lucide-react';
 
 interface DashboardViewProps {
   books: Book[];
@@ -10,6 +10,8 @@ interface DashboardViewProps {
   onUpdateGoal: (newGoal: Goal) => void;
   onQuickAddPages: (bookId: string, pagesToAdd: number) => void;
   onNavigateToChallenge: () => void;
+  onShareBook?: (book: Book) => void;
+  onShareQuote?: (quote: Quote) => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -20,6 +22,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   onUpdateGoal,
   onQuickAddPages,
   onNavigateToChallenge,
+  onShareBook,
+  onShareQuote,
 }) => {
   const [isFinishedListExpanded, setIsFinishedListExpanded] = useState(false);
 
@@ -198,9 +202,21 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* Карточка 2: Цитата дня */}
         <div className="p-6 rounded-2xl bg-gradient-to-br from-[#1c1c24] to-[#16161c] border border-white/10 shadow-mac-card flex flex-col justify-between">
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <QuoteIcon className="w-4 h-4 text-amber-400" />
-              <h3 className="text-xs font-semibold text-amber-400 uppercase tracking-wider">Цитата дня</h3>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <QuoteIcon className="w-4 h-4 text-amber-400" />
+                <h3 className="text-xs font-semibold text-amber-400 uppercase tracking-wider">Цитата дня</h3>
+              </div>
+              {quoteOfTheDay && onShareQuote && (
+                <button
+                  type="button"
+                  onClick={() => onShareQuote(quoteOfTheDay)}
+                  className="p-1 text-neutral-400 hover:text-amber-400 hover:bg-white/5 rounded-md transition-colors cursor-pointer"
+                  title="Поделиться карточкой цитаты (Spotify Lyrics)"
+                >
+                  <Share2 className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
             {quoteOfTheDay ? (
               <blockquote className="text-sm text-neutral-200 italic leading-relaxed">
@@ -277,10 +293,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                       />
                     </div>
 
-                    {/* Кнопки быстрой записи страниц (+10, +25) */}
+                    {/* Кнопки быстрой записи страниц (+10, +25) и шеринг */}
                     <div className="pt-2 flex items-center justify-between">
                       <span className="text-[10px] text-neutral-500">Быстрая запись:</span>
-                      <div className="flex gap-1.5">
+                      <div className="flex items-center gap-1.5">
                         <button
                           type="button"
                           onClick={() => onQuickAddPages(book.id, 10)}
@@ -295,6 +311,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                         >
                           +25 стр.
                         </button>
+                        {onShareBook && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onShareBook(book);
+                            }}
+                            className="p-1 rounded bg-white/5 hover:bg-emerald-500/20 text-neutral-400 hover:text-emerald-300 transition-colors cursor-pointer"
+                            title="Создать Spotify карточку книги"
+                          >
+                            <Share2 className="w-3 h-3" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

@@ -80,6 +80,55 @@ public struct SettingsView: View {
                     }
                 }
 
+                // MARK: - Иконка приложения (App Icon)
+                Section(header: Text("Иконка приложения"), footer: Text("Выберите альтернативный значок приложения для домашнего экрана iOS и панели задач.")) {
+                    ForEach([
+                        ("AppIcon-Default", "Изумрудный Лес", Color(red: 0.05, green: 0.58, blue: 0.41)),
+                        ("AppIcon-Wine", "Королевский Бордо", Color(red: 0.55, green: 0.16, blue: 0.22)),
+                        ("AppIcon-Midnight", "Полночный Индиго", Color(red: 0.20, green: 0.20, blue: 0.55)),
+                        ("AppIcon-Cyberpunk", "Киберпанк Неон", Color(red: 0.75, green: 0.15, blue: 0.83)),
+                        ("AppIcon-Parchment", "Старинный Пергамент", Color(red: 0.55, green: 0.35, blue: 0.15)),
+                        ("AppIcon-Dark", "OLED Obsidian", Color(red: 0.15, green: 0.15, blue: 0.15))
+                    ], id: \.0) { iconKey, iconName, iconColor in
+                        Button(action: {
+                            #if canImport(UIKit)
+                            let targetIcon = iconKey == "AppIcon-Default" ? nil : iconKey
+                            if UIApplication.shared.supportsAlternateIcons {
+                                UIApplication.shared.setAlternateIconName(targetIcon) { error in
+                                    if let error = error {
+                                        print("Ошибка смены иконки: \(error.localizedDescription)")
+                                    }
+                                }
+                            }
+                            #endif
+                        }) {
+                            HStack(spacing: 12) {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(iconColor)
+                                    .frame(width: 32, height: 32)
+                                    .overlay(
+                                        Image(systemName: "book.fill")
+                                            .font(.caption)
+                                            .foregroundColor(.white)
+                                    )
+                                    .shadow(color: iconColor.opacity(0.3), radius: 3, x: 0, y: 2)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(iconName)
+                                        .font(.subheadline)
+                                        .foregroundColor(.primary)
+                                    Text(iconKey == "AppIcon-Default" ? "По умолчанию" : "Альтернативная")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                Spacer()
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
                 // MARK: - Отправка на Kindle
                 Section(header: Text("Отправка на Kindle"), footer: Text("Укажите email вашей читалки (например, имя@kindle.com). Не забудьте добавить вашу личную почту в доверенный список на Amazon.")) {
                     HStack {

@@ -1,12 +1,13 @@
 import React from 'react';
 import { Book, Goal } from '../types';
-import { Trophy, Calendar, CheckCircle2, Star, BookOpen, TrendingUp } from 'lucide-react';
+import { Trophy, Calendar, CheckCircle2, Star, BookOpen, TrendingUp, Sparkles } from 'lucide-react';
 
 interface ReadingChallengeViewProps {
   books: Book[];
   goal: Goal;
   onSelectBook: (book: Book) => void;
   onUpdateGoal: (newGoal: Goal) => void;
+  onShareWrapped?: () => void;
 }
 
 export const ReadingChallengeView: React.FC<ReadingChallengeViewProps> = ({
@@ -14,6 +15,7 @@ export const ReadingChallengeView: React.FC<ReadingChallengeViewProps> = ({
   goal,
   onSelectBook,
   onUpdateGoal,
+  onShareWrapped,
 }) => {
   const finishedBooks = books.filter((b) => b.isFinished);
   const totalPages = books.reduce((sum, b) => sum + b.readPages, 0);
@@ -39,24 +41,38 @@ export const ReadingChallengeView: React.FC<ReadingChallengeViewProps> = ({
           </p>
         </div>
 
-        {/* Быстрое изменение цели (шаг 1) */}
-        <div className="flex items-center gap-2 p-1.5 rounded-xl bg-white/5 border border-white/10">
-          <span className="text-xs text-neutral-400 pl-2">Цель:</span>
-          <button
-            type="button"
-            onClick={() => onUpdateGoal({ ...goal, targetBooks: Math.max(1, goal.targetBooks - 1) })}
-            className="w-7 h-7 flex items-center justify-center text-white hover:bg-white/10 rounded-lg text-sm font-bold"
-          >
-            -
-          </button>
-          <span className="text-sm font-bold text-emerald-400 px-1">{goal.targetBooks}</span>
-          <button
-            type="button"
-            onClick={() => onUpdateGoal({ ...goal, targetBooks: goal.targetBooks + 1 })}
-            className="w-7 h-7 flex items-center justify-center text-white hover:bg-white/10 rounded-lg text-sm font-bold"
-          >
-            +
-          </button>
+        <div className="flex items-center gap-3">
+          {onShareWrapped && (
+            <button
+              type="button"
+              onClick={onShareWrapped}
+              className="flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-purple-950/40 active:scale-95 transition-all cursor-pointer"
+              title="Создать стильную карточку Spotify Wrapped с итогами чтения"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Поделиться итогами (Spotify Wrapped)</span>
+            </button>
+          )}
+
+          {/* Быстрое изменение цели (шаг 1) */}
+          <div className="flex items-center gap-2 p-1.5 rounded-xl bg-white/5 border border-white/10">
+            <span className="text-xs text-neutral-400 pl-2">Цель:</span>
+            <button
+              type="button"
+              onClick={() => onUpdateGoal({ ...goal, targetBooks: Math.max(1, goal.targetBooks - 1) })}
+              className="w-7 h-7 flex items-center justify-center text-white hover:bg-white/10 rounded-lg text-sm font-bold"
+            >
+              -
+            </button>
+            <span className="text-sm font-bold text-emerald-400 px-1">{goal.targetBooks}</span>
+            <button
+              type="button"
+              onClick={() => onUpdateGoal({ ...goal, targetBooks: goal.targetBooks + 1 })}
+              className="w-7 h-7 flex items-center justify-center text-white hover:bg-white/10 rounded-lg text-sm font-bold"
+            >
+              +
+            </button>
+          </div>
         </div>
       </div>
 
