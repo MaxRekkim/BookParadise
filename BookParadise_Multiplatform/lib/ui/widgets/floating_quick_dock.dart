@@ -5,6 +5,7 @@ import '../view_models/library_view_model.dart';
 import '../views/library_view.dart';
 import '../views/reading_session_screen.dart';
 import '../views/quotes_view.dart';
+import '../views/notes_journal_view.dart';
 import '../views/book_oracle_screen.dart';
 import '../views/settings_dialog.dart';
 
@@ -95,7 +96,20 @@ class FloatingQuickDock extends StatelessWidget {
           ),
           _divider(),
 
-          // 5. Книжный Оракул-Сомелье
+          // 5. Дневник заметок Markdown
+          _dockItem(
+            icon: Icons.edit_note_rounded,
+            tooltip: 'Дневник и заметки',
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NotesJournalView()),
+              );
+            },
+          ),
+          _divider(),
+
+          // 6. Книжный Оракул-Сомелье
           _dockItem(
             icon: Icons.auto_awesome,
             tooltip: 'Книжный Оракул-Сомелье',

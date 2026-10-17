@@ -18,6 +18,7 @@ public struct DashboardView: View {
     @State private var isShowingOracle: Bool = false
     @State private var isShowingWrapped: Bool = false
     @State private var isShowingAddBook: Bool = false
+    @State private var isShowingNotesJournal: Bool = false
     
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -99,7 +100,8 @@ public struct DashboardView: View {
                         }
                     },
                     onQuotesTapped: { isShowingQuotes = true },
-                    onOracleTapped: { isShowingOracle = true }
+                    onOracleTapped: { isShowingOracle = true },
+                    onNotesTapped: { isShowingNotesJournal = true }
                 )
                 .padding(.bottom, 16)
             }
@@ -126,6 +128,11 @@ public struct DashboardView: View {
                             }
                         }
 
+                        Button(action: { isShowingNotesJournal = true }) {
+                            Image(systemName: "note.text")
+                                .foregroundColor(theme.primaryAccent)
+                        }
+
                         Button(action: { isShowingQuotes = true }) {
                             Image(systemName: "quote.bubble.fill")
                                 .foregroundColor(theme.primaryAccent)
@@ -137,6 +144,9 @@ public struct DashboardView: View {
                         }
                     }
                 }
+            }
+            .sheet(isPresented: $isShowingNotesJournal) {
+                NotesJournalView(viewModel: viewModel)
             }
             .sheet(isPresented: $isShowingOracle) {
                 BookOracleView(viewModel: viewModel) { book in

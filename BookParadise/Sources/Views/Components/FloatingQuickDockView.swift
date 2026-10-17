@@ -8,6 +8,7 @@ public struct FloatingQuickDockView: View {
     public var onTimerTapped: () -> Void
     public var onQuotesTapped: () -> Void
     public var onOracleTapped: () -> Void
+    public var onNotesTapped: (() -> Void)? = nil
     
     public init(
         viewModel: LibraryViewModel,
@@ -15,7 +16,8 @@ public struct FloatingQuickDockView: View {
         onAddBookTapped: @escaping () -> Void,
         onTimerTapped: @escaping () -> Void,
         onQuotesTapped: @escaping () -> Void,
-        onOracleTapped: @escaping () -> Void
+        onOracleTapped: @escaping () -> Void,
+        onNotesTapped: (() -> Void)? = nil
     ) {
         self.viewModel = viewModel
         self.onSearchTapped = onSearchTapped
@@ -23,6 +25,7 @@ public struct FloatingQuickDockView: View {
         self.onTimerTapped = onTimerTapped
         self.onQuotesTapped = onQuotesTapped
         self.onOracleTapped = onOracleTapped
+        self.onNotesTapped = onNotesTapped
     }
     
     public var body: some View {
@@ -42,17 +45,23 @@ public struct FloatingQuickDockView: View {
             
             dockDivider
             
-            // 4. Цитаты
+            // 4. Заметки Studio
+            if let onNotes = onNotesTapped {
+                dockButton(icon: "note.text", action: onNotes)
+                dockDivider
+            }
+            
+            // 5. Цитаты
             dockButton(icon: "quote.bubble", action: onQuotesTapped)
             
             dockDivider
             
-            // 5. Оракул-Сомелье
+            // 6. Оракул-Сомелье
             dockButton(icon: "sparkles", accentColor: Color(red: 0.90, green: 0.72, blue: 0.23), action: onOracleTapped)
             
             dockDivider
             
-            // 6. Переключение темы
+            // 7. Переключение темы
             dockButton(icon: "circle.lefthalf.filled") {
                 withAnimation {
                     theme.selectedTheme = (theme.selectedTheme == .midnightOxford ? .wineVelvet : .midnightOxford)

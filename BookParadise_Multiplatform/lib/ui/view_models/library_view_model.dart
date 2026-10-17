@@ -136,7 +136,7 @@ class LibraryViewModel extends ChangeNotifier {
   String exportJsonBackup() {
     final list = _books.map((b) => b.toJson()).toList();
     final data = {
-      'version': '2.10.0',
+      'version': '2.11.0',
       'exportDate': DateTime.now().toIso8601String(),
       'annualGoal': _annualGoal,
       'booksCount': list.length,

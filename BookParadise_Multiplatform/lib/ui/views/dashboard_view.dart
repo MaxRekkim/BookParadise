@@ -14,6 +14,7 @@ import 'quotes_view.dart';
 import 'settings_dialog.dart';
 import 'lending_list_screen.dart';
 import 'achievements_screen.dart';
+import 'notes_journal_view.dart';
 import 'book_oracle_screen.dart';
 import 'reading_wrapped_screen.dart';
 import '../widgets/time_capsule_card.dart';
@@ -51,6 +52,13 @@ class DashboardView extends StatelessWidget {
             tooltip: 'Трофеи и стрики',
             onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => const AchievementsScreen()));
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.edit_note_rounded, color: Colors.tealAccent),
+            tooltip: 'Дневник заметок',
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const NotesJournalView()));
             },
           ),
           IconButton(

@@ -8,11 +8,14 @@ import '../../data/services/reading_session_service.dart';
 import '../../data/services/lending_service.dart';
 import '../../data/services/quotes_service.dart';
 import '../../data/services/markdown_export_service.dart';
+import '../../data/services/notes_service.dart';
+import '../../data/models/reading_note.dart';
 import '../view_models/library_view_model.dart';
 import '../widgets/book_cover_widget.dart';
 import 'reading_session_screen.dart';
 import 'lend_book_dialog.dart';
 import 'quotes_view.dart';
+import 'markdown_editor_view.dart';
 
 class BookDetailView extends StatefulWidget {
   final Book book;
@@ -288,6 +291,10 @@ class _BookDetailViewState extends State<BookDetailView> {
           _buildQuotesSection(context, book),
           const SizedBox(height: 16),
 
+          // 4.6. Заметки и конспекты Markdown
+          _buildNotesSection(context, book),
+          const SizedBox(height: 16),
+
           // 5. Книга у друзей (Трекер долгов)
           _buildLendingSection(context, book),
           const SizedBox(height: 16),
@@ -561,6 +568,153 @@ class _BookDetailViewState extends State<BookDetailView> {
                                   ),
                                 ),
                               ],
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotesSection(BuildContext context, Book book) {
+    final notesService = context.watch<NotesService>();
+    final bookNotes = notesService.notesForBook(book.id);
+    final primaryAccent = Theme.of(context).colorScheme.primary;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.edit_note_rounded, color: primaryAccent, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Заметки и конспекты (${bookNotes.length})',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                FilledButton.tonalIcon(
+                  icon: const Icon(Icons.add, size: 16),
+                  label: const Text('Создать', style: TextStyle(fontSize: 12)),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MarkdownEditorView(initialBookId: book.id),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            if (bookNotes.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(Icons.description_outlined, size: 36, color: Colors.grey.shade400),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Заметок по этой книге пока нет.',
+                        style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Создайте конспект, мысли по главам или цитатник в Markdown редакторе.',
+                        style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: bookNotes.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                itemBuilder: (context, index) {
+                  final note = bookNotes[index];
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => MarkdownEditorView(note: note),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.35),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.grey.withOpacity(0.15)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  note.title,
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              if (note.isPinned) ...[
+                                const SizedBox(width: 6),
+                                const Icon(Icons.push_pin, size: 14, color: Colors.amber),
+                              ],
+                              const SizedBox(width: 8),
+                              Text(
+                                '${note.wordCount} сл. · ~${note.readingTimeMinutes} мин',
+                                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            note.excerpt,
+                            style: TextStyle(fontSize: 12, color: Colors.grey.shade700, height: 1.3),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (note.tags.isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 6,
+                              runSpacing: 4,
+                              children: note.tags.map((t) => Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: primaryAccent.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  '#$t',
+                                  style: TextStyle(fontSize: 10, color: primaryAccent, fontWeight: FontWeight.w600),
+                                ),
+                              )).toList(),
                             ),
                           ],
                         ],

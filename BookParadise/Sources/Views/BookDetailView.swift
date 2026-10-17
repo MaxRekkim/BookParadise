@@ -14,6 +14,7 @@ public struct BookDetailView: View {
 
     @AppStorage("kindleEmail") private var kindleEmail: String = ""
     @ObservedObject private var lendingManager = LendingManager.shared
+    @ObservedObject private var noteStore = ReadingNoteStore.shared
     @State private var isShowingProgressUpdate: Bool = false
     @State private var isShowingPlanSheet: Bool = false
     @State private var isShowingQuoteScanner: Bool = false
@@ -25,6 +26,8 @@ public struct BookDetailView: View {
     @State private var reviewDraft: String = ""
     @State private var isShowingKindleAlert: Bool = false
     @State private var isShowingLendSheet: Bool = false
+    @State private var isShowingNewNoteSheet: Bool = false
+    @State private var selectedNoteForEdit: ReadingNote? = nil
 
     public init(viewModel: LibraryViewModel, bookId: Int) {
         self.viewModel = viewModel
@@ -259,6 +262,9 @@ public struct BookDetailView: View {
                 .background(Color(UIColor.secondarySystemGroupedBackground))
                 .cornerRadius(16)
 
+                // Заметки и конспекты Markdown
+                notesSection(for: book)
+
                 // Трекер одолженных книг (Lending & Borrowing)
                 lendingSection(for: book)
 
@@ -290,6 +296,12 @@ public struct BookDetailView: View {
         }
         .sheet(isPresented: $isShowingReadingSession) {
             ReadingSessionView(viewModel: viewModel, book: book)
+        }
+        .sheet(isPresented: $isShowingNewNoteSheet) {
+            MarkdownEditorView(viewModel: viewModel, initialBookId: book.id)
+        }
+        .sheet(item: $selectedNoteForEdit) { note in
+            MarkdownEditorView(viewModel: viewModel, note: note, initialBookId: book.id)
         }
         .fileImporter(
             isPresented: $isShowingFileImporter,
@@ -327,6 +339,79 @@ public struct BookDetailView: View {
                 }
             }
         }
+    }
+
+    // MARK: - Секция Заметок Markdown
+    private func notesSection(for book: Book) -> some View {
+        let bookNotes = noteStore.notes(for: book.id)
+        return VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "note.text")
+                    .foregroundColor(theme.primaryAccent)
+                Text("Заметки и конспекты Markdown")
+                    .font(.headline)
+                if !bookNotes.isEmpty {
+                    Text("(\(bookNotes.count))")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                Spacer()
+                Button(action: {
+                    isShowingNewNoteSheet = true
+                }) {
+                    Label("Добавить", systemImage: "plus.circle.fill")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(theme.primaryAccent)
+                }
+            }
+
+            if bookNotes.isEmpty {
+                Text("У вас пока нет заметок по этой книге. Создайте конспект, мысли по главам или цитатник в Markdown редакторе.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.vertical, 4)
+            } else {
+                VStack(spacing: 8) {
+                    ForEach(bookNotes) { note in
+                        Button(action: {
+                            selectedNoteForEdit = note
+                        }) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    HStack(spacing: 6) {
+                                        Text(note.title)
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.primary)
+                                            .lineLimit(1)
+                                        if note.isPinned {
+                                            Image(systemName: "pin.fill")
+                                                .font(.caption2)
+                                                .foregroundColor(.orange)
+                                        }
+                                    }
+                                    Text(note.excerpt)
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                        .lineLimit(2)
+                                }
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(10)
+                            .background(Color(UIColor.tertiarySystemGroupedBackground))
+                            .cornerRadius(10)
+                        }
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(16)
     }
 
     // MARK: - Секция Отзыва и Рецензии
