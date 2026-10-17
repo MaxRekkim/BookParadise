@@ -65,7 +65,7 @@ public final class CoreSpotlightIndexer: ObservableObject {
         var searchableItems: [CSSearchableItem] = []
         
         for book in books {
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .content)
+            let attributeSet = CSSearchableItemAttributeSet(itemContentType: "public.content")
             attributeSet.title = book.title
             attributeSet.displayName = book.title
             attributeSet.contentDescription = "\(book.author) • \(book.genre) • Прочитано \(Int(book.progressPercent))%"

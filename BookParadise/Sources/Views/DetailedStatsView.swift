@@ -75,84 +75,86 @@ public struct DetailedStatsView: View {
     public var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                // 1. Предиктивный трекер годовой цели 2026
-                annualGoalForecastCard
-                    .padding(.horizontal)
-                    .padding(.top, 12)
+                // Группа 1: Базовая аналитика и годовой прогноз
+                Group {
+                    annualGoalForecastCard
+                        .padding(.horizontal)
+                        .padding(.top, 12)
 
-                // 2. Сетка ключевых показателей скорости и объемов
-                velocityMetricsGrid
-                    .padding(.horizontal)
+                    velocityMetricsGrid
+                        .padding(.horizontal)
 
-                // 2.5. Тепловая карта активности чтения (Heatmap 24x7)
-                ReadingHeatmapView()
-                    .padding(.horizontal)
+                    ReadingHeatmapView()
+                        .padding(.horizontal)
 
-                // 3. Формат чтения: Бумажные vs Электронные книги
-                formatComparisonCard
-                    .padding(.horizontal)
+                    formatComparisonCard
+                        .padding(.horizontal)
 
-                // 4. Распределение по жанрам и любимый жанр
-                genreBreakdownCard
-                    .padding(.horizontal)
+                    genreBreakdownCard
+                        .padding(.horizontal)
+                }
 
-                // 4.1. Радар жанрового разнообразия (Spider Chart & Shannon Entropy)
-                GenreRadarChartView(books: viewModel.books)
-                    .padding(.horizontal)
+                // Группа 2: Когнитивные радары и экономика
+                Group {
+                    GenreRadarChartView(books: viewModel.books)
+                        .padding(.horizontal)
 
-                // 4.2. Шкала литературных эпох (Time Travel Axis)
-                TimeTravelAxisCardView(books: viewModel.books)
-                    .padding(.horizontal)
+                    TimeTravelAxisCardView(books: viewModel.books)
+                        .padding(.horizontal)
 
-                // 4.3. Экономика библиотеки и ценность чтения
-                LibraryEconomicsCardView(books: viewModel.books, sessions: sessionManager.sessionHistory)
-                    .padding(.horizontal)
+                    LibraryEconomicsCardView(books: viewModel.books, sessions: sessionManager.sessionHistory)
+                        .padding(.horizontal)
 
-                // 4.4. Осознанный отказ от книг (DNF Analytics)
-                DNFAnalyticsCardView(books: viewModel.books)
-                    .padding(.horizontal)
+                    DNFAnalyticsCardView(books: viewModel.books)
+                        .padding(.horizontal)
+                }
 
-                // 4.5. Литературная Онтология и Глубинные связи (Wave 4)
-                CharacterRelationshipGraphView()
-                    .padding(.horizontal)
+                // Группа 3: Литературная Онтология (Wave 4)
+                Group {
+                    CharacterRelationshipGraphView()
+                        .padding(.horizontal)
 
-                BookChronologyTimelineView()
-                    .padding(.horizontal)
+                    BookChronologyTimelineView()
+                        .padding(.horizontal)
 
-                AuthorInfluenceMatrixView()
-                    .padding(.horizontal)
+                    AuthorInfluenceMatrixView()
+                        .padding(.horizontal)
 
-                QuoteSemanticClusterView()
-                    .padding(.horizontal)
+                    QuoteSemanticClusterView()
+                        .padding(.horizontal)
 
-                WorldbuildingLoreVaultView()
-                    .padding(.horizontal)
+                    WorldbuildingLoreVaultView()
+                        .padding(.horizontal)
+                }
 
-                // 4.6. Системная интеграция iOS & macOS (Wave 5: v3.5.0)
-                InteractiveReadingWidgetView()
-                    .padding(.horizontal)
+                // Группа 4: Системная интеграция iOS & macOS (Wave 5: v3.5.0)
+                Group {
+                    InteractiveReadingWidgetView()
+                        .padding(.horizontal)
 
-                ReadingLiveActivityView()
-                    .padding(.horizontal)
+                    ReadingLiveActivityView()
+                        .padding(.horizontal)
 
-                SpotlightSearchDebugView()
-                    .padding(.horizontal)
+                    SpotlightSearchDebugView()
+                        .padding(.horizontal)
 
-                AppIntentsConfigView()
-                    .padding(.horizontal)
+                    AppIntentsConfigView()
+                        .padding(.horizontal)
 
-                MenuBarCompanionView()
-                    .padding(.horizontal)
+                    MenuBarCompanionView()
+                        .padding(.horizontal)
+                }
 
-                // 5. Оценки и галерея Шедевров
-                ratingsAndMasterpiecesCard
-                    .padding(.horizontal)
+                // Группа 5: Оценки и логи
+                Group {
+                    ratingsAndMasterpiecesCard
+                        .padding(.horizontal)
 
-                // 6. Лог сессий чтения
-                sessionHistoryCard
-                    .padding(.horizontal)
+                    sessionHistoryCard
+                        .padding(.horizontal)
 
-                Spacer(minLength: 40)
+                    Spacer(minLength: 40)
+                }
             }
         }
         .background(Color(UIColor.systemGroupedBackground))
