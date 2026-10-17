@@ -6,8 +6,11 @@ public struct BingoView: View {
     @State private var isShowingAddPlanSelector: Bool = false
     @State private var selectedBingoTab: Int = 0 // 0: Планы по месяцам, 1: Матрица Бинго 5x5
     
-    public init(viewModel: LibraryViewModel) {
+    public var isEmbedded: Bool = false
+    
+    public init(viewModel: LibraryViewModel, isEmbedded: Bool = false) {
         self.viewModel = viewModel
+        self.isEmbedded = isEmbedded
     }
     
     private var plannedBooksForMonth: [BingoItem] {
@@ -28,76 +31,84 @@ public struct BingoView: View {
     }
     
     public var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // Переключатель режима: Планы / Матрица Бинго
-                Picker("Режим", selection: $selectedBingoTab) {
-                    Text("Планы по месяцам").tag(0)
-                    Text("Матрица Бинго 5x5").tag(1)
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                
-                if selectedBingoTab == 1 {
-                    ScrollView {
-                        ReadingBingoMatrixView()
-                            .padding(.horizontal, 16)
-                            .padding(.top, 8)
-                            .padding(.bottom, 24)
+        if isEmbedded {
+            contentView
+        } else {
+            NavigationStack {
+                contentView
+                    .navigationTitle("Планы и Бинго")
+                    .refreshable {
+                        await viewModel.syncWithCloud()
                     }
-                } else {
-                    // Переключатель месяцев
-                    monthTabsBar
-                    
-                    ScrollView {
-                    VStack(spacing: 16) {
-                        // Сводка месяца
-                        monthSummaryCard
-                        
-                        // Список книг месяца
-                        if plannedBooksForMonth.isEmpty {
-                            emptyMonthView
-                        } else {
-                            VStack(spacing: 12) {
-                                ForEach(plannedBooksForMonth) { item in
-                                    bingoBookCard(item)
-                                }
-                            }
-                        }
-                        
-                        // Кнопка «+ Добавить в план месяца»
-                        Button(action: {
-                            isShowingAddPlanSelector = true
-                        }) {
-                            HStack {
-                                Image(systemName: "plus.circle.fill")
-                                Text("Добавить в план месяца (\(viewModel.selectedBingoMonth))")
-                            }
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.orange)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .background(Color.orange.opacity(0.12))
-                            .cornerRadius(12)
-                        }
+            }
+        }
+    }
+    
+    private var contentView: some View {
+        VStack(spacing: 0) {
+            // Переключатель режима: Планы / Матрица Бинго
+            Picker("Режим", selection: $selectedBingoTab) {
+                Text("Планы по месяцам").tag(0)
+                Text("Матрица Бинго 5x5").tag(1)
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            
+            if selectedBingoTab == 1 {
+                ScrollView {
+                    ReadingBingoMatrixView()
+                        .padding(.horizontal, 16)
                         .padding(.top, 8)
-                        
-                        Spacer(minLength: 90)
+                        .padding(.bottom, 24)
+                }
+            } else {
+                // Переключатель месяцев
+                monthTabsBar
+                
+                ScrollView {
+                VStack(spacing: 16) {
+                    // Сводка месяца
+                    monthSummaryCard
+                    
+                    // Список книг месяца
+                    if plannedBooksForMonth.isEmpty {
+                        emptyMonthView
+                    } else {
+                        VStack(spacing: 12) {
+                            ForEach(plannedBooksForMonth) { item in
+                                bingoBookCard(item)
+                            }
+                        }
                     }
-                    .padding()
+                    
+                    // Кнопка «+ Добавить в план месяца»
+                    Button(action: {
+                        isShowingAddPlanSelector = true
+                    }) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                            Text("Добавить в план месяца (\(viewModel.selectedBingoMonth))")
+                        }
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.orange)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.orange.opacity(0.12))
+                        .cornerRadius(12)
+                    }
+                    .padding(.top, 8)
+                    
+                    Spacer(minLength: 90)
                 }
-                }
+                .padding()
             }
-            .background(Color(UIColor.systemGroupedBackground))
-            .navigationTitle("Планы и Бинго")
-            .sheet(isPresented: $isShowingAddPlanSelector) {
-                SelectBookForPlanSheet(viewModel: viewModel, month: viewModel.selectedBingoMonth)
             }
-            .refreshable {
-                await viewModel.syncWithCloud()
-            }
+        }
+        .background(Color(UIColor.systemGroupedBackground))
+        .sheet(isPresented: $isShowingAddPlanSelector) {
+            SelectBookForPlanSheet(viewModel: viewModel, month: viewModel.selectedBingoMonth)
         }
     }
     

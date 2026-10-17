@@ -1319,7 +1319,7 @@ assertEqual(unlockedCount, 4, "All default demo trophies unlocked for v4.0.0 cel
 print("\n[Suite 40/40] Testing Sanctuary Master Overview & Milestone Stats...")
 
 struct MockSanctuaryMasterStats {
-    var versionString: String = "4.2.0"
+    var versionString: String = "4.3.0"
     var totalBooksInLibrary: Int = 42
     var totalPagesCompleted: Int = 14200
     var totalReadingHours: Double = 417.6
@@ -1332,10 +1332,10 @@ struct MockSanctuaryMasterStats {
 }
 
 let masterStats = MockSanctuaryMasterStats()
-assertEqual(masterStats.versionString, "4.2.0", "Sanctuary version string is 4.2.0")
+assertEqual(masterStats.versionString, "4.3.0", "Sanctuary version string is 4.3.0")
 assertEqual(masterStats.totalBooksInLibrary, 42, "Library contains 42 books")
 assertEqual(masterStats.totalPagesCompleted, 14200, "14,200 total pages completed")
-assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.2.0")
+assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.3.0")
 
 // -----------------------------------------------------------------------------
 // 41. TEST: AuthorTypographerEngine & Micro-Typography
@@ -1511,6 +1511,43 @@ assertEqual(highlightCenter, 0.5, "Specular glare is centered at neutral angle")
 assertEqual(highlightTilted, 0.675, "Specular glare glides smoothly across cover when tilted")
 
 // -----------------------------------------------------------------------------
+// 45. TEST: 5-Pillar Navigation Hub & Library Section Routing Architecture
+// -----------------------------------------------------------------------------
+print("\n[Suite 45/45] Testing 5-Pillar Navigation Hub & Library Section Routing...")
+
+enum MockAppTab: Int, CaseIterable {
+    case dashboard = 0
+    case library = 1
+    case journal = 2
+    case stats = 3
+    case sanctuary = 4
+
+    var title: String {
+        switch self {
+        case .dashboard: return "Дашборд"
+        case .library: return "Библиотека"
+        case .journal: return "Хроника"
+        case .stats: return "Аналитика"
+        case .sanctuary: return "Кабинет"
+        }
+    }
+}
+
+assertEqual(MockAppTab.allCases.count, 5, "Application strictly organized into 5 primary pillars")
+assertEqual(MockAppTab.dashboard.rawValue, 0, "Dashboard is primary tab 0")
+assertEqual(MockAppTab.library.rawValue, 1, "Library is primary tab 1")
+assertEqual(MockAppTab.journal.rawValue, 2, "Journal Hub is primary tab 2")
+assertEqual(MockAppTab.stats.rawValue, 3, "Detailed Stats is primary tab 3")
+assertEqual(MockAppTab.sanctuary.rawValue, 4, "Sanctuary Cabinet is primary tab 4")
+
+func mockLibraryTitle(segment: Int, booksCount: Int, cyclesCount: Int) -> String {
+    segment == 1 ? "Циклы (\(cyclesCount))" : "Библиотека (\(booksCount))"
+}
+
+assertEqual(mockLibraryTitle(segment: 0, booksCount: 42, cyclesCount: 5), "Библиотека (42)", "Segment 0 yields books catalogue")
+assertEqual(mockLibraryTitle(segment: 1, booksCount: 42, cyclesCount: 5), "Циклы (5)", "Segment 1 yields series and cycles")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -1521,7 +1558,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v4.2.0 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v4.3.0 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")

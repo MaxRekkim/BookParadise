@@ -105,55 +105,33 @@ public struct DashboardView: View {
             .navigationTitle("Книжный Рай")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 12) {
-                        Button(action: { isShowingOracle = true }) {
-                            Image(systemName: "sparkles")
-                                .foregroundColor(theme.primaryAccent)
-                        }
-
-                        Button(action: { isShowingAchievements = true }) {
-                            HStack(spacing: 3) {
-                                Image(systemName: "trophy.fill")
-                                    .foregroundColor(.orange)
-                                if achievementManager.unlockedCount > 0 {
-                                    Text("\(achievementManager.unlockedCount)")
-                                        .font(.caption2)
-                                        .fontWeight(.bold)
-                                        .foregroundColor(.orange)
-                                }
-                            }
-                        }
-
-                        Button(action: { isShowingNotesJournal = true }) {
-                            Image(systemName: "note.text")
-                                .foregroundColor(theme.primaryAccent)
-                        }
-
-                        Button(action: { isShowingQuotes = true }) {
-                            Image(systemName: "quote.bubble.fill")
-                                .foregroundColor(theme.primaryAccent)
-                        }
-                        
+                    HStack(spacing: 14) {
                         Button(action: {
                             isShowingSoundscapeMixer = true
                             HapticManager.shared.lightTap()
                         }) {
                             Image(systemName: SoundscapeManager.shared.isPlaying ? "waveform" : "headphones")
+                                .font(.system(size: 15, weight: .semibold))
                                 .foregroundColor(SoundscapeManager.shared.isPlaying ? theme.primaryAccent : .secondary)
                         }
+                        .accessibilityLabel("Аудио-ландшафт")
 
                         Button(action: {
                             isShowingStandByClock = true
                             HapticManager.shared.lightTap()
                         }) {
                             Image(systemName: "bed.double.fill")
+                                .font(.system(size: 15, weight: .semibold))
                                 .foregroundColor(theme.primaryAccent)
                         }
+                        .accessibilityLabel("Ночной режим StandBy")
 
-                        Button(action: { isShowingSettings = true }) {
-                            Image(systemName: "gearshape.fill")
+                        Button(action: { isShowingAddBook = true }) {
+                            Image(systemName: "plus")
+                                .font(.system(size: 15, weight: .bold))
                                 .foregroundColor(theme.primaryAccent)
                         }
+                        .accessibilityLabel("Добавить книгу")
                     }
                 }
             }

@@ -6,6 +6,8 @@ public struct LibraryView: View {
     @ObservedObject private var theme = ThemeManager.shared
     @State private var bookForProgressUpdate: Book? = nil
     @State private var bookForPlan: Book? = nil
+    @State private var librarySegment: Int = 0 // 0: Книги, 1: Серии и циклы
+    @State private var isShowingAddBook: Bool = false
     
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -14,8 +16,22 @@ public struct LibraryView: View {
     public var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Строка быстрых фильтров-чипсов с фиксацией от вертикального люфта
-                filterChipsBar
+                // Переключатель между каталогом книг и книжными циклами
+                Picker("Категория", selection: $librarySegment) {
+                    Text("Книги (\(viewModel.filteredBooks.count))").tag(0)
+                    Text("Серии и циклы (\(viewModel.normalizedCycles.count))").tag(1)
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .padding(.top, 4)
+                .padding(.bottom, 6)
+                .background(Color(UIColor.secondarySystemGroupedBackground))
+                
+                if librarySegment == 1 {
+                    CyclesView(viewModel: viewModel, isEmbedded: true)
+                } else {
+                    // Строка быстрых фильтров-чипсов с фиксацией от вертикального люфта
+                    filterChipsBar
                 
                 // Активные теги фильтров (если применены)
                 if viewModel.filterCriteria.isActive {
@@ -111,10 +127,25 @@ public struct LibraryView: View {
                 case .bookshelf:
                     bookshelfSpineView
                 }
+                }
             }
             .background(Color(UIColor.systemGroupedBackground))
-            .navigationTitle("Библиотека (\(viewModel.filteredBooks.count))")
+            .navigationTitle(librarySegment == 1 ? "Циклы (\(viewModel.normalizedCycles.count))" : "Библиотека (\(viewModel.filteredBooks.count))")
             .searchable(text: $viewModel.searchText, prompt: "Поиск по названию, автору, ISBN...")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: { isShowingAddBook = true }) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(theme.primaryAccent)
+                    }
+                    .accessibilityLabel("Добавить книгу")
+                }
+            }
+            .sheet(isPresented: $isShowingAddBook) {
+                AddBookSheet(viewModel: viewModel)
+                    .macSheetFrame(large: true)
+            }
             .sheet(isPresented: $viewModel.isFilterSheetPresented) {
                 BookFilterSheet(viewModel: viewModel)
             }

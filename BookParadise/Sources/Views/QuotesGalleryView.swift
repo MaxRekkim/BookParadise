@@ -13,9 +13,12 @@ public struct QuotesGalleryView: View {
     @State private var quoteToDelete: BookQuote? = nil
     @State private var showDeleteConfirmation: Bool = false
     
-    public init(viewModel: LibraryViewModel, onDismiss: (() -> Void)? = nil) {
+    public var isEmbedded: Bool = false
+    
+    public init(viewModel: LibraryViewModel, onDismiss: (() -> Void)? = nil, isEmbedded: Bool = false) {
         self.viewModel = viewModel
         self.onDismiss = onDismiss
+        self.isEmbedded = isEmbedded
     }
     
     private var filteredQuotes: [(quote: BookQuote, book: Book)] {
@@ -64,50 +67,58 @@ public struct QuotesGalleryView: View {
     }
     
     public var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                searchBarView
-                
-                if filteredQuotes.isEmpty {
-                    emptyQuotesView
-                } else {
-                    quotesScrollView
-                }
-            }
-            .background(Color(UIColor.systemGroupedBackground))
-            .navigationTitle("Цитаты и заметки (\(quotesManager.quotes.count))")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                if onDismiss != nil {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button(action: handleDismiss) {
-                            Text("Готово")
-                                .fontWeight(.bold)
-                                .foregroundColor(theme.primaryAccent)
+        if isEmbedded {
+            contentView
+        } else {
+            NavigationStack {
+                contentView
+                    .navigationTitle("Цитаты (\(quotesManager.quotes.count))")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        if onDismiss != nil {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button(action: handleDismiss) {
+                                    Text("Готово")
+                                        .fontWeight(.bold)
+                                        .foregroundColor(theme.primaryAccent)
+                                }
+                                .keyboardShortcut(.cancelAction)
+                            }
                         }
-                        .keyboardShortcut(.cancelAction)
                     }
-                }
-            }
-            .onMacExitCommand {
-                handleDismiss()
-            }
-            .interactiveDismissDisabled(false)
-            .sheet(item: $selectedQuoteForShare) { wrapper in
-                QuoteCardShareView(quote: wrapper.quote, book: wrapper.book, onDismiss: {
-                    selectedQuoteForShare = nil
-                })
-            }
-            .confirmationDialog("Удалить цитату?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
-                Button("Удалить", role: .destructive) {
-                    if let q = quoteToDelete {
-                        quotesManager.deleteQuote(id: q.id)
-                        quoteToDelete = nil
+                    .onMacExitCommand {
+                        handleDismiss()
                     }
-                }
-                Button("Отмена", role: .cancel) {
+                    .interactiveDismissDisabled(false)
+            }
+        }
+    }
+    
+    private var contentView: some View {
+        VStack(spacing: 0) {
+            searchBarView
+            
+            if filteredQuotes.isEmpty {
+                emptyQuotesView
+            } else {
+                quotesScrollView
+            }
+        }
+        .background(Color(UIColor.systemGroupedBackground))
+        .sheet(item: $selectedQuoteForShare) { wrapper in
+            QuoteCardShareView(quote: wrapper.quote, book: wrapper.book, onDismiss: {
+                selectedQuoteForShare = nil
+            })
+        }
+        .confirmationDialog("Удалить цитату?", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
+            Button("Удалить", role: .destructive) {
+                if let q = quoteToDelete {
+                    quotesManager.deleteQuote(id: q.id)
                     quoteToDelete = nil
                 }
+            }
+            Button("Отмена", role: .cancel) {
+                quoteToDelete = nil
             }
         }
     }

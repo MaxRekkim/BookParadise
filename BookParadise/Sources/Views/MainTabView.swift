@@ -4,11 +4,9 @@ import UIKit
 public enum AppTab: Int, CaseIterable, Identifiable {
     case dashboard = 0
     case library = 1
-    case stats = 2
-    case bingo = 3
-    case cycles = 4
-    case quotes = 5
-    case settings = 6
+    case journal = 2
+    case stats = 3
+    case sanctuary = 4
     
     public var id: Int { rawValue }
     
@@ -16,11 +14,9 @@ public enum AppTab: Int, CaseIterable, Identifiable {
         switch self {
         case .dashboard: return "Дашборд"
         case .library: return "Библиотека"
+        case .journal: return "Хроника"
         case .stats: return "Аналитика"
-        case .bingo: return "Планы и Бинго"
-        case .cycles: return "Книжные циклы"
-        case .quotes: return "Цитаты и заметки"
-        case .settings: return "Настройки"
+        case .sanctuary: return "Кабинет"
         }
     }
     
@@ -28,11 +24,9 @@ public enum AppTab: Int, CaseIterable, Identifiable {
         switch self {
         case .dashboard: return "square.grid.2x2.fill"
         case .library: return "books.vertical.fill"
+        case .journal: return "quote.opening"
         case .stats: return "chart.line.uptrend.xyaxis"
-        case .bingo: return "calendar.badge.clock"
-        case .cycles: return "bookmark.circle.fill"
-        case .quotes: return "quote.opening"
-        case .settings: return "gearshape.fill"
+        case .sanctuary: return "books.vertical.circle.fill"
         }
     }
 }
@@ -69,11 +63,11 @@ public struct MainTabView: View {
             Button("Обновить прогресс чтения") {
                 isShowingQuickPageSelector = true
             }
-            Button("Все цитаты") {
-                selectedTab = .quotes
+            Button("Хроника (Цитаты и заметки)") {
+                selectedTab = .journal
             }
-            Button("Циклы и книжные серии") {
-                selectedTab = .cycles
+            Button("Книжные циклы и серии") {
+                selectedTab = .library
             }
             Button("Отмена", role: .cancel) {}
         }
@@ -103,14 +97,9 @@ public struct MainTabView: View {
                 Section(header: Text("Книжный Рай")) {
                     sidebarItem(tab: .dashboard)
                     sidebarItem(tab: .library, badge: "\(viewModel.books.count)")
+                    sidebarItem(tab: .journal, badge: "\(quotesManager.quotes.count)")
                     sidebarItem(tab: .stats)
-                    sidebarItem(tab: .bingo)
-                    sidebarItem(tab: .cycles, badge: "\(viewModel.normalizedCycles.count)")
-                }
-                
-                Section(header: Text("Инструменты")) {
-                    sidebarItem(tab: .quotes, badge: quotesManager.quotes.isEmpty ? nil : "\(quotesManager.quotes.count)")
-                    sidebarItem(tab: .settings)
+                    sidebarItem(tab: .sanctuary)
                 }
             }
             .listStyle(.sidebar)
@@ -193,25 +182,17 @@ public struct MainTabView: View {
                     .opacity(selectedTab == .library ? 1 : 0)
                     .allowsHitTesting(selectedTab == .library)
 
+                JournalHubView(viewModel: viewModel)
+                    .opacity(selectedTab == .journal ? 1 : 0)
+                    .allowsHitTesting(selectedTab == .journal)
+
                 DetailedStatsView(viewModel: viewModel)
                     .opacity(selectedTab == .stats ? 1 : 0)
                     .allowsHitTesting(selectedTab == .stats)
 
-                BingoView(viewModel: viewModel)
-                    .opacity(selectedTab == .bingo ? 1 : 0)
-                    .allowsHitTesting(selectedTab == .bingo)
-
-                CyclesView(viewModel: viewModel)
-                    .opacity(selectedTab == .cycles ? 1 : 0)
-                    .allowsHitTesting(selectedTab == .cycles)
-
-                QuotesGalleryView(viewModel: viewModel)
-                    .opacity(selectedTab == .quotes ? 1 : 0)
-                    .allowsHitTesting(selectedTab == .quotes)
-
-                SettingsView(viewModel: viewModel)
-                    .opacity(selectedTab == .settings ? 1 : 0)
-                    .allowsHitTesting(selectedTab == .settings)
+                SanctuaryCabinetView(viewModel: viewModel)
+                    .opacity(selectedTab == .sanctuary ? 1 : 0)
+                    .allowsHitTesting(selectedTab == .sanctuary)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
@@ -227,52 +208,25 @@ public struct MainTabView: View {
             DashboardView(viewModel: viewModel)
         case .library:
             LibraryView(viewModel: viewModel)
+        case .journal:
+            JournalHubView(viewModel: viewModel)
         case .stats:
             DetailedStatsView(viewModel: viewModel)
-        case .bingo:
-            BingoView(viewModel: viewModel)
-        case .cycles:
-            CyclesView(viewModel: viewModel)
-        case .quotes:
-            QuotesGalleryView(viewModel: viewModel)
-        case .settings:
-            SettingsView(viewModel: viewModel)
+        case .sanctuary:
+            SanctuaryCabinetView(viewModel: viewModel)
         }
     }
     
-    // MARK: - Нижний мобильный таббар с кнопкой +
+    // MARK: - Нижний мобильный таббар с 5 разделами
     private var customTabBar: some View {
         HStack(spacing: 0) {
             tabButton(tab: .dashboard)
             tabButton(tab: .library)
-            
-            Button(action: {
-                quickActionSheetPresented = true
-            }) {
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [theme.primaryAccent, theme.secondaryAccent],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 52, height: 52)
-                        .shadow(color: theme.primaryAccent.opacity(0.35), radius: 8, x: 0, y: 4)
-                    
-                    Image(systemName: "plus")
-                        .font(.system(size: 22, weight: .bold))
-                        .foregroundColor(.white)
-                }
-            }
-            .offset(y: -14)
-            .padding(.horizontal, 6)
-            
-            tabButton(tab: .bingo)
-            tabButton(tab: .quotes)
+            tabButton(tab: .journal)
+            tabButton(tab: .stats)
+            tabButton(tab: .sanctuary)
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 8)
         .padding(.top, 8)
         .padding(.bottom, 22)
         .background(

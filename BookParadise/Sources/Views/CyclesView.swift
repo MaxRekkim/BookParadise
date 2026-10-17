@@ -5,55 +5,66 @@ public struct CyclesView: View {
     @ObservedObject public var viewModel: LibraryViewModel
     @State private var expandedCycleName: String? = nil
     
-    public init(viewModel: LibraryViewModel) {
+    public var isEmbedded: Bool = false
+    
+    public init(viewModel: LibraryViewModel, isEmbedded: Bool = false) {
         self.viewModel = viewModel
+        self.isEmbedded = isEmbedded
     }
     
     public var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // Фильтры циклов: Все, Завершенные, В процессе, Не начатые
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(CycleFilter.allCases) { filter in
-                            let isSelected = viewModel.cycleFilter == filter
-                            Button(action: {
-                                withAnimation(.easeInOut(duration: 0.15)) {
-                                    viewModel.cycleFilter = filter
-                                }
-                            }) {
-                                Text(filter.rawValue)
-                                    .font(.caption)
-                                    .fontWeight(.bold)
-                                    .padding(.horizontal, 14)
-                                    .padding(.vertical, 8)
-                                    .background(isSelected ? Color.orange : Color(UIColor.secondarySystemGroupedBackground))
-                                    .foregroundColor(isSelected ? .white : .primary)
-                                    .cornerRadius(14)
-                            }
-                        }
+        if isEmbedded {
+            contentView
+        } else {
+            NavigationStack {
+                contentView
+                    .navigationTitle("Циклы (\(viewModel.normalizedCycles.count))")
+                    .refreshable {
+                        await viewModel.syncWithCloud()
                     }
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
-                }
-                
-                ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(viewModel.normalizedCycles) { cycle in
-                            cycleCard(cycle)
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-                    .padding(.bottom, 90)
-                }
-            }
-            .background(Color(UIColor.systemGroupedBackground))
-            .navigationTitle("Циклы (\(viewModel.normalizedCycles.count))")
-            .refreshable {
-                await viewModel.syncWithCloud()
             }
         }
+    }
+    
+    private var contentView: some View {
+        VStack(spacing: 0) {
+            // Фильтры циклов: Все, Завершенные, В процессе, Не начатые
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(CycleFilter.allCases) { filter in
+                        let isSelected = viewModel.cycleFilter == filter
+                        Button(action: {
+                            withAnimation(.easeInOut(duration: 0.15)) {
+                                viewModel.cycleFilter = filter
+                            }
+                        }) {
+                            Text(filter.rawValue)
+                                .font(.caption)
+                                .fontWeight(.bold)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
+                                .background(isSelected ? Color.orange : Color(UIColor.secondarySystemGroupedBackground))
+                                .foregroundColor(isSelected ? .white : .primary)
+                                .cornerRadius(14)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 8)
+            }
+            
+            ScrollView {
+                LazyVStack(spacing: 12) {
+                    ForEach(viewModel.normalizedCycles) { cycle in
+                        cycleCard(cycle)
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.top, 8)
+                .padding(.bottom, 90)
+            }
+        }
+        .background(Color(UIColor.systemGroupedBackground))
     }
     
     // MARK: - Карточка цикла

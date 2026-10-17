@@ -13,9 +13,12 @@ public struct NotesJournalView: View {
     @State private var selectedNoteForEditing: ReadingNote? = nil
     @State private var showingNewNoteSheet: Bool = false
     
-    public init(viewModel: LibraryViewModel, onDismiss: (() -> Void)? = nil) {
+    public var isEmbedded: Bool = false
+    
+    public init(viewModel: LibraryViewModel, onDismiss: (() -> Void)? = nil, isEmbedded: Bool = false) {
         self.viewModel = viewModel
         self.onDismiss = onDismiss
+        self.isEmbedded = isEmbedded
     }
     
     private func handleDismiss() {
@@ -62,103 +65,111 @@ public struct NotesJournalView: View {
     }
     
     public var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // Строка поиска (зафиксирована вверху, не съезжает)
-                HStack(spacing: 8) {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.secondary)
-                    TextField("Поиск по заметкам, идеям и цитатам...", text: $searchText)
-                        .font(.subheadline)
-                    if !searchText.isEmpty {
-                        Button(action: { searchText = "" }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.secondary)
+        if isEmbedded {
+            contentView
+        } else {
+            NavigationStack {
+                contentView
+                    .navigationTitle("Дневник заметок (Studio)")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button(action: handleDismiss) {
+                                Text("Готово")
+                                    .fontWeight(.bold)
+                                    .foregroundColor(theme.primaryAccent)
+                            }
+                            .keyboardShortcut(.cancelAction)
+                        }
+                        ToolbarItem(placement: .primaryAction) {
+                            Button(action: { showingNewNoteSheet = true }) {
+                                Image(systemName: "square.and.pencil")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(theme.primaryAccent)
+                            }
                         }
                     }
+                    .onMacExitCommand {
+                        handleDismiss()
+                    }
+                    .interactiveDismissDisabled(false)
+            }
+        }
+    }
+    
+    private var contentView: some View {
+        VStack(spacing: 0) {
+            // Строка поиска (зафиксирована вверху, не съезжает)
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.secondary)
+                TextField("Поиск по заметкам, идеям и цитатам...", text: $searchText)
+                    .font(.subheadline)
+                if !searchText.isEmpty {
+                    Button(action: { searchText = "" }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.secondary)
+                    }
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(Color(UIColor.secondarySystemGroupedBackground))
-                .cornerRadius(10)
-                .padding(.horizontal, 16)
-                .padding(.top, 10)
-                
-                // Фильтр по тегам
-                if !allTags.isEmpty {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 6) {
-                            tagPill(title: "Все", isSelected: selectedTag == nil) {
-                                selectedTag = nil
-                            }
-                            ForEach(allTags, id: \.self) { tag in
-                                tagPill(title: "#\(tag)", isSelected: selectedTag == tag) {
-                                    if selectedTag == tag {
-                                        selectedTag = nil
-                                    } else {
-                                        selectedTag = tag
-                                    }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(Color(UIColor.secondarySystemGroupedBackground))
+            .cornerRadius(10)
+            .padding(.horizontal, 16)
+            .padding(.top, 10)
+            
+            // Фильтр по тегам
+            if !allTags.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        tagPill(title: "Все", isSelected: selectedTag == nil) {
+                            selectedTag = nil
+                        }
+                        ForEach(allTags, id: \.self) { tag in
+                            tagPill(title: "#\(tag)", isSelected: selectedTag == tag) {
+                                if selectedTag == tag {
+                                    selectedTag = nil
+                                } else {
+                                    selectedTag = tag
                                 }
                             }
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
                 }
-                
-                // Список заметок
-                if filteredNotes.isEmpty {
-                    emptyStateView
-                } else {
-                    List {
-                        // Закрепленные заметки
-                        if !pinnedNotes.isEmpty {
-                            Section(header: Label("Закрепленные", systemImage: "pin.fill")) {
-                                ForEach(pinnedNotes) { n in
-                                    noteCardRow(for: n)
-                                }
-                            }
-                        }
-                        
-                        // Все заметки
-                        Section(header: Text("Все записи (\(regularNotes.count))")) {
-                            ForEach(regularNotes) { n in
+            }
+            
+            // Список заметок
+            if filteredNotes.isEmpty {
+                emptyStateView
+            } else {
+                List {
+                    // Закрепленные заметки
+                    if !pinnedNotes.isEmpty {
+                        Section(header: Label("Закрепленные", systemImage: "pin.fill")) {
+                            ForEach(pinnedNotes) { n in
                                 noteCardRow(for: n)
                             }
                         }
                     }
-                    .listStyle(.insetGrouped)
-                }
-            }
-            .navigationTitle("Дневник заметок (Studio)")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(action: handleDismiss) {
-                        Text("Готово")
-                            .fontWeight(.bold)
-                            .foregroundColor(theme.primaryAccent)
-                    }
-                    .keyboardShortcut(.cancelAction)
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: { showingNewNoteSheet = true }) {
-                        Image(systemName: "square.and.pencil")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(theme.primaryAccent)
+                    
+                    // Все заметки
+                    Section(header: Text("Все записи (\(regularNotes.count))")) {
+                        ForEach(regularNotes) { n in
+                            noteCardRow(for: n)
+                        }
                     }
                 }
+                .listStyle(.insetGrouped)
             }
-            .onMacExitCommand {
-                handleDismiss()
-            }
-            .interactiveDismissDisabled(false)
-            .sheet(isPresented: $showingNewNoteSheet) {
-                MarkdownEditorView(viewModel: viewModel)
-            }
-            .sheet(item: $selectedNoteForEditing) { note in
-                MarkdownEditorView(viewModel: viewModel, note: note)
-            }
+        }
+        .sheet(isPresented: $showingNewNoteSheet) {
+            MarkdownEditorView(viewModel: viewModel)
+        }
+        .sheet(item: $selectedNoteForEditing) { note in
+            MarkdownEditorView(viewModel: viewModel, note: note)
         }
     }
     

@@ -90,7 +90,7 @@ public struct SettingsView: View {
                         ("AppIcon-Default", "Изумрудный Лес", Color(red: 0.05, green: 0.58, blue: 0.41)),
                         ("AppIcon-Wine", "Королевский Бордо", Color(red: 0.55, green: 0.16, blue: 0.22)),
                         ("AppIcon-Midnight", "Полночный Индиго", Color(red: 0.20, green: 0.20, blue: 0.55)),
-                        ("AppIcon-Cyberpunk", "Киберпанк Неон", Color(red: 0.75, green: 0.15, blue: 0.83)),
+                        ("AppIcon-Sapphire", "Благородный Сапфир", Color(red: 0.12, green: 0.35, blue: 0.65)),
                         ("AppIcon-Parchment", "Старинный Пергамент", Color(red: 0.55, green: 0.35, blue: 0.15)),
                         ("AppIcon-Dark", "OLED Obsidian", Color(red: 0.15, green: 0.15, blue: 0.15))
                     ], id: \.0) { iconKey, iconName, iconColor in
