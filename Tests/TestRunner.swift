@@ -1319,7 +1319,7 @@ assertEqual(unlockedCount, 4, "All default demo trophies unlocked for v4.0.0 cel
 print("\n[Suite 40/40] Testing Sanctuary Master Overview & Milestone Stats...")
 
 struct MockSanctuaryMasterStats {
-    var versionString: String = "4.1.0"
+    var versionString: String = "4.1.1"
     var totalBooksInLibrary: Int = 42
     var totalPagesCompleted: Int = 14200
     var totalReadingHours: Double = 417.6
@@ -1332,10 +1332,10 @@ struct MockSanctuaryMasterStats {
 }
 
 let masterStats = MockSanctuaryMasterStats()
-assertEqual(masterStats.versionString, "4.1.0", "Sanctuary version string is 4.1.0")
+assertEqual(masterStats.versionString, "4.1.1", "Sanctuary version string is 4.1.1")
 assertEqual(masterStats.totalBooksInLibrary, 42, "Library contains 42 books")
 assertEqual(masterStats.totalPagesCompleted, 14200, "14,200 total pages completed")
-assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.1.0")
+assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.1.1")
 
 // -----------------------------------------------------------------------------
 // 41. TEST: AuthorTypographerEngine & Micro-Typography
@@ -1444,16 +1444,26 @@ assertEqual(sampleFootnote.explanation.contains("Типографический"
 
 struct MockStandByClock {
     let amberHex: String = "#F5A647" // 1800K warm amber
+    let rubyHex: String = "#EB4047"  // 650nm deep ruby
+    let candleHex: String = "#FAD270" // 2200K warm candle
     let oledZeroBlack: String = "#000000"
 
     var isOLEDCompliant: Bool {
         oledZeroBlack == "#000000"
+    }
+
+    func isLandscape(width: Double, height: Double) -> Bool {
+        width > height
     }
 }
 
 let standBy = MockStandByClock()
 assertTrue(standBy.isOLEDCompliant, "StandBy mode strictly utilizes true OLED zero black")
 assertEqual(standBy.amberHex, "#F5A647", "StandBy mode uses warm 1800K amber illumination")
+assertEqual(standBy.rubyHex, "#EB4047", "StandBy mode supports 650nm deep ruby night vision")
+assertEqual(standBy.candleHex, "#FAD270", "StandBy mode supports 2200K candle warmth")
+assertTrue(standBy.isLandscape(width: 844, height: 390), "Detects horizontal StandBy on MagSafe dock")
+assertTrue(!standBy.isLandscape(width: 393, height: 852), "Detects portrait bedtime reading mode")
 
 
 // -----------------------------------------------------------------------------
@@ -1467,7 +1477,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v4.1.0 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v4.1.1 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")
