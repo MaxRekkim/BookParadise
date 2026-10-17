@@ -6,6 +6,7 @@ import '../../data/services/theme_service.dart';
 import '../../data/services/google_sheets_service.dart';
 import '../../data/services/quotes_service.dart';
 import '../../data/services/markdown_export_service.dart';
+import '../../data/services/update_service.dart';
 import '../view_models/library_view_model.dart';
 
 class SettingsDialog extends StatefulWidget {
@@ -69,6 +70,79 @@ class _SettingsDialogState extends State<SettingsDialog> {
                   onSelected: (_) => themeService.setTheme(t),
                 );
               }).toList(),
+            ),
+            const Divider(height: 28),
+
+            // 1.5. Обновление ПО «по воздуху» (OTA)
+            Builder(
+              builder: (ctx) {
+                final updateService = ctx.watch<UpdateService>();
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'ОБНОВЛЕНИЕ ПО (OTA)',
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.8),
+                        ),
+                        if (updateService.isChecking)
+                          const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+                        else
+                          TextButton(
+                            onPressed: () => updateService.checkForUpdates(),
+                            child: const Text('Проверить', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                          ),
+                      ],
+                    ),
+                    Text(
+                      'Текущая версия: v${updateService.currentVersion} (Build 20)',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    if (updateService.isUpdateAvailable) ...[
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.pad(BorderSide(color: Colors.amber.withOpacity(0.3))),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.bolt, color: Colors.amber, size: 18),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'Доступна версия v${updateService.latestVersion}',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                ),
+                              ],
+                            ),
+                            if (updateService.releaseTitle.isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text(updateService.releaseTitle, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ] else if (updateService.lastChecked != null && !updateService.isChecking) ...[
+                      const SizedBox(height: 4),
+                      const Row(
+                        children: [
+                          Icon(Icons.check_circle, color: Colors.green, size: 14),
+                          SizedBox(width: 4),
+                          Text('Установлена актуальная версия', style: TextStyle(fontSize: 11, color: Colors.green)),
+                        ],
+                      ),
+                    ],
+                  ],
+                );
+              },
             ),
             const Divider(height: 28),
 

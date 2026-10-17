@@ -72,6 +72,7 @@
 		A10000412345678900000041 /* MarkdownEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000412345678900000041 /* MarkdownEditorView.swift */; };
 		A10000422345678900000042 /* NotesJournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000422345678900000042 /* NotesJournalView.swift */; };
 		A10000432345678900000043 /* DesktopHoverEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000432345678900000043 /* DesktopHoverEffect.swift */; };
+		A10000442345678900000044 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000442345678900000044 /* UpdateManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -142,6 +143,7 @@
 		B10000412345678900000041 /* MarkdownEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/MarkdownEditorView.swift; sourceTree = "<group>"; };
 		B10000422345678900000042 /* NotesJournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/NotesJournalView.swift; sourceTree = "<group>"; };
 		B10000432345678900000043 /* DesktopHoverEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/DesktopHoverEffect.swift; sourceTree = "<group>"; };
+		B10000442345678900000044 /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/UpdateManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,6 +234,7 @@
 				B10000412345678900000041 /* MarkdownEditorView.swift */,
 				B10000422345678900000042 /* NotesJournalView.swift */,
 				B10000432345678900000043 /* DesktopHoverEffect.swift */,
+				B10000442345678900000044 /* UpdateManager.swift */,
 			);
 			name = Sources;
 			sourceTree = "<group>";
@@ -376,6 +379,7 @@
 				A10000412345678900000041 /* MarkdownEditorView.swift in Sources */,
 				A10000422345678900000042 /* NotesJournalView.swift in Sources */,
 				A10000432345678900000043 /* DesktopHoverEffect.swift in Sources */,
+				A10000442345678900000044 /* UpdateManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -442,7 +446,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -451,7 +455,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.11.3;
+				MARKETING_VERSION = 2.12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -468,7 +472,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
@@ -477,7 +481,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.11.3;
+				MARKETING_VERSION = 2.12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;

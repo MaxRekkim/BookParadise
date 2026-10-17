@@ -431,6 +431,22 @@ jobs:
           echo "=== Artifacts to be published ==="
           ls -lh dist-release/
 
+      - name: Update manifest.plist for Apple OTA
+        run: |
+          VERSION="${{ steps.release-info.outputs.version }}"
+          python3 -c "
+          import plistlib
+          p = 'manifest.plist'
+          with open(p, 'rb') as f:
+              pl = plistlib.load(f)
+          pl['items'][0]['assets'][0]['url'] = f'https://github.com/MaxRekkim/BookParadise/releases/latest/download/BookParadise-{VERSION}.ipa'
+          pl['items'][0]['metadata']['bundle-version'] = str(VERSION)
+          with open(p, 'wb') as f:
+              plistlib.dump(pl, f)
+          "
+          echo "Generated manifest.plist for v$VERSION:"
+          cat manifest.plist
+
       - name: Publish GitHub Release with all 4 platforms
         uses: softprops/action-gh-release@v2
         with:
@@ -443,6 +459,7 @@ jobs:
             dist-release/BookParadise-*.pkg
             dist-release/BookParadise-*-Android.apk
             dist-release/BookParadise-*-Windows-x64.zip
+            manifest.plist
           draft: false
           prerelease: ${{ steps.release-info.outputs.is_prerelease == 'true' }}
         env:

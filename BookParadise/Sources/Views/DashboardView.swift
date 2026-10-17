@@ -18,6 +18,7 @@ public struct DashboardView: View {
     @State private var isShowingAddBook: Bool = false
     @State private var isShowingNotesJournal: Bool = false
     @State private var isShowingSearchSheet: Bool = false
+    @ObservedObject private var updateManager = UpdateManager.shared
     
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -28,6 +29,12 @@ public struct DashboardView: View {
             ZStack(alignment: .bottom) {
                 ScrollView {
                     VStack(spacing: 20) {
+                        // 0. Баннер обновления ПО «по воздуху» (OTA)
+                        if updateManager.isUpdateAvailable {
+                            otaUpdateBanner
+                                .padding(.horizontal)
+                        }
+
                         // 0. Мотивация дня и прогресс годовой цели
                         DailyMotivationBanner(viewModel: viewModel)
                             .padding(.horizontal)
@@ -196,7 +203,71 @@ public struct DashboardView: View {
             .refreshable {
                 await viewModel.syncWithCloud()
             }
+            .task {
+                await updateManager.checkForUpdates(silent: true)
+            }
         }
+    }
+
+    // MARK: - Баннер доступного обновления ПО «по воздуху» (OTA)
+    private var otaUpdateBanner: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                Circle()
+                    .fill(theme.primaryAccent.opacity(0.15))
+                    .frame(width: 38, height: 38)
+                Image(systemName: "bolt.fill")
+                    .foregroundColor(theme.primaryAccent)
+                    .font(.system(size: 17, weight: .bold))
+            }
+            
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 6) {
+                    Text("Обновление v\(updateManager.latestVersion)")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(Color(UIColor.label))
+                    Text("OTA")
+                        .font(.system(size: 9, weight: .heavy))
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 2)
+                        .background(theme.primaryAccent)
+                        .foregroundColor(.white)
+                        .cornerRadius(5)
+                }
+                
+                Text(updateManager.releaseTitle)
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+            }
+            
+            Spacer()
+            
+            Button(action: {
+                updateManager.installOTAUpdate()
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "arrow.down.app.fill")
+                        .font(.system(size: 11))
+                    Text("Обновить")
+                        .font(.system(size: 11, weight: .bold))
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(theme.primaryAccent)
+                .cornerRadius(8)
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(10)
+        .background(Color(UIColor.secondarySystemGroupedBackground))
+        .cornerRadius(14)
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(theme.primaryAccent.opacity(0.25), lineWidth: 1)
+        )
+        .desktopHover(scale: 1.01, yOffset: -1)
     }
 
     // MARK: - 1. Читаю сейчас

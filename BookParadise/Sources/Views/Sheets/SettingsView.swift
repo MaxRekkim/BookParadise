@@ -18,6 +18,7 @@ public struct SettingsView: View {
     @State private var isShowingImporter: Bool = false
     @State private var importAlertMessage: String? = nil
     @State private var isShowingImportAlert: Bool = false
+    @ObservedObject private var updateManager = UpdateManager.shared
     public var onDismiss: (() -> Void)? = nil
     
     public init(viewModel: LibraryViewModel, onDismiss: (() -> Void)? = nil) {
@@ -252,6 +253,104 @@ public struct SettingsView: View {
                             }
                             .foregroundColor(theme.primaryAccent)
                         }
+                    }
+                }
+                
+                // MARK: - Обновление ПО «по воздуху» (OTA)
+                Section(header: Text("Обновление ПО «по воздуху» (OTA)"), footer: Text("Установка новых версий BookParadise без проводов и компьютера через официальный протокол Apple OTA itms-services.")) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 3) {
+                            let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "20"
+                            Text("Версия: v\(updateManager.currentVersion) (Build \(buildNumber))")
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                            if let last = updateManager.lastChecked {
+                                Text("Проверено: \(last.formatted(date: .omitted, time: .shortened))")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        Spacer()
+                        if updateManager.isChecking {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        } else {
+                            Button("Проверить") {
+                                Task {
+                                    await updateManager.checkForUpdates(silent: false)
+                                }
+                            }
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundColor(theme.primaryAccent)
+                        }
+                    }
+                    
+                    if updateManager.isUpdateAvailable {
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Image(systemName: "bolt.fill")
+                                    .foregroundColor(theme.primaryAccent)
+                                Text("Доступно обновление: v\(updateManager.latestVersion)")
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                            }
+                            
+                            Text(updateManager.releaseTitle)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .lineLimit(2)
+                            
+                            HStack(spacing: 10) {
+                                Button(action: {
+                                    updateManager.installOTAUpdate()
+                                }) {
+                                    HStack {
+                                        Image(systemName: "arrow.down.app.fill")
+                                        Text("Установить по воздуху")
+                                    }
+                                    .font(.caption)
+                                    .fontWeight(.bold)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(theme.primaryAccent)
+                                    .foregroundColor(.white)
+                                    .cornerRadius(8)
+                                }
+                                .buttonStyle(.plain)
+                                
+                                #if os(iOS) && !targetEnvironment(macCatalyst)
+                                Button(action: {
+                                    updateManager.installViaTrollStore()
+                                }) {
+                                    Text("TrollStore / IPA")
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 8)
+                                        .background(Color.secondary.opacity(0.12))
+                                        .foregroundColor(Color(UIColor.label))
+                                        .cornerRadius(8)
+                                }
+                                .buttonStyle(.plain)
+                                #endif
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    } else if updateManager.lastChecked != nil && !updateManager.isChecking {
+                        HStack {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                            Text("Установлена актуальная версия")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    
+                    if let err = updateManager.checkError {
+                        Text(err)
+                            .font(.caption2)
+                            .foregroundColor(.red)
                     }
                 }
                 

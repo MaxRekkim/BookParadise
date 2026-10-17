@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../view_models/library_view_model.dart';
 import '../../data/models/enums.dart';
 import '../../data/services/reading_session_service.dart';
+import '../../data/services/update_service.dart';
 import '../widgets/daily_motivation_banner.dart';
 import '../widgets/book_cover_widget.dart';
 import 'book_detail_view.dart';
@@ -28,6 +29,7 @@ class DashboardView extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<LibraryViewModel>();
     final sessionService = context.watch<ReadingSessionService>();
+    final updateService = context.watch<UpdateService>();
     final primaryAccent = Theme.of(context).colorScheme.primary;
 
     final inProgressBooks = viewModel.books.where((b) => b.readPages > 0 && !b.isFinished).toList();
@@ -79,6 +81,46 @@ class DashboardView extends StatelessWidget {
           ListView(
             padding: const EdgeInsets.only(bottom: 90),
             children: [
+          // 0. Баннер обновления ПО «по воздуху» (OTA)
+          if (updateService.isUpdateAvailable)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+              child: Card(
+                color: Colors.amber.withOpacity(0.12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  side: BorderSide(color: Colors.amber.withOpacity(0.35)),
+                ),
+                child: ListTile(
+                  leading: const Icon(Icons.bolt, color: Colors.amber, size: 28),
+                  title: Row(
+                    children: [
+                      Text(
+                        'Обновление v${updateService.latestVersion}',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      const SizedBox(width: 6),
+                      const Badge(label: Text('OTA', style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold))),
+                    ],
+                  ),
+                  subtitle: Text(
+                    updateService.releaseTitle.isNotEmpty ? updateService.releaseTitle : 'Доступна новая версия с улучшениями',
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      showDialog(context: context, builder: (_) => const SettingsDialog());
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      textStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                    child: const Text('Детали'),
+                  ),
+                ),
+              ),
+            ),
+
           // 1. Мотивационный баннер цитаты дня и прогресса цели года
           const DailyMotivationBanner(),
 
