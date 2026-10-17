@@ -1319,7 +1319,7 @@ assertEqual(unlockedCount, 4, "All default demo trophies unlocked for v4.0.0 cel
 print("\n[Suite 40/40] Testing Sanctuary Master Overview & Milestone Stats...")
 
 struct MockSanctuaryMasterStats {
-    var versionString: String = "4.0.0"
+    var versionString: String = "4.1.0"
     var totalBooksInLibrary: Int = 42
     var totalPagesCompleted: Int = 14200
     var totalReadingHours: Double = 417.6
@@ -1332,10 +1332,10 @@ struct MockSanctuaryMasterStats {
 }
 
 let masterStats = MockSanctuaryMasterStats()
-assertEqual(masterStats.versionString, "4.0.0", "Sanctuary version string is 4.0.0")
+assertEqual(masterStats.versionString, "4.1.0", "Sanctuary version string is 4.1.0")
 assertEqual(masterStats.totalBooksInLibrary, 42, "Library contains 42 books")
 assertEqual(masterStats.totalPagesCompleted, 14200, "14,200 total pages completed")
-assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.0.0")
+assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.1.0")
 
 // -----------------------------------------------------------------------------
 // 41. TEST: AuthorTypographerEngine & Micro-Typography
@@ -1467,7 +1467,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v4.0.0 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v4.1.0 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")
