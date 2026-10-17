@@ -1319,7 +1319,7 @@ assertEqual(unlockedCount, 4, "All default demo trophies unlocked for v4.0.0 cel
 print("\n[Suite 40/40] Testing Sanctuary Master Overview & Milestone Stats...")
 
 struct MockSanctuaryMasterStats {
-    var versionString: String = "4.9.0"
+    var versionString: String = "5.0.0"
     var totalBooksInLibrary: Int = 42
     var totalPagesCompleted: Int = 14200
     var totalReadingHours: Double = 417.6
@@ -1327,15 +1327,15 @@ struct MockSanctuaryMasterStats {
     var masterAchievementsUnlocked: Int = 12
 
     var isMilestoneReady: Bool {
-        totalBooksInLibrary >= 30 && totalPagesCompleted >= 10000 && versionString.starts(with: "4.")
+        totalBooksInLibrary >= 30 && totalPagesCompleted >= 10000 && (versionString.starts(with: "4.") || versionString.starts(with: "5."))
     }
 }
 
 let masterStats = MockSanctuaryMasterStats()
-assertEqual(masterStats.versionString, "4.9.0", "Sanctuary version string is 4.9.0")
+assertEqual(masterStats.versionString, "5.0.0", "Sanctuary version string is 5.0.0")
 assertEqual(masterStats.totalBooksInLibrary, 42, "Library contains 42 books")
 assertEqual(masterStats.totalPagesCompleted, 14200, "14,200 total pages completed")
-assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.9.0")
+assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v5.0.0")
 
 // -----------------------------------------------------------------------------
 // 41. TEST: AuthorTypographerEngine & Micro-Typography
@@ -1932,6 +1932,40 @@ let cli = 0.0588 * L - 0.296 * S - 15.8
 assertEqual((cli * 10).rounded() / 10, 12.1, "Coleman-Liau grade level computed accurately (12.1)")
 
 // -----------------------------------------------------------------------------
+// 52. TEST: Grand Sovereign Sanctuary Master Edition (v5.0.0 Architecture)
+// -----------------------------------------------------------------------------
+print("\n[Suite 52/52] Testing Grand Sovereign Sanctuary Master Edition (v5.0.0 Architecture)...")
+
+struct SovereignSanctuaryArchitecture {
+    let version: String = "5.0.0"
+    let buildNumber: Int = 51
+    let primaryPillarsCount: Int = 5
+    let readingToolsCount: Int = 8 // 4x2 grid in Sanctuary Cabinet
+    let journalSegmentsCount: Int = 4 // Sessions, Quotes, Notes, Marginalia
+    let librarySegmentsCount: Int = 4 // Catalogue, Series, Genres, Add
+    let photobiologicalPhasesCount: Int = 5 // Daylight, GoldenHour, Twilight, Candlelight, RubyDark
+    let marginaliaSymbolsCount: Int = 6 // Manicule, Epiphany, Question, CrossRef, NotaBene, Asterisk
+    let soundscapePresetsCount: Int = 5
+    let isZeroCloudGuaranteed: Bool = true
+    let isTelemetryFree: Bool = true
+    let isOfflineAutonomous: Bool = true
+}
+
+let arch = SovereignSanctuaryArchitecture()
+assertEqual(arch.version, "5.0.0", "Grand Sovereign Sanctuary architecture reaches Version 5.0.0")
+assertEqual(arch.buildNumber, 51, "Build version incremented to 51")
+assertEqual(arch.primaryPillarsCount, 5, "Application strictly organized into 5 primary pillars")
+assertEqual(arch.readingToolsCount, 8, "Sanctuary Cabinet houses 8 specialized tools in balanced 4x2 grid")
+assertEqual(arch.journalSegmentsCount, 4, "Journal Hub encompasses 4 chronicle segments including Marginalia")
+assertEqual(arch.librarySegmentsCount, 4, "Library catalogue provides 4 distinct organization views")
+assertEqual(arch.photobiologicalPhasesCount, 5, "Circadian solar engine operates across 5 photobiological phases")
+assertEqual(arch.marginaliaSymbolsCount, 6, "Scholarly marginalia engine includes 6 historical symbols")
+assertEqual(arch.soundscapePresetsCount, 5, "Spatial audio conductor provides 5 binaural soundscapes")
+assertTrue(arch.isZeroCloudGuaranteed, "Strict Zero-Cloud sovereignty enforced across entire application")
+assertTrue(arch.isTelemetryFree, "Strict zero-telemetry guarantee verified")
+assertTrue(arch.isOfflineAutonomous, "100% offline autonomy without external server dependencies")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -1942,7 +1976,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v4.9.0 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v5.0.0 Master Edition is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")

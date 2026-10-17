@@ -11,7 +11,7 @@ public struct SanctuaryMasterStats: Codable, Equatable {
     public var masterAchievementsUnlocked: Int
     
     public init(
-        versionString: String = "4.0.0",
+        versionString: String = "5.0.0",
         totalBooksInLibrary: Int = 42,
         totalPagesCompleted: Int = 14200,
         totalReadingHours: Double = 417.6,
