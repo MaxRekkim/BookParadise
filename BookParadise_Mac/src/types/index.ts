@@ -46,3 +46,26 @@ export interface Goal {
 export type NavigationTab = 'dashboard' | 'library' | 'challenge' | 'notes' | 'soundscape' | 'settings';
 
 export type AppIconId = 'emerald' | 'wine' | 'midnight' | 'cyberpunk' | 'parchment' | 'dark';
+
+export type AppThemeId = 'emerald' | 'wine' | 'midnight' | 'amber' | 'cyberpunk' | 'dark' | 'autoDayNight';
+
+export type FontFamilyPreference = 'sans' | 'serif' | 'mono' | 'rounded';
+
+export type FontSizePreference = 'compact' | 'normal' | 'comfortable' | 'large';
+
+export type CardStylePreference = '3d' | 'bento' | 'minimal';
+
+export interface UserPersonalization {
+  theme: AppThemeId;
+  appIcon: AppIconId;
+  fontFamily: FontFamilyPreference;
+  fontSize: FontSizePreference;
+  cardStyle: CardStylePreference;
+  kindleEmail: string;
+  dailyGoalMinutes: number;
+  timerSprintMinutes: number;
+  show3DEffects: boolean;
+  soundscapeAutoplay: boolean;
+  soundscapeDefaultMode: 'fireplace' | 'rain' | 'library' | 'cafe';
+  soundscapeVolume: number;
+}

@@ -29,6 +29,10 @@ echo "=== 4. Копирование ресурсов и манифеста Info.
 cp "${DIR}/macos-runner/Info.plist" "${APP_BUNDLE}/Contents/Info.plist"
 cp -r "${DIR}/dist" "${APP_BUNDLE}/Contents/Resources/"
 
+echo "=== 4.1. Подпись бандла (ad-hoc codesign) и снятие атрибутов карантина ==="
+codesign --force --deep --sign - "${APP_BUNDLE}"
+xattr -cr "${APP_BUNDLE}"
+
 echo "=== 5. Создание инсталлятора PKG ==="
 VERSION="2.12.0"
 PKG_NAME="BookParadise-${VERSION}.pkg"
@@ -41,7 +45,7 @@ rm -rf pkg_root
 echo "=== 6. Создание образа диска DMG ==="
 DMG_NAME="BookParadise-${VERSION}.dmg"
 DMG_STAGING="${DIR}/dmg_staging"
-rm -rf "$DMG_STAGING" "$DMG_NAME"
+rm -rf "$DMG_STAGING" "${DIR}/${DMG_NAME}"
 mkdir -p "$DMG_STAGING"
 cp -r "${APP_BUNDLE}" "$DMG_STAGING/"
 ln -s /Applications "$DMG_STAGING/Applications"

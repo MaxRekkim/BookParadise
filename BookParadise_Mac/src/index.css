@@ -4,13 +4,103 @@
 
 :root {
   color-scheme: dark;
+  --theme-primary: #10b981;
+  --theme-secondary: #047857;
+  --theme-glow: rgba(16, 185, 129, 0.25);
+  --theme-bg: #0d1210;
+  --theme-sidebar: #101614;
+  --theme-card: #151d1a;
+  --theme-border: rgba(16, 185, 129, 0.15);
+  --theme-accent-text: #34d399;
+}
+
+[data-theme="wine"] {
+  --theme-primary: #f43f5e;
+  --theme-secondary: #9f1239;
+  --theme-glow: rgba(244, 63, 94, 0.25);
+  --theme-bg: #12080b;
+  --theme-sidebar: #170b0f;
+  --theme-card: #1e0e14;
+  --theme-border: rgba(244, 63, 94, 0.15);
+  --theme-accent-text: #fb7185;
+}
+
+[data-theme="midnight"] {
+  --theme-primary: #6366f1;
+  --theme-secondary: #4338ca;
+  --theme-glow: rgba(99, 102, 241, 0.25);
+  --theme-bg: #090a14;
+  --theme-sidebar: #0e101f;
+  --theme-card: #14172b;
+  --theme-border: rgba(99, 102, 241, 0.15);
+  --theme-accent-text: #818cf8;
+}
+
+[data-theme="amber"] {
+  --theme-primary: #f59e0b;
+  --theme-secondary: #b45309;
+  --theme-glow: rgba(245, 158, 11, 0.25);
+  --theme-bg: #120d08;
+  --theme-sidebar: #19120b;
+  --theme-card: #20170e;
+  --theme-border: rgba(245, 158, 11, 0.15);
+  --theme-accent-text: #fbbf24;
+}
+
+[data-theme="cyberpunk"] {
+  --theme-primary: #d946ef;
+  --theme-secondary: #06b6d4;
+  --theme-glow: rgba(217, 70, 239, 0.3);
+  --theme-bg: #0d0614;
+  --theme-sidebar: #130a1c;
+  --theme-card: #1b0e28;
+  --theme-border: rgba(217, 70, 239, 0.2);
+  --theme-accent-text: #e879f9;
+}
+
+[data-theme="dark"] {
+  --theme-primary: #e5e5e5;
+  --theme-secondary: #737373;
+  --theme-glow: rgba(255, 255, 255, 0.12);
+  --theme-bg: #050505;
+  --theme-sidebar: #0a0a0a;
+  --theme-card: #141414;
+  --theme-border: rgba(255, 255, 255, 0.1);
+  --theme-accent-text: #f5f5f5;
+}
+
+[data-font="sans"], html[data-font="sans"] body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+}
+[data-font="serif"], html[data-font="serif"] body {
+  font-family: "New York", "Charter", Georgia, Cambria, "Times New Roman", serif;
+}
+[data-font="mono"], html[data-font="mono"] body {
+  font-family: "JetBrains Mono", "SF Mono", Menlo, Monaco, Consolas, monospace;
+}
+[data-font="rounded"], html[data-font="rounded"] body {
+  font-family: "SF Pro Rounded", system-ui, sans-serif;
+}
+
+html[data-size="compact"] {
+  font-size: 14px;
+}
+html[data-size="normal"] {
+  font-size: 15px;
+}
+html[data-size="comfortable"] {
+  font-size: 16px;
+}
+html[data-size="large"] {
+  font-size: 17px;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #121216;
+  background-color: var(--theme-bg, #0d1210);
   color: #f3f4f6;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
   overflow: hidden;
+  transition: background-color 0.3s ease;
 }
+

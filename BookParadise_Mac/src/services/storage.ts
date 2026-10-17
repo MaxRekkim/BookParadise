@@ -1,4 +1,4 @@
-import { Book, Quote, Note, Goal } from '../types';
+import { Book, Quote, Note, Goal, UserPersonalization } from '../types';
 import { initialBooks, initialQuotes, initialNotes, initialGoal } from '../data/initialData';
 
 const STORAGE_KEYS = {
@@ -8,6 +8,22 @@ const STORAGE_KEYS = {
   GOAL: 'bookparadise_goal_v2',
   SHEETS_URL: 'bookparadise_sheets_url_v2',
   APP_ICON: 'bookparadise_app_icon_v2',
+  PERSONALIZATION: 'bookparadise_personalization_v2',
+};
+
+export const defaultPersonalization: UserPersonalization = {
+  theme: 'emerald',
+  appIcon: 'emerald',
+  fontFamily: 'sans',
+  fontSize: 'normal',
+  cardStyle: 'bento',
+  kindleEmail: '',
+  dailyGoalMinutes: 30,
+  timerSprintMinutes: 25,
+  show3DEffects: true,
+  soundscapeAutoplay: false,
+  soundscapeDefaultMode: 'fireplace',
+  soundscapeVolume: 0.4,
 };
 
 export const storageService = {
@@ -93,6 +109,23 @@ export const storageService = {
 
   saveAppIcon(iconId: string) {
     localStorage.setItem(STORAGE_KEYS.APP_ICON, iconId);
+  },
+
+  getPersonalization(): UserPersonalization {
+    const raw = localStorage.getItem(STORAGE_KEYS.PERSONALIZATION);
+    if (!raw) return defaultPersonalization;
+    try {
+      return { ...defaultPersonalization, ...JSON.parse(raw) };
+    } catch {
+      return defaultPersonalization;
+    }
+  },
+
+  savePersonalization(settings: UserPersonalization) {
+    localStorage.setItem(STORAGE_KEYS.PERSONALIZATION, JSON.stringify(settings));
+    if (settings.appIcon) {
+      this.saveAppIcon(settings.appIcon);
+    }
   },
 
   exportMarkdown(books: Book[], quotes: Quote[], notes: Note[]): string {

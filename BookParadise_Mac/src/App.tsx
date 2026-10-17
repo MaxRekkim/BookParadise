@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Book, Quote, Note, Goal, NavigationTab, AppIconId } from './types';
+import { Book, Quote, Note, Goal, NavigationTab, AppIconId, UserPersonalization } from './types';
 import { storageService } from './services/storage';
 import { soundscape } from './services/soundscape';
 import { Sidebar } from './components/Sidebar';
@@ -22,6 +22,9 @@ export function App() {
   const [quotes, setQuotes] = useState<Quote[]>(() => storageService.getQuotes());
   const [notes, setNotes] = useState<Note[]>(() => storageService.getNotes());
   const [goal, setGoal] = useState<Goal>(() => storageService.getGoal());
+  const [personalization, setPersonalization] = useState<UserPersonalization>(() =>
+    storageService.getPersonalization()
+  );
   const [appIcon, setAppIcon] = useState<AppIconId>(
     () => (storageService.getAppIcon() as AppIconId) || 'emerald'
   );
@@ -60,6 +63,24 @@ export function App() {
   useEffect(() => {
     storageService.saveGoal(goal);
   }, [goal]);
+
+  // Применение темы, шрифта и размера ко всему интерфейсу приложения
+  useEffect(() => {
+    storageService.savePersonalization(personalization);
+    if (personalization.appIcon !== appIcon) {
+      setAppIcon(personalization.appIcon);
+    }
+
+    let effectiveTheme = personalization.theme;
+    if (effectiveTheme === 'autoDayNight') {
+      const hour = new Date().getHours();
+      effectiveTheme = (hour >= 19 || hour < 7) ? 'midnight' : 'wine';
+    }
+
+    document.documentElement.setAttribute('data-theme', effectiveTheme);
+    document.documentElement.setAttribute('data-font', personalization.fontFamily);
+    document.documentElement.setAttribute('data-size', personalization.fontSize);
+  }, [personalization]);
 
   // Динамическое обновление фавиконки приложения в соответствии с выбранной иконкой
   useEffect(() => {
@@ -315,16 +336,29 @@ export function App() {
         onAdd={handleAddBook}
       />
 
-      {/* Модальное окно настроек */}
+      {/* Модальное окно настроек и персонализации */}
       <SettingsModal
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
         books={books}
         quotes={quotes}
         notes={notes}
+        goal={goal}
+        onUpdateGoal={(newGoal) => setGoal(newGoal)}
         onImportBooks={(imported) => setBooks(imported)}
-        currentAppIcon={appIcon}
-        onSelectAppIcon={(icon) => setAppIcon(icon)}
+        personalization={personalization}
+        onUpdatePersonalization={(updated) => setPersonalization(updated)}
+        onPlaySoundscape={(mode) => {
+          soundscape.play(mode, personalization.soundscapeVolume ?? 0.4);
+          setSoundscapePlaying(true);
+          setSoundscapeMode(mode);
+        }}
+        onStopSoundscape={() => {
+          soundscape.stop();
+          setSoundscapePlaying(false);
+          setSoundscapeMode(null);
+        }}
+        soundscapePlaying={soundscapePlaying}
       />
 
       {/* Command Palette (⌘K) */}
