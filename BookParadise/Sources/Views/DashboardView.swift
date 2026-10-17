@@ -20,6 +20,7 @@ public struct DashboardView: View {
     @State private var isShowingSearchSheet: Bool = false
     @State private var isShowingSoundscapeMixer: Bool = false
     @State private var isShowingStandByClock: Bool = false
+    @State private var isShowingCircadianSolar: Bool = false
     @ObservedObject private var updateManager = UpdateManager.shared
     
     public init(viewModel: LibraryViewModel) {
@@ -236,12 +237,18 @@ public struct DashboardView: View {
                             isShowingAddBook = true
                         case "oracle":
                             isShowingOracle = true
+                        case "circadian":
+                            isShowingCircadianSolar = true
                         default:
                             break
                         }
                     }
                 )
                 .macSheetFrame(large: true)
+            }
+            .sheet(isPresented: $isShowingCircadianSolar) {
+                CircadianSolarControlSheet()
+                    .macSheetFrame()
             }
             .sheet(isPresented: $isShowingSoundscapeMixer) {
                 SoundscapeMixerSheet()

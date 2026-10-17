@@ -9,6 +9,7 @@ public struct SanctuaryCabinetView: View {
     @ObservedObject private var soundscape = SoundscapeManager.shared
     @ObservedObject private var achievementManager = AchievementManager.shared
     @ObservedObject private var updateManager = UpdateManager.shared
+    @ObservedObject private var solarEngine = CircadianSolarEngine.shared
 
     // Модальные окна инструментов
     @State private var isShowingStandByClock: Bool = false
@@ -22,6 +23,7 @@ public struct SanctuaryCabinetView: View {
     @State private var isShowingObsidianSync: Bool = false
     @State private var isShowingImporter: Bool = false
     @State private var isShowingExLibrisStudio: Bool = false
+    @State private var isShowingCircadianSolar: Bool = false
 
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -142,6 +144,10 @@ public struct SanctuaryCabinetView: View {
                 ExLibrisStudioSheet()
                     .macSheetFrame(large: true)
             }
+            .sheet(isPresented: $isShowingCircadianSolar) {
+                CircadianSolarControlSheet()
+                    .macSheetFrame()
+            }
         }
     }
 
@@ -221,6 +227,16 @@ public struct SanctuaryCabinetView: View {
                     color: Color(red: 0.85, green: 0.68, blue: 0.28)
                 ) {
                     isShowingExLibrisStudio = true
+                    HapticManager.shared.lightTap()
+                }
+
+                cabinetToolCard(
+                    title: "Циркадный свет",
+                    subtitle: "\(solarEngine.currentPhase.rawValue)",
+                    icon: solarEngine.currentPhase.icon,
+                    color: solarEngine.currentPhase.accentTint
+                ) {
+                    isShowingCircadianSolar = true
                     HapticManager.shared.lightTap()
                 }
             }

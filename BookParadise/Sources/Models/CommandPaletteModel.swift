@@ -66,7 +66,7 @@ public struct CommandPaletteEngine {
     public static func search(
         query: String,
         books: [Book],
-        quotes: [Quote],
+        quotes: [BookQuote],
         onSelectBook: @escaping (Book) -> Void,
         onNavigateTab: @escaping (Int) -> Void,
         onTriggerAction: @escaping (String) -> Void
@@ -141,6 +141,15 @@ public struct CommandPaletteEngine {
                 execute: { onTriggerAction("obsidian") }
             ),
             CommandPaletteItem(
+                title: "Циркадный астрономический свет",
+                subtitle: "Спектр чтения от 6500K до рубинового 630nm",
+                category: .actions,
+                icon: "sun.horizon.fill",
+                accentColor: .orange,
+                actionTag: "circadian",
+                execute: { onTriggerAction("circadian") }
+            ),
+            CommandPaletteItem(
                 title: "Проверить обновления",
                 subtitle: "Свежие релизы с GitHub Releases",
                 category: .actions,
@@ -193,7 +202,7 @@ public struct CommandPaletteEngine {
                     category: .books,
                     icon: "book.closed.fill",
                     accentColor: book.genre.accentColor,
-                    actionTag: "book:\(book.id.uuidString)",
+                    actionTag: "book:\(book.id)",
                     execute: { onSelectBook(book) }
                 )
             )
@@ -201,14 +210,16 @@ public struct CommandPaletteEngine {
 
         // Поиск по цитатам
         let matchingQuotes = quotes.filter { q in
-            q.text.lowercased().contains(trimmed) || q.author.lowercased().contains(trimmed)
+            q.text.lowercased().contains(trimmed) || (q.note?.lowercased().contains(trimmed) ?? false)
         }
 
         for quote in matchingQuotes.prefix(6) {
+            let matchingBook = books.first { $0.id == quote.bookId }
+            let bookTitle = matchingBook?.title ?? "Цитата из книги"
             results.append(
                 CommandPaletteItem(
                     title: "«\(quote.text.prefix(60))...»",
-                    subtitle: quote.author.isEmpty ? "Цитата из книги" : quote.author,
+                    subtitle: bookTitle,
                     category: .quotes,
                     icon: "quote.opening",
                     accentColor: Color(red: 0.52, green: 0.14, blue: 0.20),

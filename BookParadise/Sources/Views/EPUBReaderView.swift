@@ -15,7 +15,9 @@ public struct EPUBReaderView: View {
     @State private var isFolioMode: Bool = true
     @State private var showingNeuroPacer: Bool = false
     @State private var showingBinauralSheet: Bool = false
+    @State private var showingCircadianSheet: Bool = false
     @ObservedObject private var audioEngine = TactilePageFlipAudioEngine.shared
+    @ObservedObject private var solarEngine = CircadianSolarEngine.shared
 
     private let wineAccent = Color(red: 0.52, green: 0.14, blue: 0.20)
 
@@ -154,6 +156,9 @@ public struct EPUBReaderView: View {
         .sheet(isPresented: $showingBinauralSheet) {
             SoundscapeBinauralSheet()
         }
+        .sheet(isPresented: $showingCircadianSheet) {
+            CircadianSolarControlSheet()
+        }
         .alert("Цитата сохранена", isPresented: $showingQuoteAlert) {
             Button("Отлично", role: .cancel) {}
         } message: {
@@ -203,6 +208,16 @@ public struct EPUBReaderView: View {
                 Image(systemName: "eye.circle.fill")
                     .font(.system(size: 16))
                     .foregroundColor(selectedTexture.textColor)
+            }
+
+            // Циркадный астрономический спектр
+            Button {
+                showingCircadianSheet = true
+                HapticManager.shared.lightTap()
+            } label: {
+                Image(systemName: solarEngine.currentPhase.icon)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(solarEngine.currentPhase.accentTint)
             }
 
             // Переключатель Bionic Reading
@@ -326,6 +341,28 @@ public struct EPUBReaderView: View {
                             .tint(wineAccent)
                         Image(systemName: "speaker.wave.3")
                             .foregroundColor(.secondary)
+                    }
+                }
+
+                Section("Циркадный астрономический свет") {
+                    Toggle("Авто-подстройка под солнце", isOn: $solarEngine.isAutoAstronomicalEnabled)
+                        .tint(wineAccent)
+
+                    Button(action: {
+                        showingCircadianSheet = true
+                    }) {
+                        HStack {
+                            Label(solarEngine.currentPhase.rawValue, systemImage: solarEngine.currentPhase.icon)
+                                .foregroundColor(solarEngine.currentPhase.accentTint)
+                                .font(.subheadline.weight(.semibold))
+                            Spacer()
+                            Text("\(solarEngine.currentPhase.kelvin)K")
+                                .font(.system(size: 13, weight: .bold, design: .monospaced))
+                                .foregroundColor(.secondary)
+                            Image(systemName: "chevron.right")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
 

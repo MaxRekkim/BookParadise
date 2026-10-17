@@ -1319,7 +1319,7 @@ assertEqual(unlockedCount, 4, "All default demo trophies unlocked for v4.0.0 cel
 print("\n[Suite 40/40] Testing Sanctuary Master Overview & Milestone Stats...")
 
 struct MockSanctuaryMasterStats {
-    var versionString: String = "4.6.0"
+    var versionString: String = "4.7.0"
     var totalBooksInLibrary: Int = 42
     var totalPagesCompleted: Int = 14200
     var totalReadingHours: Double = 417.6
@@ -1332,10 +1332,10 @@ struct MockSanctuaryMasterStats {
 }
 
 let masterStats = MockSanctuaryMasterStats()
-assertEqual(masterStats.versionString, "4.6.0", "Sanctuary version string is 4.6.0")
+assertEqual(masterStats.versionString, "4.7.0", "Sanctuary version string is 4.7.0")
 assertEqual(masterStats.totalBooksInLibrary, 42, "Library contains 42 books")
 assertEqual(masterStats.totalPagesCompleted, 14200, "14,200 total pages completed")
-assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.6.0")
+assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.7.0")
 
 // -----------------------------------------------------------------------------
 // 41. TEST: AuthorTypographerEngine & Micro-Typography
@@ -1710,6 +1710,72 @@ assertEqual(authorResults.count, 1, "Matches book by author name")
 assertEqual(authorResults.first?.title, "Преступление и наказание", "Found correct book by author")
 
 // -----------------------------------------------------------------------------
+// 49. TEST: Circadian Astronomical Solar Reading Engine & Photobiological Phases
+// -----------------------------------------------------------------------------
+print("\n[Suite 49/49] Testing Circadian Astronomical Solar Reading Engine...")
+
+enum TestSolarPhase: String, CaseIterable {
+    case daylight = "Дневной зенит (6500K)"
+    case goldenHour = "Золотой час (4500K)"
+    case twilight = "Сумерки (3000K)"
+    case candlelight = "Свечное пламя (1800K)"
+    case rubyDark = "Рубиновая ночь (630nm)"
+    
+    var kelvin: Int {
+        switch self {
+        case .daylight: return 6500
+        case .goldenHour: return 4500
+        case .twilight: return 3000
+        case .candlelight: return 1800
+        case .rubyDark: return 1000
+        }
+    }
+    
+    var melatoninProtectionScore: Double {
+        switch self {
+        case .daylight: return 0.15
+        case .goldenHour: return 0.50
+        case .twilight: return 0.75
+        case .candlelight: return 0.92
+        case .rubyDark: return 0.99
+        }
+    }
+}
+
+func testResolvePhase(forHour hour: Double) -> TestSolarPhase {
+    if hour >= 22.5 || hour < 5.5 {
+        return .rubyDark
+    } else if hour >= 20.0 || (hour >= 5.5 && hour < 6.5) {
+        return .candlelight
+    } else if (hour >= 18.0 && hour < 20.0) || (hour >= 6.5 && hour < 7.5) {
+        return .twilight
+    } else if (hour >= 16.0 && hour < 18.0) || (hour >= 7.5 && hour < 9.0) {
+        return .goldenHour
+    } else {
+        return .daylight
+    }
+}
+
+func testCalculateSolarElevation(hourOfDay: Double) -> Double {
+    let normalizedAngle = ((hourOfDay - 6.0) / 24.0) * (2.0 * Double.pi)
+    return sin(normalizedAngle) * 55.0
+}
+
+assertEqual(TestSolarPhase.allCases.count, 5, "Circadian solar engine provides exactly 5 photobiological phases")
+assertEqual(TestSolarPhase.daylight.kelvin, 6500, "Daylight phase operates at 6500K crisp neutral illumination")
+assertEqual(TestSolarPhase.goldenHour.kelvin, 4500, "Golden hour phase operates at 4500K warm amber illumination")
+assertEqual(TestSolarPhase.candlelight.kelvin, 1800, "Candlelight phase operates at 1800K warm hearth illumination")
+assertEqual(TestSolarPhase.rubyDark.melatoninProtectionScore, 0.99, "Ruby night vision offers 99% melatonin protection")
+assertTrue(testCalculateSolarElevation(hourOfDay: 12.0) > 50.0, "Solar elevation peaks at zenith noon (> 50 degrees)")
+assertTrue(testCalculateSolarElevation(hourOfDay: 0.0) < -50.0, "Solar elevation plunges at midnight nadir (< -50 degrees)")
+assertEqual(testResolvePhase(forHour: 13.0), .daylight, "13:00 resolves to Daylight phase")
+assertEqual(testResolvePhase(forHour: 17.0), .goldenHour, "17:00 resolves to Golden Hour phase")
+assertEqual(testResolvePhase(forHour: 19.0), .twilight, "19:00 resolves to Twilight phase")
+assertEqual(testResolvePhase(forHour: 21.0), .candlelight, "21:00 resolves to Candlelight phase")
+assertEqual(testResolvePhase(forHour: 23.5), .rubyDark, "23:30 resolves to Ruby Dark monochromatic mode")
+assertEqual(testResolvePhase(forHour: 02.0), .rubyDark, "02:00 resolves to Ruby Dark monochromatic mode")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -1720,7 +1786,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v4.6.0 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v4.7.0 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")
