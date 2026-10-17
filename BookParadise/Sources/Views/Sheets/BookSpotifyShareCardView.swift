@@ -156,10 +156,10 @@ public struct BookSpotifyShareCardView: View {
                 coverURL: book.cleanCoverURL,
                 title: book.title,
                 author: book.author,
-                width: 170,
-                height: 250,
+                genre: book.genre,
                 cornerRadius: 14
             )
+            .frame(width: 170, height: 250)
             .shadow(color: Color.black.opacity(0.45), radius: 18, x: 0, y: 10)
             .padding(.vertical, 6)
 
