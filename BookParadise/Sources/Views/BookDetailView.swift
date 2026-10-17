@@ -13,7 +13,6 @@ public struct BookDetailView: View {
     @ObservedObject private var eBookStorage = EBookStorageManager.shared
 
     @AppStorage("kindleEmail") private var kindleEmail: String = ""
-    @ObservedObject private var lendingManager = LendingManager.shared
     @ObservedObject private var noteStore = ReadingNoteStore.shared
     @State private var isShowingProgressUpdate: Bool = false
     @State private var isShowingPlanSheet: Bool = false
@@ -25,10 +24,9 @@ public struct BookDetailView: View {
     @State private var isEditingReview: Bool = false
     @State private var reviewDraft: String = ""
     @State private var isShowingKindleAlert: Bool = false
-    @State private var isShowingLendSheet: Bool = false
     @State private var isShowingNewNoteSheet: Bool = false
     @State private var selectedNoteForEdit: ReadingNote? = nil
-    @State private var isShowingSpotifyCard: Bool = false
+    @State private var isShowingShareCard: Bool = false
     @State private var isShowingInAppReader: Bool = false
     @State private var isShowingBookBeam: Bool = false
 
@@ -67,7 +65,7 @@ public struct BookDetailView: View {
                     )
                     .frame(width: 125, height: 185)
 
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: 0) {
                         Text(book.genre.rawValue)
                             .font(.caption2)
                             .fontWeight(.bold)
@@ -76,21 +74,23 @@ public struct BookDetailView: View {
                             .padding(.vertical, 4)
                             .background(book.genre.accentColor.opacity(0.12))
                             .cornerRadius(6)
+                            .padding(.bottom, 8)
 
-                        Text(book.title)
+                        Text(book.typographicTitle)
                             .font(.title3)
                             .fontWeight(.bold)
                             .lineLimit(3)
 
-                        Text(book.author)
+                        Text(book.typographicAuthor)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
+                            .padding(.top, 4)
 
                         if let r = book.rating {
                             Text(r.rawValue)
                                 .font(.headline)
                                 .foregroundColor(.orange)
-                                .padding(.top, 2)
+                                .padding(.top, 6)
                         }
 
                         Spacer()
@@ -195,12 +195,12 @@ public struct BookDetailView: View {
                         }
                     }
 
-                    // Кнопка генерации карточки итогов в стиле Spotify
-                    Button(action: { isShowingSpotifyCard = true }) {
+                    // Кнопка генерации карточки книги
+                    Button(action: { isShowingShareCard = true }) {
                         HStack(spacing: 8) {
                             Image(systemName: "sparkles.rectangle.stack.fill")
                                 .font(.subheadline)
-                            Text("Поделиться карточкой (Spotify Style)")
+                            Text("Поделиться карточкой книги")
                                 .font(.subheadline)
                                 .fontWeight(.bold)
                         }
@@ -308,9 +308,6 @@ public struct BookDetailView: View {
         .sheet(isPresented: $isShowingBookBeam) {
             BookBeamShareView(payload: makeBookBeamPayload(for: book))
         }
-        .sheet(isPresented: $isShowingLendSheet) {
-            LendBookSheet(book: book)
-        }
         .sheet(isPresented: $isShowingProgressUpdate) {
             ProgressUpdateSheet(viewModel: viewModel, book: book)
         }
@@ -370,8 +367,8 @@ public struct BookDetailView: View {
                 }
             }
         }
-        .sheet(isPresented: $isShowingSpotifyCard) {
-            BookSpotifyShareCardView(book: book)
+        .sheet(isPresented: $isShowingShareCard) {
+            BookShareCardView(book: book)
                 .macSheetFrame()
         }
         .fullScreenCover(isPresented: $isShowingInAppReader) {
@@ -747,99 +744,7 @@ public struct BookDetailView: View {
         }
     }
 
-    // MARK: - Трекер одолженных книг
-    private func lendingSection(for book: Book) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Image(systemName: "person.2.fill")
-                    .foregroundColor(theme.primaryAccent)
-                Text("Книга у друзей (Трекер долгов)")
-                    .font(.headline)
-                Spacer()
-            }
 
-            if let active = lendingManager.activeLending(for: String(book.id)) {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(active.type == .lentToFriend ? "Одолжена другу:" : "Взята у:")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            Text(active.personName)
-                                .font(.subheadline)
-                                .fontWeight(.bold)
-                        }
-                        Spacer()
-                        if let days = active.daysRemaining {
-                            if days < 0 {
-                                Text("Просрочено \(abs(days)) дн.")
-                                    .font(.caption2)
-                                    .fontWeight(.bold)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                    .background(Color.red.opacity(0.15))
-                                    .foregroundColor(.red)
-                                    .clipShape(Capsule())
-                            } else {
-                                Text("Осталось \(days) дн.")
-                                    .font(.caption2)
-                                    .fontWeight(.medium)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                    .background(Color.orange.opacity(0.15))
-                                    .foregroundColor(.orange)
-                                    .clipShape(Capsule())
-                            }
-                        }
-                    }
-
-                    if let contact = active.contact, !contact.isEmpty {
-                        Text("Контакт: \(contact)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-
-                    Button(action: {
-                        withAnimation {
-                            lendingManager.markReturned(recordId: active.id)
-                        }
-                    }) {
-                        HStack {
-                            Image(systemName: "checkmark.circle.fill")
-                            Text("Отметить возврат книги")
-                        }
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.green)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 10)
-                        .background(Color.green.opacity(0.12))
-                        .cornerRadius(10)
-                    }
-                }
-                .padding()
-                .background(Color(UIColor.tertiarySystemGroupedBackground))
-                .cornerRadius(12)
-            } else {
-                Button(action: { isShowingLendSheet = true }) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "arrow.up.right.circle")
-                        Text("Одолжить книгу другу / Записать в долг")
-                    }
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(theme.primaryAccent)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
-                    .background(theme.primaryAccent.opacity(0.12))
-                    .cornerRadius(10)
-                }
-            }
-        }
-        .padding()
-        .background(Color(UIColor.secondarySystemGroupedBackground))
-        .cornerRadius(16)
-    }
 
     // MARK: - Экспорт в Markdown
     private func exportSection(for book: Book) -> some View {

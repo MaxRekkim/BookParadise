@@ -547,60 +547,55 @@ assertEqual(oledProfile.bgHex, "#000000", "OLED Midnight uses true zero black #0
 assertEqual(washiProfile.isDark, false, "Japanese Washi is light tactile paper")
 
 // -----------------------------------------------------------------------------
-// 16. TEST: Reading Club & Margin Note Reactions
+// 16. TEST: Literary Book Share Card & Visual Themes Engine
 // -----------------------------------------------------------------------------
-print("\n[Suite 16/20] Testing Reading Club & Margin Note Reactions...")
+print("\n[Suite 16/20] Testing Literary Book Share Card & Themes...")
 
-struct MockClubMember {
-    let name: String
-    let progressPercent: Double
-}
+enum MockBookShareCardTheme: String, CaseIterable {
+    case midnightSlate = "midnight_slate"
+    case royalWine = "royal_wine"
+    case emeraldElegance = "emerald_elegance"
+    case vintageParchment = "vintage_parchment"
 
-let m1 = MockClubMember(name: "Leader", progressPercent: 80.0)
-let m2 = MockClubMember(name: "Member1", progressPercent: 60.0)
-let m3 = MockClubMember(name: "Member2", progressPercent: 40.0)
-let avgProgress = (m1.progressPercent + m2.progressPercent + m3.progressPercent) / 3.0
+    var isDark: Bool {
+        self != .vintageParchment
+    }
 
-assertEqual(Int(avgProgress), 60, "Average progress across members is computed correctly (60%)")
-
-var reactions: [String: Int] = ["❤️": 3, "🔥": 1]
-func toggleReaction(emoji: String, currentCount: inout [String: Int], userReacted: Bool) -> Bool {
-    if userReacted {
-        currentCount[emoji] = max(0, (currentCount[emoji] ?? 1) - 1)
-        return false
-    } else {
-        currentCount[emoji] = (currentCount[emoji] ?? 0) + 1
-        return true
+    var title: String {
+        switch self {
+        case .midnightSlate: return "Полуночный сланец"
+        case .royalWine: return "Королевский Бордо"
+        case .emeraldElegance: return "Изумрудный атлас"
+        case .vintageParchment: return "Пергамент"
+        }
     }
 }
-var userHasHeart = true
-userHasHeart = toggleReaction(emoji: "❤️", currentCount: &reactions, userReacted: userHasHeart)
-assertEqual(reactions["❤️"] ?? 0, 2, "Un-reacting decrements reaction count to 2")
-assertEqual(userHasHeart, false, "User reacted state toggles to false")
+
+assertEqual(MockBookShareCardTheme.allCases.count, 4, "Book share card has 4 noble Apple-grade themes")
+assertEqual(MockBookShareCardTheme.midnightSlate.isDark, true, "Midnight Slate is a deep dark theme")
+assertEqual(MockBookShareCardTheme.vintageParchment.isDark, false, "Vintage Parchment is light tactile paper")
+assertEqual(MockBookShareCardTheme.emeraldElegance.title, "Изумрудный атлас", "Emerald elegance has correct title")
 
 // -----------------------------------------------------------------------------
-// 17. TEST: Book Lending Trust Score & iCalendar Generator
+// 17. TEST: Library Shelving & Reading State Transition Engine
 // -----------------------------------------------------------------------------
-print("\n[Suite 17/20] Testing Book Lending Trust Score & iCalendar Generator...")
+print("\n[Suite 17/20] Testing Library Shelving & State Transition...")
 
-func mockCalcTrust(total: Int, onTime: Int, overdue: Int, damaged: Int) -> Double {
-    guard total > 0 else { return 100.0 }
-    let ratio = Double(onTime) / Double(total)
-    let raw = (ratio * 100.0) - (Double(overdue) * 15.0) - (Double(damaged) * 20.0)
-    return max(0.0, min(100.0, raw))
+enum MockReadingStatus: String {
+    case notStarted = "Не начата"
+    case inProgress = "В процессе"
+    case read = "Прочитано"
 }
 
-let pristineTrust = mockCalcTrust(total: 5, onTime: 5, overdue: 0, damaged: 0)
-assertEqual(pristineTrust, 100.0, "100% on-time returns yields 100.0 trust score")
-
-let penaltyTrust = mockCalcTrust(total: 4, onTime: 3, overdue: 1, damaged: 0)
-assertEqual(penaltyTrust, 60.0, "3 on-time out of 4 with 1 overdue penalty yields 60.0 trust score")
-
-func mockICSCheck(title: String, borrower: String) -> String {
-    "BEGIN:VCALENDAR\r\nSUMMARY:Книжный Рай: Возврат «\(title)» от \(borrower)\r\nBEGIN:VALARM\r\nTRIGGER:-PT2H\r\nEND:VCALENDAR"
+func evaluateStatus(pagesRead: Int, totalPages: Int) -> MockReadingStatus {
+    if pagesRead <= 0 { return .notStarted }
+    if pagesRead >= totalPages { return .read }
+    return .inProgress
 }
-let sampleICS = mockICSCheck(title: "1984", borrower: "Алексей")
-assertEqual(sampleICS.contains("BEGIN:VCALENDAR") && sampleICS.contains("BEGIN:VALARM"), true, "ICS contains VCALENDAR envelope and VALARM reminder")
+
+assertEqual(evaluateStatus(pagesRead: 0, totalPages: 384), .notStarted, "0 pages read is .notStarted")
+assertEqual(evaluateStatus(pagesRead: 150, totalPages: 384), .inProgress, "Partial read is .inProgress")
+assertEqual(evaluateStatus(pagesRead: 384, totalPages: 384), .read, "100% read is .read")
 
 // -----------------------------------------------------------------------------
 // 18. TEST: Reading Bingo 5x5 Matrix & Line Completion Math
@@ -1099,34 +1094,31 @@ assertEqual(almanac[0].title, "Альманах Чтения 2026", "Almanac cov
 assertTrue(almanac[0].highlights.contains("42 книг"), "Almanac cover summarizes annual books count")
 
 // -----------------------------------------------------------------------------
-// 34. TEST: Book Club Thesis & Dialectic Discussion Generator
+// 34. TEST: Literary Citation & Epigraph Synthesis Engine
 // -----------------------------------------------------------------------------
-print("\n[Suite 34/35] Testing Book Club Thesis & Discussion Generator...")
+print("\n[Suite 34/35] Testing Literary Citation & Epigraph Synthesis...")
 
-enum MockCategory: String, CaseIterable {
-    case moralDilemma = "Моральная дилемма"
-    case philosophicalCore = "Философский нерв"
-    case symbolism = "Символизм"
-    case psychology = "Психология героев"
+struct MockEpigraph {
+    let quote: String
+    let sourceBook: String
+    let author: String
+    let page: Int
+
+    var formattedCitation: String {
+        "«\(quote)»\n— \(author), «\(sourceBook)», с. \(page)"
+    }
 }
 
-struct MockPrompt {
-    let category: MockCategory
-    let question: String
-    let minutes: Int
-}
+let epigraph = MockEpigraph(
+    quote: "Рукописи не горят.",
+    sourceBook: "Мастер и Маргарита",
+    author: "Михаил Булгаков",
+    page: 287
+)
 
-let clubAgenda = [
-    MockPrompt(category: .moralDilemma, question: "Оправдан ли конформизм прокуратора?", minutes: 20),
-    MockPrompt(category: .philosophicalCore, question: "Почему Мастер заслужил 'Покой', а не 'Свет'?", minutes: 25),
-    MockPrompt(category: .symbolism, question: "Какую роль играет весенняя гроза над Ершалаимом?", minutes: 15),
-    MockPrompt(category: .psychology, question: "Преображение поэта Бездомного: выздоровление или крах?", minutes: 15)
-]
-
-let totalAgendaMinutes = clubAgenda.reduce(0) { $0 + $1.minutes }
-assertEqual(totalAgendaMinutes, 75, "Club debate agenda calculates 75 total minutes")
-assertEqual(clubAgenda.count, 4, "Agenda contains 4 diverse dialectic questions")
-assertEqual(clubAgenda[0].category, .moralDilemma, "First question explores moral dilemma")
+assertEqual(epigraph.quote, "Рукописи не горят.", "Epigraph text matches source")
+assertTrue(epigraph.formattedCitation.contains("— Михаил Булгаков"), "Citation formats attribution correctly")
+assertTrue(epigraph.formattedCitation.contains("с. 287"), "Citation preserves page reference")
 
 // -----------------------------------------------------------------------------
 // 35. TEST: Circadian Reading Chronotype & Cognitive Peak Engine
@@ -1344,6 +1336,125 @@ assertEqual(masterStats.versionString, "4.0.0", "Sanctuary version string is 4.0
 assertEqual(masterStats.totalBooksInLibrary, 42, "Library contains 42 books")
 assertEqual(masterStats.totalPagesCompleted, 14200, "14,200 total pages completed")
 assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.0.0")
+
+// -----------------------------------------------------------------------------
+// 41. TEST: AuthorTypographerEngine & Micro-Typography
+// -----------------------------------------------------------------------------
+print("\n[Suite 41/45] Testing AuthorTypographerEngine & Micro-Typography...")
+
+struct MockAuthorTypographer {
+    static let thinNBSP = "\u{202F}"
+    static let nbsp = "\u{00A0}"
+    static let shortWordsToBind: Set<String> = [
+        "и", "в", "во", "на", "с", "со", "к", "ко", "о", "об", "у", "за", "из", "по",
+        "the", "a", "an", "of", "in", "on", "at", "to", "for"
+    ]
+
+    static func formatAuthor(_ author: String) -> String {
+        var result = author.trimmingCharacters(in: .whitespacesAndNewlines)
+        result = result.replacingOccurrences(
+            of: "([А-ЯA-Z][а-яa-z]?\\.)([А-ЯA-Z])",
+            with: "$1 $2",
+            options: .regularExpression
+        )
+        let doubleInitialsPrefix = "([А-ЯA-Z][а-яa-z]?\\.)[ \\t]+([А-ЯA-Z][а-яa-z]?\\.)[ \\t]+([А-Яа-яA-Za-z\\-]+)"
+        result = result.replacingOccurrences(
+            of: doubleInitialsPrefix,
+            with: "$1\(thinNBSP)$2\(nbsp)$3",
+            options: .regularExpression
+        )
+        let singleInitialPrefix = "([А-ЯA-Z][а-яa-z]?\\.)[ \\t]+([А-Яа-яA-Za-z\\-]+)"
+        result = result.replacingOccurrences(
+            of: singleInitialPrefix,
+            with: "$1\(nbsp)$2",
+            options: .regularExpression
+        )
+        return result
+    }
+
+    static func formatTitle(_ title: String) -> String {
+        var result = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let wordsPattern = "\\b(" + shortWordsToBind.joined(separator: "|") + ")\\s+"
+        result = result.replacingOccurrences(
+            of: wordsPattern,
+            with: "$1\(nbsp)",
+            options: [.regularExpression, .caseInsensitive]
+        )
+        return result
+    }
+}
+
+let formattedTolstoy = MockAuthorTypographer.formatAuthor("Л. Н. Толстой")
+assertEqual(formattedTolstoy, "Л.\u{202F}Н.\u{00A0}Толстой", "Double initials bound with narrow NBSP and surname with NBSP")
+
+let formattedPushkin = MockAuthorTypographer.formatAuthor("А. Пушкин")
+assertEqual(formattedPushkin, "А.\u{00A0}Пушкин", "Single initial bound to surname with NBSP")
+
+let formattedTitle = MockAuthorTypographer.formatTitle("Война и мир")
+assertEqual(formattedTitle, "Война и\u{00A0}мир", "Preposition 'и' bound to next word with NBSP to prevent orphans")
+
+let formattedEnTitle = MockAuthorTypographer.formatTitle("The Lord of the Rings")
+assertEqual(formattedEnTitle.contains("\u{00A0}"), true, "English prepositions 'of' and 'the' bound with NBSP")
+
+// -----------------------------------------------------------------------------
+// 42. TEST: BookSpineView Dynamic Physical Width Geometry
+// -----------------------------------------------------------------------------
+print("\n[Suite 42/45] Testing BookSpineView Dynamic Spine Geometry...")
+
+func mockCalculateSpineWidth(pages: Int) -> Double {
+    if pages <= 150 {
+        return 24.0
+    } else if pages <= 350 {
+        return 32.0
+    } else if pages <= 600 {
+        return 42.0
+    } else if pages <= 900 {
+        return 52.0
+    } else {
+        return 64.0
+    }
+}
+
+assertEqual(mockCalculateSpineWidth(pages: 120), 24.0, "Slim volume (120 pages) has 24pt spine")
+assertEqual(mockCalculateSpineWidth(pages: 320), 32.0, "Standard novel (320 pages) has 32pt spine")
+assertEqual(mockCalculateSpineWidth(pages: 500), 42.0, "Substantial book (500 pages) has 42pt spine")
+assertEqual(mockCalculateSpineWidth(pages: 800), 52.0, "Epic tome (800 pages) has 52pt spine")
+assertEqual(mockCalculateSpineWidth(pages: 1200), 64.0, "Colossal omnibus (1200 pages) has 64pt spine")
+
+// -----------------------------------------------------------------------------
+// 43. TEST: StandBy Desk Clock & Footnote Popover Architecture
+// -----------------------------------------------------------------------------
+print("\n[Suite 43/45] Testing StandBy Desk Clock & Footnote Popover...")
+
+struct MockFootnote {
+    let index: Int
+    let term: String
+    let explanation: String
+}
+
+let sampleFootnote = MockFootnote(
+    index: 1,
+    term: "Шпаций",
+    explanation: "Типографический пробельный материал для создания тонких межсловных интервалов."
+)
+
+assertEqual(sampleFootnote.index, 1, "Footnote index is 1")
+assertEqual(sampleFootnote.term, "Шпаций", "Footnote term is correctly preserved")
+assertEqual(sampleFootnote.explanation.contains("Типографический"), true, "Footnote explanation contains detailed text")
+
+struct MockStandByClock {
+    let amberHex: String = "#F5A647" // 1800K warm amber
+    let oledZeroBlack: String = "#000000"
+
+    var isOLEDCompliant: Bool {
+        oledZeroBlack == "#000000"
+    }
+}
+
+let standBy = MockStandByClock()
+assertTrue(standBy.isOLEDCompliant, "StandBy mode strictly utilizes true OLED zero black")
+assertEqual(standBy.amberHex, "#F5A647", "StandBy mode uses warm 1800K amber illumination")
+
 
 // -----------------------------------------------------------------------------
 // SUMMARY

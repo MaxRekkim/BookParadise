@@ -84,7 +84,7 @@ public struct HotReadsBentoView: View {
                     }
                     
                     // 2. Обложка + Название, автор и прогресс
-                    HStack(alignment: .top, spacing: 10) {
+                    HStack(alignment: .top, spacing: 12) {
                         BookCoverView(
                             coverURL: book.cleanCoverURL,
                             title: book.title,
@@ -95,15 +95,15 @@ public struct HotReadsBentoView: View {
                         .frame(width: 50, height: 75)
                         .shadow(color: Color.black.opacity(0.15), radius: 3, x: 0, y: 2)
                         
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(book.title)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(book.typographicTitle)
                                 .font(.system(size: 13, weight: .bold))
                                 .foregroundColor(Color(UIColor.label))
                                 .lineLimit(2)
                                 .multilineTextAlignment(.leading)
                             
-                            Text(book.author)
-                                .font(.system(size: 11))
+                            Text(book.typographicAuthor)
+                                .font(.system(size: 11, weight: .medium))
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
                             

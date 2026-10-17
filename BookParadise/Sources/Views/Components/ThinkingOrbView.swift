@@ -77,7 +77,7 @@ public struct ThinkingOrbView: View {
                         let depthAlpha = dot.a * (0.35 + 0.65 * (isDark ? clampedWhite : (1.0 - clampedWhite)))
                         fillColor = tint.opacity(depthAlpha)
                     } else {
-                        // Адаптивный монохром (как в оригинале thinking-orbs)
+                        // Адаптивный монохромный градиент
                         let grayLevel = isDark ? (1.0 - clampedWhite) : clampedWhite
                         fillColor = Color(
                             red: grayLevel,

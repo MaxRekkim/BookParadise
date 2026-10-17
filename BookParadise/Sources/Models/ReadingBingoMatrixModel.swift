@@ -6,14 +6,14 @@ public enum BingoVisualTheme: String, Codable, CaseIterable {
     case classicParchment = "Винтажный пергамент"
     case midnightGold = "Полуночное золото"
     case botanicalSage = "Ботанический шалфей"
-    case neonCyber = "Киберпанк неон"
+    case nordicSlate = "Северный сланец"
     
     public var primaryColor: Color {
         switch self {
         case .classicParchment: return Color(red: 0.65, green: 0.45, blue: 0.25)
         case .midnightGold: return Color(red: 0.95, green: 0.78, blue: 0.35)
         case .botanicalSage: return Color(red: 0.32, green: 0.55, blue: 0.42)
-        case .neonCyber: return Color(red: 0.20, green: 0.85, blue: 0.95)
+        case .nordicSlate: return Color(red: 0.35, green: 0.48, blue: 0.62)
         }
     }
     
@@ -22,7 +22,7 @@ public enum BingoVisualTheme: String, Codable, CaseIterable {
         case .classicParchment: return Color(red: 0.97, green: 0.94, blue: 0.88)
         case .midnightGold: return Color(red: 0.08, green: 0.08, blue: 0.12)
         case .botanicalSage: return Color(red: 0.93, green: 0.96, blue: 0.94)
-        case .neonCyber: return Color(red: 0.05, green: 0.05, blue: 0.08)
+        case .nordicSlate: return Color(red: 0.94, green: 0.95, blue: 0.97)
         }
     }
     
@@ -31,7 +31,7 @@ public enum BingoVisualTheme: String, Codable, CaseIterable {
         case .classicParchment: return Color(red: 0.93, green: 0.89, blue: 0.82)
         case .midnightGold: return Color(red: 0.14, green: 0.14, blue: 0.20)
         case .botanicalSage: return Color(red: 0.86, green: 0.91, blue: 0.87)
-        case .neonCyber: return Color(red: 0.10, green: 0.12, blue: 0.18)
+        case .nordicSlate: return Color(red: 0.88, green: 0.90, blue: 0.94)
         }
     }
     
@@ -40,7 +40,7 @@ public enum BingoVisualTheme: String, Codable, CaseIterable {
         case .classicParchment: return Color(red: 0.22, green: 0.18, blue: 0.12)
         case .midnightGold: return Color(red: 0.96, green: 0.96, blue: 0.98)
         case .botanicalSage: return Color(red: 0.15, green: 0.25, blue: 0.18)
-        case .neonCyber: return Color(red: 0.90, green: 0.98, blue: 1.0)
+        case .nordicSlate: return Color(red: 0.12, green: 0.16, blue: 0.22)
         }
     }
 }

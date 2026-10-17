@@ -1,29 +1,29 @@
 import SwiftUI
 import UIKit
 
-/// Темы оформления карточки в стиле Spotify
-public enum SpotifyCardTheme: String, CaseIterable, Identifiable {
-    case spotifyDark = "spotify_dark"
+/// Темы оформления эстетичной карточки книги в стандартах Apple Human Interface Guidelines
+public enum BookShareCardTheme: String, CaseIterable, Identifiable {
+    case midnightSlate = "midnight_slate"
     case royalWine = "royal_wine"
-    case neonWrapped = "neon_wrapped"
+    case emeraldElegance = "emerald_elegance"
     case vintageParchment = "vintage_parchment"
 
     public var id: String { rawValue }
 
     public var title: String {
         switch self {
-        case .spotifyDark: return "Spotify Dark"
+        case .midnightSlate: return "Полуночный сланец"
         case .royalWine: return "Королевский Бордо"
-        case .neonWrapped: return "Neon Wrapped"
+        case .emeraldElegance: return "Изумрудный атлас"
         case .vintageParchment: return "Пергамент"
         }
     }
 
     public var gradient: LinearGradient {
         switch self {
-        case .spotifyDark:
+        case .midnightSlate:
             return LinearGradient(
-                colors: [Color(red: 0.08, green: 0.16, blue: 0.12), Color(red: 0.05, green: 0.05, blue: 0.07)],
+                colors: [Color(red: 0.08, green: 0.10, blue: 0.14), Color(red: 0.04, green: 0.05, blue: 0.07)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -33,9 +33,9 @@ public enum SpotifyCardTheme: String, CaseIterable, Identifiable {
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
-        case .neonWrapped:
+        case .emeraldElegance:
             return LinearGradient(
-                colors: [Color(red: 0.38, green: 0.05, blue: 0.55), Color(red: 0.05, green: 0.15, blue: 0.35)],
+                colors: [Color(red: 0.06, green: 0.18, blue: 0.12), Color(red: 0.02, green: 0.08, blue: 0.05)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -50,9 +50,9 @@ public enum SpotifyCardTheme: String, CaseIterable, Identifiable {
 
     public var accentColor: Color {
         switch self {
-        case .spotifyDark: return Color(red: 0.11, green: 0.84, blue: 0.38) // Spotify Green
+        case .midnightSlate: return Color(red: 0.85, green: 0.88, blue: 0.92)
         case .royalWine: return Color(red: 0.85, green: 0.25, blue: 0.35)
-        case .neonWrapped: return Color(red: 0.00, green: 0.92, blue: 0.95) // Cyan
+        case .emeraldElegance: return Color(red: 0.35, green: 0.75, blue: 0.50)
         case .vintageParchment: return Color(red: 0.55, green: 0.35, blue: 0.15)
         }
     }
@@ -72,8 +72,8 @@ public enum SpotifyCardTheme: String, CaseIterable, Identifiable {
     }
 }
 
-/// Модальное окно генерации и шеринга красивой Spotify-style карточки книги
-public struct BookSpotifyShareCardView: View {
+/// Модальное окно генерации и шеринга эстетичной карточки книги
+public struct BookShareCardView: View {
     public let book: Book
     public var customQuote: String? = nil
     public var onDismiss: (() -> Void)? = nil
@@ -81,7 +81,7 @@ public struct BookSpotifyShareCardView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var theme = ThemeManager.shared
 
-    @State private var selectedTheme: SpotifyCardTheme = .spotifyDark
+    @State private var selectedTheme: BookShareCardTheme = .midnightSlate
     @State private var renderedCardImage: UIImage? = nil
     @State private var isCopied: Bool = false
     @State private var isSavedToPhotos: Bool = false
@@ -97,31 +97,31 @@ public struct BookSpotifyShareCardView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     // 1. Интерактивное превью карточки
-                    spotifyCard
-                        .padding(.horizontal, 20)
+                    shareCard
                         .padding(.top, 10)
 
-                    // 2. Селектор тем оформления карточки
+                    // 2. Выбор визуального стиля
                     themeSelector
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal)
 
-                    // 3. Блок действий шеринга
+                    // 3. Кнопки действий
                     actionButtons
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 30)
+                        .padding(.horizontal)
+                        .padding(.bottom, 24)
                 }
             }
             .background(Color(UIColor.systemGroupedBackground))
-            .navigationTitle("Карточка итогов")
+            .navigationTitle("Карточка книги")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Готово") {
-                        onDismiss?()
-                        dismiss()
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Закрыть") {
+                        if let onDismiss = onDismiss {
+                            onDismiss()
+                        } else {
+                            dismiss()
+                        }
                     }
-                    .font(.headline)
-                    .foregroundColor(theme.primaryAccent)
                 }
             }
             .onAppear {
@@ -130,8 +130,8 @@ public struct BookSpotifyShareCardView: View {
         }
     }
 
-    // MARK: - Дизайн Spotify-карточки
-    private var spotifyCard: some View {
+    // MARK: - Дизайн карточки книги
+    private var shareCard: some View {
         VStack(spacing: 16) {
             // Верхняя плашка
             HStack {
@@ -193,7 +193,7 @@ public struct BookSpotifyShareCardView: View {
                 }
             }
 
-            // Spotify-подобный звуковой/читательский визуалайзер
+            // Индикатор читательского темпоритма
             soundwaveVisualizer
 
             // Статистические плашки (Bento)
@@ -234,26 +234,23 @@ public struct BookSpotifyShareCardView: View {
             Divider()
                 .background(selectedTheme.subtitleColor.opacity(0.2))
 
-            // Нижний штрихкод / брендинг в стиле Spotify
+            // Нижний литературный штамп и эмблема издания
             HStack {
-                HStack(spacing: 4) {
-                    ForEach(0..<18, id: \.self) { idx in
-                        RoundedRectangle(cornerRadius: 1)
-                            .fill(selectedTheme.accentColor)
-                            .frame(width: 2.5, height: [12, 18, 8, 22, 14, 10, 20, 16, 24, 14, 18, 12, 22, 8, 16, 20, 10, 14][idx % 18])
-                    }
+                HStack(spacing: 6) {
+                    Image(systemName: "books.vertical.fill")
+                        .font(.system(size: 11))
+                        .foregroundColor(selectedTheme.accentColor)
+                    Text("КНИЖНЫЙ РАЙ")
+                        .font(.system(size: 11, weight: .bold, design: .serif))
+                        .tracking(1.2)
+                        .foregroundColor(selectedTheme.textColor)
                 }
 
                 Spacer()
 
-                HStack(spacing: 4) {
-                    Image(systemName: "books.vertical.fill")
-                        .font(.system(size: 10))
-                        .foregroundColor(selectedTheme.accentColor)
-                    Text("BookParadise")
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                        .foregroundColor(selectedTheme.textColor)
-                }
+                Text("Литературное издание")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(selectedTheme.subtitleColor)
             }
             .padding(.top, 2)
         }
@@ -315,7 +312,7 @@ public struct BookSpotifyShareCardView: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 10) {
-                    ForEach(SpotifyCardTheme.allCases) { item in
+                    ForEach(BookShareCardTheme.allCases) { item in
                         Button(action: {
                             withAnimation(.spring(response: 0.3)) {
                                 selectedTheme = item
@@ -370,75 +367,75 @@ public struct BookSpotifyShareCardView: View {
                 ) {
                     HStack {
                         Image(systemName: "square.and.arrow.up")
-                        Text("Поделиться в Telegram / Stories...")
+                        Text("Поделиться изображением")
                     }
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
+                    .font(.headline)
                     .foregroundColor(theme.primaryAccent)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(theme.primaryAccent.opacity(0.12))
-                    .cornerRadius(12)
+                    .padding(.vertical, 14)
+                    .background(Color(UIColor.secondarySystemGroupedBackground))
+                    .cornerRadius(14)
                 }
+                .buttonStyle(.plain)
             }
 
-            // 3. Сохранить в галерею Фото
+            // 3. Сохранить в Фотоплёнку
             Button(action: saveToPhotos) {
                 HStack {
-                    Image(systemName: isSavedToPhotos ? "checkmark" : "photo.on.rectangle.angled")
-                    Text(isSavedToPhotos ? "Сохранено в Фото!" : "Сохранить в Фотопленку")
+                    Image(systemName: isSavedToPhotos ? "photo.fill.on.rectangle.fill" : "square.and.arrow.down")
+                    Text(isSavedToPhotos ? "Сохранено в Фото!" : "Сохранить в Фотоплёнку")
                 }
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundColor(Color(UIColor.label))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(Color(UIColor.secondarySystemGroupedBackground))
-                .cornerRadius(12)
+                .foregroundColor(.secondary)
             }
             .buttonStyle(.plain)
+            .padding(.top, 4)
         }
     }
 
-    // MARK: - Рендеринг и сохранение
-    @MainActor
-    private func renderCard() -> UIImage? {
-        let renderer = ImageRenderer(content: spotifyCard.frame(width: 360))
-        #if targetEnvironment(macCatalyst)
-        renderer.scale = 2.0
-        #else
-        renderer.scale = UIScreen.main.scale
-        #endif
-        return renderer.uiImage
-    }
-
-    @MainActor
+    // MARK: - Рендеринг и утилиты
     private func generateCardImage() {
-        if let img = renderCard() {
-            self.renderedCardImage = img
+        Task { @MainActor in
+            let renderer = ImageRenderer(content: shareCard.frame(width: 360))
+            renderer.scale = UIScreen.main.scale
+            if let image = renderer.uiImage {
+                self.renderedCardImage = image
+            }
         }
     }
 
-    @MainActor
     private func copyImageToClipboard() {
-        let img = renderedCardImage ?? renderCard()
-        if let img = img {
-            UIPasteboard.general.image = img
+        guard let img = renderedCardImage else {
+            generateCardImage()
+            return
+        }
+        UIPasteboard.general.image = img
+        HapticManager.shared.lightTap()
+        withAnimation {
             isCopied = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            withAnimation {
                 isCopied = false
             }
         }
     }
 
-    @MainActor
     private func saveToPhotos() {
-        let img = renderedCardImage ?? renderCard()
-        guard let img = img else { return }
+        guard let img = renderedCardImage else {
+            generateCardImage()
+            return
+        }
         UIImageWriteToSavedPhotosAlbum(img, nil, nil, nil)
-        isSavedToPhotos = true
+        HapticManager.shared.lightTap()
+        withAnimation {
+            isSavedToPhotos = true
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            isSavedToPhotos = false
+            withAnimation {
+                isSavedToPhotos = false
+            }
         }
     }
 }

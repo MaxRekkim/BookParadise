@@ -99,7 +99,7 @@ public struct RPGDashboardCard: View {
                 HStack(spacing: 4) {
                     Image(systemName: "snowflake")
                         .font(.caption2)
-                        .foregroundColor(.cyan)
+                        .foregroundColor(.blue)
                     Text("Заморозки: \(streakMgr.freezes)")
                         .font(.system(size: 10, weight: .medium))
                         .foregroundColor(.secondary)

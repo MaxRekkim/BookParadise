@@ -37,7 +37,7 @@ public enum Genre: String, CaseIterable, Codable, Identifiable {
         case .mysticGothic: return .purple
         case .psychologicalThriller: return .indigo
         case .modernProse: return .teal
-        case .sciFiAltHistory: return .cyan
+        case .sciFiAltHistory: return Color(red: 0.28, green: 0.52, blue: 0.70)
         case .philosophyPsychology: return .orange
         case .trueCrime: return .red
         }

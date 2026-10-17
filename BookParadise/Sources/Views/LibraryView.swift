@@ -262,7 +262,7 @@ public struct LibraryView: View {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 160), spacing: 12)], spacing: 16) {
                 ForEach(viewModel.filteredBooks) { book in
                     NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 10) {
                             ZStack(alignment: .topTrailing) {
                                 BookCoverView(
                                     coverURL: book.cleanCoverURL,
@@ -291,15 +291,15 @@ public struct LibraryView: View {
                             }
                             
                             VStack(alignment: .leading, spacing: 3) {
-                                Text(book.title)
+                                Text(book.typographicTitle)
                                     .font(.caption)
-                                    .fontWeight(.medium)
+                                    .fontWeight(.semibold)
                                     .foregroundColor(.primary)
                                     .lineLimit(2)
                                     .multilineTextAlignment(.leading)
                                 
-                                Text(book.author)
-                                    .font(.system(size: 10))
+                                Text(book.typographicAuthor)
+                                    .font(.system(size: 10, weight: .regular))
                                     .foregroundColor(.secondary)
                                     .lineLimit(1)
                             }
@@ -339,13 +339,13 @@ public struct LibraryView: View {
                         )
                         .frame(width: 50, height: 75)
                         
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(book.title)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(book.typographicTitle)
                                 .font(.subheadline)
                                 .fontWeight(.bold)
                                 .lineLimit(1)
                             
-                            Text(book.author)
+                            Text(book.typographicAuthor)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
@@ -412,28 +412,53 @@ public struct LibraryView: View {
                     let chunks = chunkBooks(books, size: 8)
                     ForEach(Array(chunks.enumerated()), id: \.offset) { index, shelfBooks in
                         VStack(spacing: 0) {
-                            // Книги на полке с горизонтальной прокруткой для узких экранов
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(alignment: .bottom, spacing: 3) {
-                                    ForEach(shelfBooks) { book in
-                                        NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
-                                            BookSpineView(book: book)
-                                        }
-                                        .buttonStyle(.plain)
-                                        .contextMenu {
-                                            Button(action: { bookForProgressUpdate = book }) {
-                                                Label("Обновить прогресс", systemImage: "pencil")
+                            // Книги на полке с глубокой нишей и горизонтальной прокруткой
+                            ZStack(alignment: .bottom) {
+                                // Задняя дубовая стенка книжного шкафа с тенью от верхней полки
+                                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                    .fill(
+                                        LinearGradient(
+                                            colors: [
+                                                Color(red: 0.16, green: 0.12, blue: 0.09).opacity(0.85),
+                                                Color(red: 0.22, green: 0.16, blue: 0.12).opacity(0.95)
+                                            ],
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                    )
+                                    .overlay(
+                                        LinearGradient(
+                                            colors: [Color.black.opacity(0.55), Color.clear],
+                                            startPoint: .top,
+                                            endPoint: .center
+                                        )
+                                    )
+                                    .frame(height: 195)
+                                    .padding(.horizontal, 8)
+
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(alignment: .bottom, spacing: 4) {
+                                        ForEach(shelfBooks) { book in
+                                            NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
+                                                BookSpineView(book: book)
                                             }
-                                            Button(action: { bookForPlan = book }) {
-                                                Label("Добавить в план", systemImage: "calendar.badge.plus")
+                                            .buttonStyle(.plain)
+                                            .contextMenu {
+                                                Button(action: { bookForProgressUpdate = book }) {
+                                                    Label("Обновить прогресс", systemImage: "pencil")
+                                                }
+                                                Button(action: { bookForPlan = book }) {
+                                                    Label("Добавить в план", systemImage: "calendar.badge.plus")
+                                                }
                                             }
                                         }
                                     }
+                                    .padding(.horizontal, 20)
+                                    .padding(.bottom, 2)
                                 }
-                                .padding(.horizontal, 16)
                             }
 
-                            // Деревянная полочная балка
+                            // Деревянная полочная балка из натурального массива дуба
                             shelfBeam
                         }
                     }
@@ -445,27 +470,41 @@ public struct LibraryView: View {
 
     private var shelfBeam: some View {
         VStack(spacing: 0) {
+            // Верхний скос балки (световой блик)
+            Rectangle()
+                .fill(Color(red: 0.82, green: 0.64, blue: 0.46))
+                .frame(height: 2)
+
+            // Фронтальная балка массива дуба
             LinearGradient(
                 colors: [
-                    Color(red: 0.72, green: 0.52, blue: 0.36),
-                    Color(red: 0.48, green: 0.32, blue: 0.18)
+                    Color(red: 0.65, green: 0.46, blue: 0.30),
+                    Color(red: 0.45, green: 0.28, blue: 0.16)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
             )
             .frame(height: 14)
-            .cornerRadius(2)
-            .shadow(color: .black.opacity(0.25), radius: 3, y: 3)
+            .overlay(
+                VStack {
+                    Spacer()
+                    Rectangle()
+                        .fill(Color(red: 0.78, green: 0.68, blue: 0.42).opacity(0.4))
+                        .frame(height: 0.8)
+                }
+            )
+            .shadow(color: .black.opacity(0.35), radius: 4, y: 3)
 
+            // Глубокая тень под полкой
             Rectangle()
                 .fill(
                     LinearGradient(
-                        colors: [.black.opacity(0.18), .clear],
+                        colors: [.black.opacity(0.28), .clear],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
-                .frame(height: 6)
+                .frame(height: 8)
         }
     }
 

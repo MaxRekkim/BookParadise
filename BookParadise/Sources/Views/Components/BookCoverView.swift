@@ -85,29 +85,34 @@ public struct BookCoverView: View {
                 
                 let isCompact = geo.size.width < 60
                 
-                VStack(spacing: isCompact ? 2 : 6) {
+                VStack(spacing: isCompact ? 2 : 5) {
                     Image(systemName: genre.iconName)
-                        .font(.system(size: isCompact ? 16 : 24, weight: .semibold))
-                        .foregroundColor(.white)
+                        .font(.system(size: isCompact ? 14 : 22, weight: .medium))
+                        .foregroundColor(.white.opacity(0.9))
                     
                     if !isCompact {
-                        Text(title)
-                            .font(.system(size: 11, weight: .bold))
+                        Rectangle()
+                            .fill(Color.white.opacity(0.35))
+                            .frame(width: max(20, geo.size.width * 0.4), height: 1)
+                            .padding(.vertical, 1)
+
+                        Text(AuthorTypographerEngine.formatTitle(title))
+                            .font(.system(size: 11, weight: .bold, design: .serif))
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .lineLimit(3)
                             .padding(.horizontal, 6)
                         
                         if !author.isEmpty {
-                            Text(author)
-                                .font(.system(size: 9, weight: .medium))
+                            Text(AuthorTypographerEngine.formatAuthor(author))
+                                .font(.system(size: 8.5, weight: .medium, design: .serif))
                                 .foregroundColor(.white.opacity(0.85))
                                 .lineLimit(1)
                                 .padding(.horizontal, 4)
                         }
                     } else {
-                        Text(title)
-                            .font(.system(size: 8, weight: .bold))
+                        Text(AuthorTypographerEngine.formatTitle(title))
+                            .font(.system(size: 8, weight: .bold, design: .serif))
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .lineLimit(2)

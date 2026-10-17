@@ -156,9 +156,6 @@ public struct DetailedStatsView: View {
                     ReadingAlmanacPreviewView()
                         .padding(.horizontal)
 
-                    BookClubThesisView()
-                        .padding(.horizontal)
-
                     ReadingChronotypeView()
                         .padding(.horizontal)
                 }
@@ -362,7 +359,7 @@ public struct DetailedStatsView: View {
                         .frame(width: geo.size.width * CGFloat(paperPercent / 100.0))
 
                     Rectangle()
-                        .fill(Color.cyan)
+                        .fill(Color.indigo)
                         .frame(width: geo.size.width * CGFloat(elecPercent / 100.0))
                 }
                 .cornerRadius(6)
@@ -391,7 +388,7 @@ public struct DetailedStatsView: View {
                 // Электронные
                 HStack(spacing: 10) {
                     Circle()
-                        .fill(Color.cyan)
+                        .fill(Color.indigo)
                         .frame(width: 12, height: 12)
 
                     VStack(alignment: .leading, spacing: 2) {

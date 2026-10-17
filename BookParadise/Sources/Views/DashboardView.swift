@@ -19,6 +19,7 @@ public struct DashboardView: View {
     @State private var isShowingNotesJournal: Bool = false
     @State private var isShowingSearchSheet: Bool = false
     @State private var isShowingSoundscapeMixer: Bool = false
+    @State private var isShowingStandByClock: Bool = false
     @ObservedObject private var updateManager = UpdateManager.shared
     
     public init(viewModel: LibraryViewModel) {
@@ -91,14 +92,6 @@ public struct DashboardView: View {
                         wrappedQuickBanner
                             .padding(.horizontal)
                         
-                        // 3.7. Книжный Клуб и Синхронизация заметок (Wave 3)
-                        ReadingClubCardView()
-                            .padding(.horizontal)
-
-                        // 3.8. Трекер аренды и возврата книг у друзей (Wave 3)
-                        BookLendingTrackerView()
-                            .padding(.horizontal)
-                        
                         // 4. Графики аналитики (SwiftCharts)
                         analyticsChartsSection
                             .padding(.horizontal)
@@ -147,6 +140,14 @@ public struct DashboardView: View {
                         }) {
                             Image(systemName: SoundscapeManager.shared.isPlaying ? "waveform" : "headphones")
                                 .foregroundColor(SoundscapeManager.shared.isPlaying ? theme.primaryAccent : .secondary)
+                        }
+
+                        Button(action: {
+                            isShowingStandByClock = true
+                            HapticManager.shared.lightTap()
+                        }) {
+                            Image(systemName: "bed.double.fill")
+                                .foregroundColor(theme.primaryAccent)
                         }
 
                         Button(action: { isShowingSettings = true }) {
@@ -230,6 +231,12 @@ public struct DashboardView: View {
             .sheet(isPresented: $isShowingSoundscapeMixer) {
                 SoundscapeMixerSheet()
                     .macSheetFrame()
+            }
+            .fullScreenCover(isPresented: $isShowingStandByClock) {
+                StandByNightstandClockView(
+                    currentBook: viewModel.readingNowBooks.first,
+                    onDismiss: { isShowingStandByClock = false }
+                )
             }
             .onAppear {
                 RPGLevelManager.shared.syncWithLibrary(
