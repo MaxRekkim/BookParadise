@@ -16,8 +16,10 @@ public struct EPUBReaderView: View {
     @State private var showingNeuroPacer: Bool = false
     @State private var showingBinauralSheet: Bool = false
     @State private var showingCircadianSheet: Bool = false
+    @State private var showingDensitySheet: Bool = false
     @ObservedObject private var audioEngine = TactilePageFlipAudioEngine.shared
     @ObservedObject private var solarEngine = CircadianSolarEngine.shared
+    @ObservedObject private var entropyEngine = ShannonEntropyEngine.shared
 
     private let wineAccent = Color(red: 0.52, green: 0.14, blue: 0.20)
 
@@ -159,6 +161,14 @@ public struct EPUBReaderView: View {
         .sheet(isPresented: $showingCircadianSheet) {
             CircadianSolarControlSheet()
         }
+        .sheet(isPresented: $showingDensitySheet) {
+            CognitiveDensitySheet(result: entropyEngine.currentResult)
+        }
+        .onChange(of: currentChapterIndex) { newIndex in
+            if newIndex < chapters.count {
+                _ = entropyEngine.analyze(text: chapters[newIndex].content)
+            }
+        }
         .alert("Цитата сохранена", isPresented: $showingQuoteAlert) {
             Button("Отлично", role: .cancel) {}
         } message: {
@@ -262,7 +272,25 @@ public struct EPUBReaderView: View {
 
                 Spacer()
 
-                // Кнопка сохранения цитаты
+                // Информационная плотность Шеннона
+                Button {
+                    showingDensitySheet = true
+                    HapticManager.shared.lightTap()
+                } label: {
+                    HStack(spacing: 3) {
+                        Image(systemName: entropyEngine.currentResult.densityBand.icon)
+                            .font(.system(size: 9, weight: .bold))
+                        Text("H: \(String(format: "%.2f", entropyEngine.currentResult.normalizedEntropy))")
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    }
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(entropyEngine.currentResult.densityBand.badgeColor.opacity(0.18))
+                    .foregroundColor(entropyEngine.currentResult.densityBand.badgeColor)
+                    .clipShape(Capsule())
+                }
+
+                Spacer()
                 Button {
                     saveQuickQuote()
                 } label: {
@@ -430,6 +458,10 @@ public struct EPUBReaderView: View {
                     estimatedReadMinutes: 1
                 )
             ]
+        }
+        
+        if !chapters.isEmpty {
+            _ = entropyEngine.analyze(text: chapters[currentChapterIndex].content)
         }
     }
 

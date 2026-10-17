@@ -1319,7 +1319,7 @@ assertEqual(unlockedCount, 4, "All default demo trophies unlocked for v4.0.0 cel
 print("\n[Suite 40/40] Testing Sanctuary Master Overview & Milestone Stats...")
 
 struct MockSanctuaryMasterStats {
-    var versionString: String = "4.8.0"
+    var versionString: String = "4.9.0"
     var totalBooksInLibrary: Int = 42
     var totalPagesCompleted: Int = 14200
     var totalReadingHours: Double = 417.6
@@ -1332,10 +1332,10 @@ struct MockSanctuaryMasterStats {
 }
 
 let masterStats = MockSanctuaryMasterStats()
-assertEqual(masterStats.versionString, "4.8.0", "Sanctuary version string is 4.8.0")
+assertEqual(masterStats.versionString, "4.9.0", "Sanctuary version string is 4.9.0")
 assertEqual(masterStats.totalBooksInLibrary, 42, "Library contains 42 books")
 assertEqual(masterStats.totalPagesCompleted, 14200, "14,200 total pages completed")
-assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.8.0")
+assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.9.0")
 
 // -----------------------------------------------------------------------------
 // 41. TEST: AuthorTypographerEngine & Micro-Typography
@@ -1859,6 +1859,79 @@ toggleDogEar(bookId: 1, pageNumber: 42)
 assertEqual(mockDogEars["1_42"], false, "Dog-ear on book 1 page 42 unfolds cleanly")
 
 // -----------------------------------------------------------------------------
+// 51. TEST: Shannon Lexical Entropy & Reading Cognitive Density Engine
+// -----------------------------------------------------------------------------
+print("\n[Suite 51/51] Testing Shannon Lexical Entropy & Cognitive Density Engine...")
+
+func calculateShannonEntropy(words: [String]) -> (entropyBits: Double, normalized: Double, ttr: Double) {
+    guard !words.isEmpty else { return (0.0, 0.0, 0.0) }
+    var freq: [String: Int] = [:]
+    for w in words { freq[w.lowercased(), default: 0] += 1 }
+    let n = Double(words.count)
+    let ttr = Double(freq.count) / n
+    var h: Double = 0.0
+    for count in freq.values {
+        let p = Double(count) / n
+        if p > 0 { h -= p * (log(p) / log(2.0)) }
+    }
+    let maxH = log(max(2.0, n)) / log(2.0)
+    let normalized = min(1.0, max(0.0, h / maxH))
+    return ((h * 100).rounded() / 100, (normalized * 100).rounded() / 100, (ttr * 100).rounded() / 100)
+}
+
+func resolveDensityBand(normalizedEntropy: Double, ttr: Double) -> String {
+    if normalizedEntropy >= 0.85 || ttr >= 0.75 {
+        return "dense"
+    } else if normalizedEntropy >= 0.70 || ttr >= 0.60 {
+        return "academic"
+    } else if normalizedEntropy >= 0.55 || ttr >= 0.45 {
+        return "narrative"
+    } else {
+        return "airy"
+    }
+}
+
+func recommendedWPM(band: String) -> Int {
+    switch band {
+    case "dense": return 160
+    case "academic": return 210
+    case "narrative": return 270
+    default: return 330
+    }
+}
+
+// 1. Нулевая энтропия (повторение одного слова)
+let zeroEntropyResult = calculateShannonEntropy(words: ["книга", "книга", "книга", "книга"])
+assertEqual(zeroEntropyResult.entropyBits, 0.0, "Identical tokens yield 0.0 Shannon bits of information")
+assertEqual(zeroEntropyResult.ttr, 0.25, "4 identical tokens yield 0.25 Type-Token Ratio")
+assertEqual(zeroEntropyResult.normalized, 0.0, "Normalized entropy for identical tokens is exactly 0.0")
+
+// 2. Максимальная энтропия (все слова уникальны)
+let maxEntropyResult = calculateShannonEntropy(words: ["бытие", "время", "пространство", "логос", "смысл", "память", "тишина", "вечность"])
+assertEqual(maxEntropyResult.ttr, 1.0, "8 distinct words yield 1.0 Type-Token Ratio")
+assertEqual(maxEntropyResult.entropyBits, 3.0, "8 equiprobable states yield exactly log2(8) = 3.0 bits")
+assertEqual(maxEntropyResult.normalized, 1.0, "Equiprobable distribution yields 1.0 normalized entropy")
+
+// 3. Классификация плотности
+assertEqual(resolveDensityBand(normalizedEntropy: 0.92, ttr: 0.85), "dense", "High entropy text resolves to Dense Hermetic depth")
+assertEqual(resolveDensityBand(normalizedEntropy: 0.74, ttr: 0.65), "academic", "Academic compendium resolves to Academic band")
+assertEqual(resolveDensityBand(normalizedEntropy: 0.60, ttr: 0.50), "narrative", "Balanced novel resolves to Narrative prose band")
+assertEqual(resolveDensityBand(normalizedEntropy: 0.40, ttr: 0.30), "airy", "Light dialogue resolves to Airy band")
+
+// 4. Рекомендуемый темп чтения WPM
+assertEqual(recommendedWPM(band: "dense"), 160, "Dense hermetic prose recommends 160 WPM for deep contemplation")
+assertEqual(recommendedWPM(band: "airy"), 330, "Airy dialogue prose recommends 330 WPM for brisk reading")
+
+// 5. Индекс Колман-Лиау (CLI)
+let lettersCount = 500.0
+let wordsCount = 100.0
+let sentencesCount = 5.0
+let L = (lettersCount / wordsCount) * 100.0
+let S = (sentencesCount / wordsCount) * 100.0
+let cli = 0.0588 * L - 0.296 * S - 15.8
+assertEqual((cli * 10).rounded() / 10, 12.1, "Coleman-Liau grade level computed accurately (12.1)")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -1869,7 +1942,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v4.8.0 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v4.9.0 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")

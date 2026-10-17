@@ -21,6 +21,7 @@ public struct DashboardView: View {
     @State private var isShowingSoundscapeMixer: Bool = false
     @State private var isShowingStandByClock: Bool = false
     @State private var isShowingCircadianSolar: Bool = false
+    @State private var isShowingCognitiveDensity: Bool = false
     @ObservedObject private var updateManager = UpdateManager.shared
     
     public init(viewModel: LibraryViewModel) {
@@ -239,6 +240,8 @@ public struct DashboardView: View {
                             isShowingOracle = true
                         case "circadian":
                             isShowingCircadianSolar = true
+                        case "entropy":
+                            isShowingCognitiveDensity = true
                         default:
                             break
                         }
@@ -248,6 +251,12 @@ public struct DashboardView: View {
             }
             .sheet(isPresented: $isShowingCircadianSolar) {
                 CircadianSolarControlSheet()
+                    .macSheetFrame()
+            }
+            .sheet(isPresented: $isShowingCognitiveDensity) {
+                let textSample = viewModel.books.map { "\($0.title). \($0.author). \($0.genre.rawValue)." }.joined(separator: " ")
+                let result = ShannonEntropyEngine.shared.analyze(text: textSample.isEmpty ? "Книжный Рай: Библиотека библиофила и суверенное святилище мысли." : textSample)
+                CognitiveDensitySheet(result: result)
                     .macSheetFrame()
             }
             .sheet(isPresented: $isShowingSoundscapeMixer) {

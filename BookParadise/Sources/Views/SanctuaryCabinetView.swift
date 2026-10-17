@@ -24,6 +24,7 @@ public struct SanctuaryCabinetView: View {
     @State private var isShowingImporter: Bool = false
     @State private var isShowingExLibrisStudio: Bool = false
     @State private var isShowingCircadianSolar: Bool = false
+    @State private var isShowingCognitiveDensity: Bool = false
 
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -146,6 +147,12 @@ public struct SanctuaryCabinetView: View {
             }
             .sheet(isPresented: $isShowingCircadianSolar) {
                 CircadianSolarControlSheet()
+                    .macSheetFrame()
+            }
+            .sheet(isPresented: $isShowingCognitiveDensity) {
+                let textSample = viewModel.books.map { "\($0.title). \($0.author). \($0.genre.rawValue)." }.joined(separator: " ")
+                let result = ShannonEntropyEngine.shared.analyze(text: textSample.isEmpty ? "Книжный Рай: Библиотека библиофила и суверенное святилище мысли." : textSample)
+                CognitiveDensitySheet(result: result)
                     .macSheetFrame()
             }
         }
@@ -281,6 +288,17 @@ public struct SanctuaryCabinetView: View {
                     iconColor: .blue
                 ) {
                     isShowingImporter = true
+                }
+
+                Divider().padding(.leading, 44)
+
+                cabinetListRow(
+                    title: "Энтропия Шеннона и когнитивная плотность",
+                    subtitle: "H(X), лексический анализ TTR и метрики сложности",
+                    icon: "atom",
+                    iconColor: .pink
+                ) {
+                    isShowingCognitiveDensity = true
                 }
             }
             .padding(14)

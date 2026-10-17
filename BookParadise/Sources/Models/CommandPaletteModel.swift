@@ -150,6 +150,15 @@ public struct CommandPaletteEngine {
                 execute: { onTriggerAction("circadian") }
             ),
             CommandPaletteItem(
+                title: "Анализ энтропии Шеннона",
+                subtitle: "Когнитивная плотность H(X), лексический анализ TTR и темп",
+                category: .actions,
+                icon: "atom",
+                accentColor: .pink,
+                actionTag: "entropy",
+                execute: { onTriggerAction("entropy") }
+            ),
+            CommandPaletteItem(
                 title: "Проверить обновления",
                 subtitle: "Свежие релизы с GitHub Releases",
                 category: .actions,
