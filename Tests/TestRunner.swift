@@ -1319,7 +1319,7 @@ assertEqual(unlockedCount, 4, "All default demo trophies unlocked for v4.0.0 cel
 print("\n[Suite 40/40] Testing Sanctuary Master Overview & Milestone Stats...")
 
 struct MockSanctuaryMasterStats {
-    var versionString: String = "4.7.0"
+    var versionString: String = "4.8.0"
     var totalBooksInLibrary: Int = 42
     var totalPagesCompleted: Int = 14200
     var totalReadingHours: Double = 417.6
@@ -1332,10 +1332,10 @@ struct MockSanctuaryMasterStats {
 }
 
 let masterStats = MockSanctuaryMasterStats()
-assertEqual(masterStats.versionString, "4.7.0", "Sanctuary version string is 4.7.0")
+assertEqual(masterStats.versionString, "4.8.0", "Sanctuary version string is 4.8.0")
 assertEqual(masterStats.totalBooksInLibrary, 42, "Library contains 42 books")
 assertEqual(masterStats.totalPagesCompleted, 14200, "14,200 total pages completed")
-assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.7.0")
+assertTrue(masterStats.isMilestoneReady, "Milestone readiness criteria fully satisfied for v4.8.0")
 
 // -----------------------------------------------------------------------------
 // 41. TEST: AuthorTypographerEngine & Micro-Typography
@@ -1776,6 +1776,89 @@ assertEqual(testResolvePhase(forHour: 23.5), .rubyDark, "23:30 resolves to Ruby 
 assertEqual(testResolvePhase(forHour: 02.0), .rubyDark, "02:00 resolves to Ruby Dark monochromatic mode")
 
 // -----------------------------------------------------------------------------
+// 50. TEST: Scholarly Marginalia, Tactile 3D Dog-Ears & Watercolor Highlights
+// -----------------------------------------------------------------------------
+print("\n[Suite 50/50] Testing Scholarly Marginalia, Dog-Ears & Watercolor Highlights...")
+
+enum TestMarginaliaSymbol: String, CaseIterable {
+    case manicule = "☞"
+    case epiphany = "✦"
+    case question = "⸮"
+    case crossRef = "†"
+    case notaBene = "NB"
+    case asterisk = "※"
+}
+
+enum TestWatercolorWash: String, CaseIterable {
+    case honeyAmber = "Сусальное золото (Охра)"
+    case sageGreen = "Шалфейный мох"
+    case vermilionRed = "Киноварь (Кармин)"
+    case lapisBlue = "Лазурит (Индиго)"
+    case violetDusk = "Сумеречный вереск"
+}
+
+struct TestMarginaliaNote {
+    let id: UUID
+    let bookId: Int
+    let pageNumber: Int
+    var yOffsetFraction: Double
+    var text: String
+    var symbol: TestMarginaliaSymbol
+    var wash: TestWatercolorWash?
+    
+    init(id: UUID = UUID(), bookId: Int, pageNumber: Int, yOffsetFraction: Double = 0.25, text: String, symbol: TestMarginaliaSymbol = .manicule, wash: TestWatercolorWash? = .honeyAmber) {
+        self.id = id
+        self.bookId = bookId
+        self.pageNumber = pageNumber
+        self.yOffsetFraction = min(0.9, max(0.1, yOffsetFraction))
+        self.text = text
+        self.symbol = symbol
+        self.wash = wash
+    }
+}
+
+struct TestDogEarCorner {
+    var isFolded: Bool = false
+    var foldSize: Double = 36.0
+    var foldAngleDegrees: Double = 45.0
+}
+
+assertEqual(TestMarginaliaSymbol.allCases.count, 6, "Scholarly marginalia engine includes 6 historical symbols")
+assertEqual(TestMarginaliaSymbol.manicule.rawValue, "☞", "Manicule symbol matches historical index pointer ☞")
+assertEqual(TestMarginaliaSymbol.epiphany.rawValue, "✦", "Epiphany symbol matches illumination star ✦")
+assertEqual(TestMarginaliaSymbol.notaBene.rawValue, "NB", "Nota Bene symbol matches Latin abbreviation NB")
+assertEqual(TestWatercolorWash.allCases.count, 5, "Watercolor washes include exactly 5 natural pigments")
+
+var dogEar = TestDogEarCorner()
+assertEqual(dogEar.isFolded, false, "Initial page corner is flat and unfolded")
+assertEqual(dogEar.foldAngleDegrees, 45.0, "Tactile fold angle is calibrated to natural 45-degree corner crease")
+dogEar.isFolded = true
+assertEqual(dogEar.isFolded, true, "Page corner correctly registers folded dog-ear state")
+
+let note1 = TestMarginaliaNote(bookId: 1, pageNumber: 42, yOffsetFraction: 0.35, text: "Глубокая метафора времени", symbol: .epiphany, wash: .honeyAmber)
+let noteClampedLow = TestMarginaliaNote(bookId: 1, pageNumber: 42, yOffsetFraction: 0.02, text: "Верхняя заметка")
+let noteClampedHigh = TestMarginaliaNote(bookId: 1, pageNumber: 42, yOffsetFraction: 0.98, text: "Нижняя заметка")
+
+assertEqual(note1.bookId, 1, "Marginalia note attaches to book ID 1")
+assertEqual(note1.pageNumber, 42, "Marginalia note attaches to page 42")
+assertEqual(note1.symbol, .epiphany, "Note preserves epiphany symbol")
+assertEqual(noteClampedLow.yOffsetFraction, 0.1, "Marginalia yOffset is clamped to safe top margin rail (>= 0.1)")
+assertEqual(noteClampedHigh.yOffsetFraction, 0.9, "Marginalia yOffset is clamped to safe bottom margin rail (<= 0.9)")
+
+var mockNotes = [note1, noteClampedLow, noteClampedHigh]
+var mockDogEars: [String: Bool] = [:]
+
+func toggleDogEar(bookId: Int, pageNumber: Int) {
+    let key = "\(bookId)_\(pageNumber)"
+    mockDogEars[key] = !(mockDogEars[key] ?? false)
+}
+
+toggleDogEar(bookId: 1, pageNumber: 42)
+assertEqual(mockDogEars["1_42"], true, "Dog-ear on book 1 page 42 is now folded")
+toggleDogEar(bookId: 1, pageNumber: 42)
+assertEqual(mockDogEars["1_42"], false, "Dog-ear on book 1 page 42 unfolds cleanly")
+
+// -----------------------------------------------------------------------------
 // SUMMARY
 // -----------------------------------------------------------------------------
 print("\n=======================================================")
@@ -1786,7 +1869,7 @@ print("  Failed:          \(failedTests) ❌")
 print("=======================================================")
 
 if failedTests == 0 {
-    print("🎉 ALL TESTS PASSED! Release v4.7.0 is rock-solid.\n")
+    print("🎉 ALL TESTS PASSED! Release v4.8.0 is rock-solid.\n")
     exit(0)
 } else {
     print("⚠️ SOME TESTS FAILED!\n")

@@ -7,8 +7,9 @@ public struct JournalHubView: View {
     @ObservedObject private var theme = ThemeManager.shared
     @ObservedObject private var quotesManager = QuotesManager.shared
     @ObservedObject private var noteStore = ReadingNoteStore.shared
+    @ObservedObject private var marginalia = MarginaliaManager.shared
 
-    @State private var selectedSegment: Int = 0 // 0: Цитаты, 1: Заметки, 2: Планы и Бинго
+    @State private var selectedSegment: Int = 0 // 0: Цитаты, 1: Заметки, 2: Маргиналии, 3: Планы и Бинго
     @State private var isShowingNewNoteSheet: Bool = false
     @State private var isShowingQuotePicker: Bool = false
     @State private var isShowingAddPlanSelector: Bool = false
@@ -24,7 +25,8 @@ public struct JournalHubView: View {
                 Picker("Раздел", selection: $selectedSegment) {
                     Text("Цитаты (\(quotesManager.quotes.count))").tag(0)
                     Text("Заметки (\(noteStore.notes.count))").tag(1)
-                    Text("Планы & Бинго").tag(2)
+                    Text("Маргиналии (\(marginalia.notes.count))").tag(2)
+                    Text("Бинго").tag(3)
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal, 16)
@@ -41,6 +43,8 @@ public struct JournalHubView: View {
                         QuotesGalleryView(viewModel: viewModel, isEmbedded: true)
                     case 1:
                         NotesJournalView(viewModel: viewModel, isEmbedded: true)
+                    case 2:
+                        MarginaliaJournalListView(viewModel: viewModel)
                     default:
                         BingoView(viewModel: viewModel, isEmbedded: true)
                     }
@@ -67,7 +71,7 @@ public struct JournalHubView: View {
                                     .foregroundColor(theme.primaryAccent)
                             }
                             .accessibilityLabel("Создать заметку")
-                        } else {
+                        } else if selectedSegment == 3 {
                             Button(action: { isShowingAddPlanSelector = true }) {
                                 Image(systemName: "calendar.badge.plus")
                                     .font(.system(size: 16, weight: .semibold))

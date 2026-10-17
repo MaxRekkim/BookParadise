@@ -152,6 +152,10 @@
 		A10001392345678900000139 /* BookParadise/Sources/Views/Components/CommandPaletteOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001392345678900000139 /* BookParadise/Sources/Views/Components/CommandPaletteOverlayView.swift */; };
 		A10001402345678900000140 /* BookParadise/Sources/Models/CircadianSolarEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001402345678900000140 /* BookParadise/Sources/Models/CircadianSolarEngine.swift */; };
 		A10001412345678900000141 /* BookParadise/Sources/Views/Sheets/CircadianSolarControlSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001412345678900000141 /* BookParadise/Sources/Views/Sheets/CircadianSolarControlSheet.swift */; };
+		A10001422345678900000142 /* BookParadise/Sources/Models/BookMarginaliaModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001422345678900000142 /* BookParadise/Sources/Models/BookMarginaliaModel.swift */; };
+		A10001432345678900000143 /* BookParadise/Sources/Views/Components/MarginaliaOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001432345678900000143 /* BookParadise/Sources/Views/Components/MarginaliaOverlayView.swift */; };
+		A10001442345678900000144 /* BookParadise/Sources/Views/Sheets/MarginaliaEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001442345678900000144 /* BookParadise/Sources/Views/Sheets/MarginaliaEditorSheet.swift */; };
+		A10001452345678900000145 /* BookParadise/Sources/Views/Components/MarginaliaJournalListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001452345678900000145 /* BookParadise/Sources/Views/Components/MarginaliaJournalListView.swift */; };
 		A11C0DE123456789ABCDEF01 /* BookParadise/Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11C0DE223456789ABCDEF02 /* BookParadise/Resources/Assets.xcassets */; };
 		A2D01757B7FB30D83F71BC42 /* BookParadise/Sources/Views/LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF78C7237D080A6F64CE875 /* BookParadise/Sources/Views/LibraryView.swift */; };
 		AF6824F508686520BF8094D4 /* BookParadise/Sources/Views/MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9873C29434472930EC446CE /* BookParadise/Sources/Views/MainTabView.swift */; };
@@ -338,6 +342,10 @@
 		B10001392345678900000139 /* BookParadise/Sources/Views/Components/CommandPaletteOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/CommandPaletteOverlayView.swift; sourceTree = "<group>"; };
 		B10001402345678900000140 /* BookParadise/Sources/Models/CircadianSolarEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/CircadianSolarEngine.swift; sourceTree = "<group>"; };
 		B10001412345678900000141 /* BookParadise/Sources/Views/Sheets/CircadianSolarControlSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/CircadianSolarControlSheet.swift; sourceTree = "<group>"; };
+		B10001422345678900000142 /* BookParadise/Sources/Models/BookMarginaliaModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BookMarginaliaModel.swift; sourceTree = "<group>"; };
+		B10001432345678900000143 /* BookParadise/Sources/Views/Components/MarginaliaOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/MarginaliaOverlayView.swift; sourceTree = "<group>"; };
+		B10001442345678900000144 /* BookParadise/Sources/Views/Sheets/MarginaliaEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/MarginaliaEditorSheet.swift; sourceTree = "<group>"; };
+		B10001452345678900000145 /* BookParadise/Sources/Views/Components/MarginaliaJournalListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/MarginaliaJournalListView.swift; sourceTree = "<group>"; };
 		B31F051912C52A30FC0ADD33 /* BookParadise/Sources/Models/BingoAndCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BingoAndCycle.swift; sourceTree = "<group>"; };
 		C10000012345678900000001 /* BookParadiseWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BookParadiseWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C10000022345678900000002 /* BookParadise/Sources/Widgets/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BookParadise/Sources/Widgets/Info.plist; sourceTree = "<group>"; };
@@ -541,6 +549,10 @@
 				B10001392345678900000139 /* BookParadise/Sources/Views/Components/CommandPaletteOverlayView.swift */,
 				B10001402345678900000140 /* BookParadise/Sources/Models/CircadianSolarEngine.swift */,
 				B10001412345678900000141 /* BookParadise/Sources/Views/Sheets/CircadianSolarControlSheet.swift */,
+				B10001422345678900000142 /* BookParadise/Sources/Models/BookMarginaliaModel.swift */,
+				B10001432345678900000143 /* BookParadise/Sources/Views/Components/MarginaliaOverlayView.swift */,
+				B10001442345678900000144 /* BookParadise/Sources/Views/Sheets/MarginaliaEditorSheet.swift */,
+				B10001452345678900000145 /* BookParadise/Sources/Views/Components/MarginaliaJournalListView.swift */,
 				C10000022345678900000002 /* BookParadise/Sources/Widgets/Info.plist */,
 			);
 			name = Sources;
@@ -805,6 +817,10 @@
 				A10001392345678900000139 /* BookParadise/Sources/Views/Components/CommandPaletteOverlayView.swift in Sources */,
 				A10001402345678900000140 /* BookParadise/Sources/Models/CircadianSolarEngine.swift in Sources */,
 				A10001412345678900000141 /* BookParadise/Sources/Views/Sheets/CircadianSolarControlSheet.swift in Sources */,
+				A10001422345678900000142 /* BookParadise/Sources/Models/BookMarginaliaModel.swift in Sources */,
+				A10001432345678900000143 /* BookParadise/Sources/Views/Components/MarginaliaOverlayView.swift in Sources */,
+				A10001442345678900000144 /* BookParadise/Sources/Views/Sheets/MarginaliaEditorSheet.swift in Sources */,
+				A10001452345678900000145 /* BookParadise/Sources/Views/Components/MarginaliaJournalListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -849,7 +865,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 48;
+				CURRENT_PROJECT_VERSION = 49;
 				DERIVE_MACS_SYNTHESIZED_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
@@ -859,7 +875,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.7.0;
+				MARKETING_VERSION = 4.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -907,7 +923,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CODE_SIGNING_REQUIRED = NO;
-				CURRENT_PROJECT_VERSION = 48;
+				CURRENT_PROJECT_VERSION = 49;
 				DERIVE_MACS_SYNTHESIZED_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
@@ -917,7 +933,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 4.7.0;
+				MARKETING_VERSION = 4.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -934,7 +950,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CODE_SIGNING_REQUIRED = NO;
-				CURRENT_PROJECT_VERSION = 48;
+				CURRENT_PROJECT_VERSION = 49;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookParadise/Sources/Widgets/Info.plist;
@@ -944,7 +960,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 4.7.0;
+				MARKETING_VERSION = 4.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -961,7 +977,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 48;
+				CURRENT_PROJECT_VERSION = 49;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BookParadise/Sources/Widgets/Info.plist;
@@ -971,7 +987,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 4.7.0;
+				MARKETING_VERSION = 4.8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

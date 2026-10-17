@@ -16,6 +16,9 @@ public struct FolioBookSpreadView: View {
     @State private var activeDirection: PageFlipDirection = .forward
     @State private var isDragging: Bool = false
     @State private var hasFiredHapticMidway: Bool = false
+    @State private var showingMarginaliaEditor: Bool = false
+    @State private var editorPageNumber: Int = 1
+    @State private var editorYOffset: Double = 0.3
 
     @ObservedObject private var audioEngine = TactilePageFlipAudioEngine.shared
 
@@ -70,6 +73,13 @@ public struct FolioBookSpreadView: View {
                         handleDragEnded(value: value, containerWidth: proxy.size.width, isWide: isWide)
                     }
             )
+            .sheet(isPresented: $showingMarginaliaEditor) {
+                MarginaliaEditorSheet(
+                    bookId: 1,
+                    pageNumber: editorPageNumber,
+                    yOffsetFraction: editorYOffset
+                )
+            }
         }
     }
 
@@ -81,6 +91,19 @@ public struct FolioBookSpreadView: View {
             ZStack {
                 pageColumn(content: spread.leftPage, headerTitle: spread.runningHeaderLeft)
                     .frame(maxWidth: .infinity)
+
+                if let leftP = spread.leftPage {
+                    MarginaliaOverlayView(
+                        bookId: 1,
+                        pageNumber: leftP.pageNumber,
+                        isRightSide: false,
+                        onAddMarginalia: { yOffset in
+                            editorPageNumber = leftP.pageNumber
+                            editorYOffset = yOffset
+                            showingMarginaliaEditor = true
+                        }
+                    )
+                }
 
                 // Тень при перелистывании назад (слева направо)
                 if isDragging && activeDirection == .backward {
@@ -105,6 +128,19 @@ public struct FolioBookSpreadView: View {
             ZStack {
                 pageColumn(content: spread.rightPage, headerTitle: spread.runningHeaderRight)
                     .frame(maxWidth: .infinity)
+
+                if let rightP = spread.rightPage {
+                    MarginaliaOverlayView(
+                        bookId: 1,
+                        pageNumber: rightP.pageNumber,
+                        isRightSide: true,
+                        onAddMarginalia: { yOffset in
+                            editorPageNumber = rightP.pageNumber
+                            editorYOffset = yOffset
+                            showingMarginaliaEditor = true
+                        }
+                    )
+                }
 
                 // Тень под приподнятым листом при перелистывании вперед
                 if isDragging && activeDirection == .forward {
@@ -135,6 +171,19 @@ public struct FolioBookSpreadView: View {
         ZStack {
             pageColumn(content: activePage, headerTitle: spread.runningHeaderRight)
                 .frame(maxWidth: .infinity)
+
+            if let page = activePage {
+                MarginaliaOverlayView(
+                    bookId: 1,
+                    pageNumber: page.pageNumber,
+                    isRightSide: true,
+                    onAddMarginalia: { yOffset in
+                        editorPageNumber = page.pageNumber
+                        editorYOffset = yOffset
+                        showingMarginaliaEditor = true
+                    }
+                )
+            }
 
             // Тень прогиба листа
             if isDragging {
