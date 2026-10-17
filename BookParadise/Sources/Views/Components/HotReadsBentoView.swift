@@ -89,10 +89,10 @@ public struct HotReadsBentoView: View {
                             coverURL: book.cleanCoverURL,
                             title: book.title,
                             author: book.author,
-                            width: 50,
-                            height: 75
+                            genre: book.genre,
+                            cornerRadius: 6
                         )
-                        .cornerRadius(6)
+                        .frame(width: 50, height: 75)
                         .shadow(color: Color.black.opacity(0.15), radius: 3, x: 0, y: 2)
                         
                         VStack(alignment: .leading, spacing: 4) {
