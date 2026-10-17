@@ -7,86 +7,86 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A11C0DE123456789ABCDEF01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11C0DE223456789ABCDEF02 /* Assets.xcassets */; };
-		E4830BD84B2E07F7A6C99C3C /* BookParadiseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877B4DF7790352BDB710122A /* BookParadiseApp.swift */; };
-		0406C60041C9C1E05C1CBC5F /* LibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296DD7C36A7010814F00EADC /* LibraryViewModel.swift */; };
-		2F7CB2045D22F2C180772523 /* BingoAndCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B31F051912C52A30FC0ADD33 /* BingoAndCycle.swift */; };
-		989669DB874D10C99909EFAA /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4D3F549A3188CE9CEC619A /* Book.swift */; };
-		FC8B84D85D7E7B4F5C364E25 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00AFB99D8BA4E5AFA5AC851 /* Enums.swift */; };
-		6BC57A21967A0A76575113C7 /* SampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC88039883819BB1DA33EC20 /* SampleData.swift */; };
-		A011276AE99FC75ABFB945F8 /* BingoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1A32797694F39BC24A4FAD /* BingoView.swift */; };
-		6404B9BD7B6F37BD8659A5F5 /* BookDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20ADD9F23DD97B9804B9438 /* BookDetailView.swift */; };
-		9FA497E12BBB2D9C4ED74924 /* CyclesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8728AACE3BB474BB0BBC2519 /* CyclesView.swift */; };
-		3AA3EE9A6E79F53428D01E26 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1A9BDE606E208601BE918B /* DashboardView.swift */; };
-		A2D01757B7FB30D83F71BC42 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF78C7237D080A6F64CE875 /* LibraryView.swift */; };
-		AF6824F508686520BF8094D4 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9873C29434472930EC446CE /* MainTabView.swift */; };
-		2061AACA7DBD3819512CFFE1 /* AddBookSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9260CDC2323B88E799E0864 /* AddBookSheet.swift */; };
-		BE2E71ED763160EE540E3C56 /* AddToPlanSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8EDF406E8B40223BC90FA3 /* AddToPlanSheet.swift */; };
-		8502E0F48A052AA7E2144F86 /* ProgressUpdateSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71CB116DAE3DBE79856B81FD /* ProgressUpdateSheet.swift */; };
-		CD5BFEEF8063FE70085AFB8F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8E3587AEDC96834D727C95 /* SettingsView.swift */; };
-		67A7B3596F0FE22F0EC42A7B /* BookCoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5C4EF5CB3401E73A482849 /* BookCoverView.swift */; };
-		B0B755CBA19473B38A8E3D1E /* ReadingCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67942F6EC3F6E884F8AD1FE8 /* ReadingCalendarView.swift */; };
-		39591E8E58B37EA6B50D827E /* BarcodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C7F3D0439FBAE61ACE5C4A /* BarcodeScannerView.swift */; };
-		5BFFAEEBBCB8538A58AEA921 /* GoogleBooksLookupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34E6BC062DCA6DF3BB2E0B0 /* GoogleBooksLookupService.swift */; };
-		5D7A6CE5A3A37FD00163E6F6 /* GoogleSheetsAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A03507AC84488FA4E573A0B /* GoogleSheetsAPIService.swift */; };
-		A10000012345678900000001 /* BookQuote.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000012345678900000001 /* BookQuote.swift */; };
-		A10000022345678900000002 /* ReadingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000022345678900000002 /* ReadingSession.swift */; };
-		A10000032345678900000003 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000032345678900000003 /* ThemeManager.swift */; };
-		A10000042345678900000004 /* QuotesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000042345678900000004 /* QuotesManager.swift */; };
-		A10000052345678900000005 /* ReadingSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000052345678900000005 /* ReadingSessionManager.swift */; };
-		A10000062345678900000006 /* QuoteScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000062345678900000006 /* QuoteScannerView.swift */; };
-		A10000072345678900000007 /* QuoteCardShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000072345678900000007 /* QuoteCardShareView.swift */; };
-		A10000082345678900000008 /* ReadingSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000082345678900000008 /* ReadingSessionView.swift */; };
-		A10000092345678900000009 /* WidgetDataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000092345678900000009 /* WidgetDataExporter.swift */; };
-		A10000102345678900000010 /* BookParadiseWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000102345678900000010 /* BookParadiseWidget.swift */; };
-		A10000112345678900000011 /* EBookStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000112345678900000011 /* EBookStorageManager.swift */; };
-		A10000122345678900000012 /* QuotesGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000122345678900000012 /* QuotesGalleryView.swift */; };
-		A10000132345678900000013 /* DailyMotivationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000132345678900000013 /* DailyMotivationBanner.swift */; };
-		A10000142345678900000014 /* DetailedStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000142345678900000014 /* DetailedStatsView.swift */; };
-		A10000152345678900000015 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000152345678900000015 /* ImageCacheManager.swift */; };
-		A10000162345678900000016 /* iCloudSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000162345678900000016 /* iCloudSyncManager.swift */; };
-		A10000172345678900000017 /* ThinkingOrbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000172345678900000017 /* ThinkingOrbView.swift */; };
-		A10000182345678900000018 /* ReadingChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000182345678900000018 /* ReadingChallengeView.swift */; };
-		A10000192345678900000019 /* BookFilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000192345678900000019 /* BookFilterSheet.swift */; };
-		A10000202345678900000020 /* QuoteCardTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000202345678900000020 /* QuoteCardTheme.swift */; };
-		A10000212345678900000021 /* BookLendingRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000212345678900000021 /* BookLendingRecord.swift */; };
-		A10000222345678900000022 /* LendingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000222345678900000022 /* LendingManager.swift */; };
-		A10000232345678900000023 /* MarkdownExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000232345678900000023 /* MarkdownExportService.swift */; };
-		A10000242345678900000024 /* SoundscapeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000242345678900000024 /* SoundscapeManager.swift */; };
-		A10000252345678900000025 /* LendBookSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000252345678900000025 /* LendBookSheet.swift */; };
-		A10000262345678900000026 /* LendingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000262345678900000026 /* LendingListView.swift */; };
-		A10000272345678900000027 /* ReadingAchievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000272345678900000027 /* ReadingAchievement.swift */; };
-		A10000282345678900000028 /* AchievementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000282345678900000028 /* AchievementManager.swift */; };
-		A10000292345678900000029 /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000292345678900000029 /* AchievementsView.swift */; };
-		A10000302345678900000030 /* TimeCapsuleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000302345678900000030 /* TimeCapsuleCard.swift */; };
-		A10000312345678900000031 /* BookOracleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000312345678900000031 /* BookOracleManager.swift */; };
-		A10000322345678900000032 /* BookOracleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000322345678900000032 /* BookOracleView.swift */; };
-		A10000332345678900000033 /* ReadingWrappedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000332345678900000033 /* ReadingWrappedView.swift */; };
-		A10000342345678900000034 /* BookSpineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000342345678900000034 /* BookSpineView.swift */; };
-		A10000352345678900000035 /* ReadingVelocityChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000352345678900000035 /* ReadingVelocityChartView.swift */; };
-		A10000362345678900000036 /* HotReadsBentoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000362345678900000036 /* HotReadsBentoView.swift */; };
-		A10000372345678900000037 /* ExecutiveQuotaRingAndMixView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000372345678900000037 /* ExecutiveQuotaRingAndMixView.swift */; };
-		A10000382345678900000038 /* FloatingQuickDockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000382345678900000038 /* FloatingQuickDockView.swift */; };
-		A10000392345678900000039 /* ReadingNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000392345678900000039 /* ReadingNote.swift */; };
-		A10000402345678900000040 /* ReadingNoteStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000402345678900000040 /* ReadingNoteStore.swift */; };
-		A10000412345678900000041 /* MarkdownEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000412345678900000041 /* MarkdownEditorView.swift */; };
-		A10000422345678900000042 /* NotesJournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000422345678900000042 /* NotesJournalView.swift */; };
-		A10000432345678900000043 /* DesktopHoverEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000432345678900000043 /* DesktopHoverEffect.swift */; };
-		A10000442345678900000044 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000442345678900000044 /* UpdateManager.swift */; };
-		A10000452345678900000045 /* BookSpotifyShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000452345678900000045 /* BookSpotifyShareCardView.swift */; };
-		A10000462345678900000046 /* StreakModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000462345678900000046 /* StreakModel.swift */; };
-		A10000472345678900000047 /* StreakManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000472345678900000047 /* StreakManager.swift */; };
-		A10000482345678900000048 /* RPGLevelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000482345678900000048 /* RPGLevelModel.swift */; };
-		A10000492345678900000049 /* RPGLevelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000492345678900000049 /* RPGLevelManager.swift */; };
-		A10000502345678900000050 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000502345678900000050 /* HapticManager.swift */; };
-		A10000512345678900000051 /* EPUBReaderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000512345678900000051 /* EPUBReaderService.swift */; };
-		A10000522345678900000052 /* EPUBReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000522345678900000052 /* EPUBReaderView.swift */; };
-		A10000532345678900000053 /* RPGDashboardCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000532345678900000053 /* RPGDashboardCard.swift */; };
-		A10000542345678900000054 /* ReadingHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000542345678900000054 /* ReadingHeatmapView.swift */; };
-		A10000552345678900000055 /* SoundscapeMixerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000552345678900000055 /* SoundscapeMixerSheet.swift */; };
+		0406C60041C9C1E05C1CBC5F /* BookParadise/Sources/ViewModels/LibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296DD7C36A7010814F00EADC /* BookParadise/Sources/ViewModels/LibraryViewModel.swift */; };
+		2061AACA7DBD3819512CFFE1 /* BookParadise/Sources/Views/Sheets/AddBookSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9260CDC2323B88E799E0864 /* BookParadise/Sources/Views/Sheets/AddBookSheet.swift */; };
+		2F7CB2045D22F2C180772523 /* BookParadise/Sources/Models/BingoAndCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B31F051912C52A30FC0ADD33 /* BookParadise/Sources/Models/BingoAndCycle.swift */; };
+		39591E8E58B37EA6B50D827E /* BookParadise/Sources/Services/BarcodeScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00C7F3D0439FBAE61ACE5C4A /* BookParadise/Sources/Services/BarcodeScannerView.swift */; };
+		3AA3EE9A6E79F53428D01E26 /* BookParadise/Sources/Views/DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1A9BDE606E208601BE918B /* BookParadise/Sources/Views/DashboardView.swift */; };
+		5BFFAEEBBCB8538A58AEA921 /* BookParadise/Sources/Services/GoogleBooksLookupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34E6BC062DCA6DF3BB2E0B0 /* BookParadise/Sources/Services/GoogleBooksLookupService.swift */; };
+		5D7A6CE5A3A37FD00163E6F6 /* BookParadise/Sources/Services/GoogleSheetsAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A03507AC84488FA4E573A0B /* BookParadise/Sources/Services/GoogleSheetsAPIService.swift */; };
+		6404B9BD7B6F37BD8659A5F5 /* BookParadise/Sources/Views/BookDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20ADD9F23DD97B9804B9438 /* BookParadise/Sources/Views/BookDetailView.swift */; };
+		67A7B3596F0FE22F0EC42A7B /* BookParadise/Sources/Views/Components/BookCoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5C4EF5CB3401E73A482849 /* BookParadise/Sources/Views/Components/BookCoverView.swift */; };
+		6BC57A21967A0A76575113C7 /* BookParadise/Sources/Models/SampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC88039883819BB1DA33EC20 /* BookParadise/Sources/Models/SampleData.swift */; };
+		8502E0F48A052AA7E2144F86 /* BookParadise/Sources/Views/Sheets/ProgressUpdateSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71CB116DAE3DBE79856B81FD /* BookParadise/Sources/Views/Sheets/ProgressUpdateSheet.swift */; };
+		989669DB874D10C99909EFAA /* BookParadise/Sources/Models/Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4D3F549A3188CE9CEC619A /* BookParadise/Sources/Models/Book.swift */; };
+		9FA497E12BBB2D9C4ED74924 /* BookParadise/Sources/Views/CyclesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8728AACE3BB474BB0BBC2519 /* BookParadise/Sources/Views/CyclesView.swift */; };
+		A011276AE99FC75ABFB945F8 /* BookParadise/Sources/Views/BingoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1A32797694F39BC24A4FAD /* BookParadise/Sources/Views/BingoView.swift */; };
+		A10000012345678900000001 /* BookParadise/Sources/Models/BookQuote.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000012345678900000001 /* BookParadise/Sources/Models/BookQuote.swift */; };
+		A10000022345678900000002 /* BookParadise/Sources/Models/ReadingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000022345678900000002 /* BookParadise/Sources/Models/ReadingSession.swift */; };
+		A10000032345678900000003 /* BookParadise/Sources/Services/ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000032345678900000003 /* BookParadise/Sources/Services/ThemeManager.swift */; };
+		A10000042345678900000004 /* BookParadise/Sources/Services/QuotesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000042345678900000004 /* BookParadise/Sources/Services/QuotesManager.swift */; };
+		A10000052345678900000005 /* BookParadise/Sources/Services/ReadingSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000052345678900000005 /* BookParadise/Sources/Services/ReadingSessionManager.swift */; };
+		A10000062345678900000006 /* BookParadise/Sources/Views/Sheets/QuoteScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000062345678900000006 /* BookParadise/Sources/Views/Sheets/QuoteScannerView.swift */; };
+		A10000072345678900000007 /* BookParadise/Sources/Views/Sheets/QuoteCardShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000072345678900000007 /* BookParadise/Sources/Views/Sheets/QuoteCardShareView.swift */; };
+		A10000082345678900000008 /* BookParadise/Sources/Views/Sheets/ReadingSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000082345678900000008 /* BookParadise/Sources/Views/Sheets/ReadingSessionView.swift */; };
+		A10000092345678900000009 /* BookParadise/Sources/Widgets/WidgetDataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000092345678900000009 /* BookParadise/Sources/Widgets/WidgetDataExporter.swift */; };
+		A10000102345678900000010 /* BookParadise/Sources/Widgets/BookParadiseWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000102345678900000010 /* BookParadise/Sources/Widgets/BookParadiseWidget.swift */; };
+		A10000112345678900000011 /* BookParadise/Sources/Services/EBookStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000112345678900000011 /* BookParadise/Sources/Services/EBookStorageManager.swift */; };
+		A10000122345678900000012 /* BookParadise/Sources/Views/QuotesGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000122345678900000012 /* BookParadise/Sources/Views/QuotesGalleryView.swift */; };
+		A10000132345678900000013 /* BookParadise/Sources/Views/Components/DailyMotivationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000132345678900000013 /* BookParadise/Sources/Views/Components/DailyMotivationBanner.swift */; };
+		A10000142345678900000014 /* BookParadise/Sources/Views/DetailedStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000142345678900000014 /* BookParadise/Sources/Views/DetailedStatsView.swift */; };
+		A10000152345678900000015 /* BookParadise/Sources/Services/ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000152345678900000015 /* BookParadise/Sources/Services/ImageCacheManager.swift */; };
+		A10000162345678900000016 /* BookParadise/Sources/Services/iCloudSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000162345678900000016 /* BookParadise/Sources/Services/iCloudSyncManager.swift */; };
+		A10000172345678900000017 /* BookParadise/Sources/Views/Components/ThinkingOrbView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000172345678900000017 /* BookParadise/Sources/Views/Components/ThinkingOrbView.swift */; };
+		A10000182345678900000018 /* BookParadise/Sources/Views/ReadingChallengeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000182345678900000018 /* BookParadise/Sources/Views/ReadingChallengeView.swift */; };
+		A10000192345678900000019 /* BookParadise/Sources/Views/Sheets/BookFilterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000192345678900000019 /* BookParadise/Sources/Views/Sheets/BookFilterSheet.swift */; };
+		A10000202345678900000020 /* BookParadise/Sources/Models/QuoteCardTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000202345678900000020 /* BookParadise/Sources/Models/QuoteCardTheme.swift */; };
+		A10000212345678900000021 /* BookParadise/Sources/Models/BookLendingRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000212345678900000021 /* BookParadise/Sources/Models/BookLendingRecord.swift */; };
+		A10000222345678900000022 /* BookParadise/Sources/Services/LendingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000222345678900000022 /* BookParadise/Sources/Services/LendingManager.swift */; };
+		A10000232345678900000023 /* BookParadise/Sources/Services/MarkdownExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000232345678900000023 /* BookParadise/Sources/Services/MarkdownExportService.swift */; };
+		A10000242345678900000024 /* BookParadise/Sources/Services/SoundscapeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000242345678900000024 /* BookParadise/Sources/Services/SoundscapeManager.swift */; };
+		A10000252345678900000025 /* BookParadise/Sources/Views/Sheets/LendBookSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000252345678900000025 /* BookParadise/Sources/Views/Sheets/LendBookSheet.swift */; };
+		A10000262345678900000026 /* BookParadise/Sources/Views/Sheets/LendingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000262345678900000026 /* BookParadise/Sources/Views/Sheets/LendingListView.swift */; };
+		A10000272345678900000027 /* BookParadise/Sources/Models/ReadingAchievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000272345678900000027 /* BookParadise/Sources/Models/ReadingAchievement.swift */; };
+		A10000282345678900000028 /* BookParadise/Sources/Services/AchievementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000282345678900000028 /* BookParadise/Sources/Services/AchievementManager.swift */; };
+		A10000292345678900000029 /* BookParadise/Sources/Views/Sheets/AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000292345678900000029 /* BookParadise/Sources/Views/Sheets/AchievementsView.swift */; };
+		A10000302345678900000030 /* BookParadise/Sources/Views/Components/TimeCapsuleCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000302345678900000030 /* BookParadise/Sources/Views/Components/TimeCapsuleCard.swift */; };
+		A10000312345678900000031 /* BookParadise/Sources/Services/BookOracleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000312345678900000031 /* BookParadise/Sources/Services/BookOracleManager.swift */; };
+		A10000322345678900000032 /* BookParadise/Sources/Views/Sheets/BookOracleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000322345678900000032 /* BookParadise/Sources/Views/Sheets/BookOracleView.swift */; };
+		A10000332345678900000033 /* BookParadise/Sources/Views/Sheets/ReadingWrappedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000332345678900000033 /* BookParadise/Sources/Views/Sheets/ReadingWrappedView.swift */; };
+		A10000342345678900000034 /* BookParadise/Sources/Views/Components/BookSpineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000342345678900000034 /* BookParadise/Sources/Views/Components/BookSpineView.swift */; };
+		A10000352345678900000035 /* BookParadise/Sources/Views/Components/ReadingVelocityChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000352345678900000035 /* BookParadise/Sources/Views/Components/ReadingVelocityChartView.swift */; };
+		A10000362345678900000036 /* BookParadise/Sources/Views/Components/HotReadsBentoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000362345678900000036 /* BookParadise/Sources/Views/Components/HotReadsBentoView.swift */; };
+		A10000372345678900000037 /* BookParadise/Sources/Views/Components/ExecutiveQuotaRingAndMixView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000372345678900000037 /* BookParadise/Sources/Views/Components/ExecutiveQuotaRingAndMixView.swift */; };
+		A10000382345678900000038 /* BookParadise/Sources/Views/Components/FloatingQuickDockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000382345678900000038 /* BookParadise/Sources/Views/Components/FloatingQuickDockView.swift */; };
+		A10000392345678900000039 /* BookParadise/Sources/Models/ReadingNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000392345678900000039 /* BookParadise/Sources/Models/ReadingNote.swift */; };
+		A10000402345678900000040 /* BookParadise/Sources/Services/ReadingNoteStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000402345678900000040 /* BookParadise/Sources/Services/ReadingNoteStore.swift */; };
+		A10000412345678900000041 /* BookParadise/Sources/Views/MarkdownEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000412345678900000041 /* BookParadise/Sources/Views/MarkdownEditorView.swift */; };
+		A10000422345678900000042 /* BookParadise/Sources/Views/NotesJournalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000422345678900000042 /* BookParadise/Sources/Views/NotesJournalView.swift */; };
+		A10000432345678900000043 /* BookParadise/Sources/Views/Components/DesktopHoverEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000432345678900000043 /* BookParadise/Sources/Views/Components/DesktopHoverEffect.swift */; };
+		A10000442345678900000044 /* BookParadise/Sources/Services/UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000442345678900000044 /* BookParadise/Sources/Services/UpdateManager.swift */; };
+		A10000452345678900000045 /* BookParadise/Sources/Views/Sheets/BookSpotifyShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000452345678900000045 /* BookParadise/Sources/Views/Sheets/BookSpotifyShareCardView.swift */; };
+		A10000462345678900000046 /* BookParadise/Sources/Models/StreakModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000462345678900000046 /* BookParadise/Sources/Models/StreakModel.swift */; };
+		A10000472345678900000047 /* BookParadise/Sources/Services/StreakManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000472345678900000047 /* BookParadise/Sources/Services/StreakManager.swift */; };
+		A10000482345678900000048 /* BookParadise/Sources/Models/RPGLevelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000482345678900000048 /* BookParadise/Sources/Models/RPGLevelModel.swift */; };
+		A10000492345678900000049 /* BookParadise/Sources/Services/RPGLevelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000492345678900000049 /* BookParadise/Sources/Services/RPGLevelManager.swift */; };
+		A10000502345678900000050 /* BookParadise/Sources/Services/HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000502345678900000050 /* BookParadise/Sources/Services/HapticManager.swift */; };
+		A10000512345678900000051 /* BookParadise/Sources/Services/EPUBReaderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000512345678900000051 /* BookParadise/Sources/Services/EPUBReaderService.swift */; };
+		A10000522345678900000052 /* BookParadise/Sources/Views/EPUBReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000522345678900000052 /* BookParadise/Sources/Views/EPUBReaderView.swift */; };
+		A10000532345678900000053 /* BookParadise/Sources/Views/Components/RPGDashboardCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000532345678900000053 /* BookParadise/Sources/Views/Components/RPGDashboardCard.swift */; };
+		A10000542345678900000054 /* BookParadise/Sources/Views/Components/ReadingHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000542345678900000054 /* BookParadise/Sources/Views/Components/ReadingHeatmapView.swift */; };
+		A10000552345678900000055 /* BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000552345678900000055 /* BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift */; };
+		A11C0DE123456789ABCDEF01 /* BookParadise/Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11C0DE223456789ABCDEF02 /* BookParadise/Resources/Assets.xcassets */; };
+		A2D01757B7FB30D83F71BC42 /* BookParadise/Sources/Views/LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF78C7237D080A6F64CE875 /* BookParadise/Sources/Views/LibraryView.swift */; };
+		AF6824F508686520BF8094D4 /* BookParadise/Sources/Views/MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9873C29434472930EC446CE /* BookParadise/Sources/Views/MainTabView.swift */; };
+		B0B755CBA19473B38A8E3D1E /* BookParadise/Sources/Views/Components/ReadingCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67942F6EC3F6E884F8AD1FE8 /* BookParadise/Sources/Views/Components/ReadingCalendarView.swift */; };
+		BE2E71ED763160EE540E3C56 /* BookParadise/Sources/Views/Sheets/AddToPlanSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8EDF406E8B40223BC90FA3 /* BookParadise/Sources/Views/Sheets/AddToPlanSheet.swift */; };
 		C10000032345678900000003 /* BookParadiseWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C10000012345678900000001 /* BookParadiseWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		C10000042345678900000004 /* WidgetDataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000092345678900000009 /* WidgetDataExporter.swift */; };
-		C10000052345678900000005 /* BookParadiseWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000102345678900000010 /* BookParadiseWidget.swift */; };
+		C10000042345678900000004 /* BookParadise/Sources/Widgets/WidgetDataExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000092345678900000009 /* BookParadise/Sources/Widgets/WidgetDataExporter.swift */; };
+		C10000052345678900000005 /* BookParadise/Sources/Widgets/BookParadiseWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000102345678900000010 /* BookParadise/Sources/Widgets/BookParadiseWidget.swift */; };
+		CD5BFEEF8063FE70085AFB8F /* BookParadise/Sources/Views/Sheets/SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8E3587AEDC96834D727C95 /* BookParadise/Sources/Views/Sheets/SettingsView.swift */; };
+		E4830BD84B2E07F7A6C99C3C /* BookParadiseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877B4DF7790352BDB710122A /* BookParadiseApp.swift */; };
+		FC8B84D85D7E7B4F5C364E25 /* BookParadise/Sources/Models/Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00AFB99D8BA4E5AFA5AC851 /* BookParadise/Sources/Models/Enums.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,87 +114,87 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		A11C0DE223456789ABCDEF02 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = BookParadise/Resources/Assets.xcassets; sourceTree = "<group>"; };
+		00C7F3D0439FBAE61ACE5C4A /* BookParadise/Sources/Services/BarcodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/BarcodeScannerView.swift; sourceTree = "<group>"; };
+		1A1A32797694F39BC24A4FAD /* BookParadise/Sources/Views/BingoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/BingoView.swift; sourceTree = "<group>"; };
+		296DD7C36A7010814F00EADC /* BookParadise/Sources/ViewModels/LibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/ViewModels/LibraryViewModel.swift; sourceTree = "<group>"; };
+		2C4D3F549A3188CE9CEC619A /* BookParadise/Sources/Models/Book.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/Book.swift; sourceTree = "<group>"; };
+		2EF78C7237D080A6F64CE875 /* BookParadise/Sources/Views/LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/LibraryView.swift; sourceTree = "<group>"; };
+		3B1A9BDE606E208601BE918B /* BookParadise/Sources/Views/DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/DashboardView.swift; sourceTree = "<group>"; };
 		4CF1DABA89BE0C55C3BC784F /* BookParadise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BookParadise.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		DC4275F37C711520F972BFA7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BookParadise/Resources/Info.plist; sourceTree = "<group>"; };
-		877B4DF7790352BDB710122A /* BookParadiseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/BookParadiseApp.swift; sourceTree = "<group>"; };
-		296DD7C36A7010814F00EADC /* LibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/ViewModels/LibraryViewModel.swift; sourceTree = "<group>"; };
-		B31F051912C52A30FC0ADD33 /* BingoAndCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BingoAndCycle.swift; sourceTree = "<group>"; };
-		2C4D3F549A3188CE9CEC619A /* Book.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/Book.swift; sourceTree = "<group>"; };
-		A00AFB99D8BA4E5AFA5AC851 /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/Enums.swift; sourceTree = "<group>"; };
-		EC88039883819BB1DA33EC20 /* SampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/SampleData.swift; sourceTree = "<group>"; };
-		1A1A32797694F39BC24A4FAD /* BingoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/BingoView.swift; sourceTree = "<group>"; };
-		E20ADD9F23DD97B9804B9438 /* BookDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/BookDetailView.swift; sourceTree = "<group>"; };
-		8728AACE3BB474BB0BBC2519 /* CyclesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/CyclesView.swift; sourceTree = "<group>"; };
-		3B1A9BDE606E208601BE918B /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/DashboardView.swift; sourceTree = "<group>"; };
-		2EF78C7237D080A6F64CE875 /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/LibraryView.swift; sourceTree = "<group>"; };
-		C9873C29434472930EC446CE /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/MainTabView.swift; sourceTree = "<group>"; };
-		C9260CDC2323B88E799E0864 /* AddBookSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/AddBookSheet.swift; sourceTree = "<group>"; };
-		9C8EDF406E8B40223BC90FA3 /* AddToPlanSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/AddToPlanSheet.swift; sourceTree = "<group>"; };
-		71CB116DAE3DBE79856B81FD /* ProgressUpdateSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/ProgressUpdateSheet.swift; sourceTree = "<group>"; };
-		8A8E3587AEDC96834D727C95 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/SettingsView.swift; sourceTree = "<group>"; };
-		8C5C4EF5CB3401E73A482849 /* BookCoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/BookCoverView.swift; sourceTree = "<group>"; };
-		67942F6EC3F6E884F8AD1FE8 /* ReadingCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ReadingCalendarView.swift; sourceTree = "<group>"; };
-		00C7F3D0439FBAE61ACE5C4A /* BarcodeScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/BarcodeScannerView.swift; sourceTree = "<group>"; };
-		E34E6BC062DCA6DF3BB2E0B0 /* GoogleBooksLookupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/GoogleBooksLookupService.swift; sourceTree = "<group>"; };
-		8A03507AC84488FA4E573A0B /* GoogleSheetsAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/GoogleSheetsAPIService.swift; sourceTree = "<group>"; };
-		B10000012345678900000001 /* BookQuote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BookQuote.swift; sourceTree = "<group>"; };
-		B10000022345678900000002 /* ReadingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/ReadingSession.swift; sourceTree = "<group>"; };
-		B10000032345678900000003 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/ThemeManager.swift; sourceTree = "<group>"; };
-		B10000042345678900000004 /* QuotesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/QuotesManager.swift; sourceTree = "<group>"; };
-		B10000052345678900000005 /* ReadingSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/ReadingSessionManager.swift; sourceTree = "<group>"; };
-		B10000062345678900000006 /* QuoteScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/QuoteScannerView.swift; sourceTree = "<group>"; };
-		B10000072345678900000007 /* QuoteCardShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/QuoteCardShareView.swift; sourceTree = "<group>"; };
-		B10000082345678900000008 /* ReadingSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/ReadingSessionView.swift; sourceTree = "<group>"; };
-		B10000092345678900000009 /* WidgetDataExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Widgets/WidgetDataExporter.swift; sourceTree = "<group>"; };
-		B10000102345678900000010 /* BookParadiseWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Widgets/BookParadiseWidget.swift; sourceTree = "<group>"; };
-		B10000112345678900000011 /* EBookStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/EBookStorageManager.swift; sourceTree = "<group>"; };
-		B10000122345678900000012 /* QuotesGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/QuotesGalleryView.swift; sourceTree = "<group>"; };
-		B10000132345678900000013 /* DailyMotivationBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/DailyMotivationBanner.swift; sourceTree = "<group>"; };
-		B10000142345678900000014 /* DetailedStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/DetailedStatsView.swift; sourceTree = "<group>"; };
-		B10000152345678900000015 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/ImageCacheManager.swift; sourceTree = "<group>"; };
-		B10000162345678900000016 /* iCloudSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/iCloudSyncManager.swift; sourceTree = "<group>"; };
-		B10000172345678900000017 /* ThinkingOrbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ThinkingOrbView.swift; sourceTree = "<group>"; };
-		B10000182345678900000018 /* ReadingChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/ReadingChallengeView.swift; sourceTree = "<group>"; };
-		B10000192345678900000019 /* BookFilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/BookFilterSheet.swift; sourceTree = "<group>"; };
-		B10000202345678900000020 /* QuoteCardTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/QuoteCardTheme.swift; sourceTree = "<group>"; };
-		B10000212345678900000021 /* BookLendingRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BookLendingRecord.swift; sourceTree = "<group>"; };
-		B10000222345678900000022 /* LendingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/LendingManager.swift; sourceTree = "<group>"; };
-		B10000232345678900000023 /* MarkdownExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/MarkdownExportService.swift; sourceTree = "<group>"; };
-		B10000242345678900000024 /* SoundscapeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/SoundscapeManager.swift; sourceTree = "<group>"; };
-		B10000252345678900000025 /* LendBookSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/LendBookSheet.swift; sourceTree = "<group>"; };
-		B10000262345678900000026 /* LendingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/LendingListView.swift; sourceTree = "<group>"; };
-		B10000272345678900000027 /* ReadingAchievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/ReadingAchievement.swift; sourceTree = "<group>"; };
-		B10000282345678900000028 /* AchievementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/AchievementManager.swift; sourceTree = "<group>"; };
-		B10000292345678900000029 /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/AchievementsView.swift; sourceTree = "<group>"; };
-		B10000302345678900000030 /* TimeCapsuleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/TimeCapsuleCard.swift; sourceTree = "<group>"; };
-		B10000312345678900000031 /* BookOracleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/BookOracleManager.swift; sourceTree = "<group>"; };
-		B10000322345678900000032 /* BookOracleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/BookOracleView.swift; sourceTree = "<group>"; };
-		B10000332345678900000033 /* ReadingWrappedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/ReadingWrappedView.swift; sourceTree = "<group>"; };
-		B10000342345678900000034 /* BookSpineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/BookSpineView.swift; sourceTree = "<group>"; };
-		B10000352345678900000035 /* ReadingVelocityChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ReadingVelocityChartView.swift; sourceTree = "<group>"; };
-		B10000362345678900000036 /* HotReadsBentoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/HotReadsBentoView.swift; sourceTree = "<group>"; };
-		B10000372345678900000037 /* ExecutiveQuotaRingAndMixView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ExecutiveQuotaRingAndMixView.swift; sourceTree = "<group>"; };
-		B10000382345678900000038 /* FloatingQuickDockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/FloatingQuickDockView.swift; sourceTree = "<group>"; };
-		B10000392345678900000039 /* ReadingNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/ReadingNote.swift; sourceTree = "<group>"; };
-		B10000402345678900000040 /* ReadingNoteStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/ReadingNoteStore.swift; sourceTree = "<group>"; };
-		B10000412345678900000041 /* MarkdownEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/MarkdownEditorView.swift; sourceTree = "<group>"; };
-		B10000422345678900000042 /* NotesJournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/NotesJournalView.swift; sourceTree = "<group>"; };
-		B10000432345678900000043 /* DesktopHoverEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/DesktopHoverEffect.swift; sourceTree = "<group>"; };
-		B10000442345678900000044 /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/UpdateManager.swift; sourceTree = "<group>"; };
-		B10000452345678900000045 /* BookSpotifyShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/BookSpotifyShareCardView.swift; sourceTree = "<group>"; };
-		B10000462345678900000046 /* StreakModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/StreakModel.swift; sourceTree = "<group>"; };
-		B10000472345678900000047 /* StreakManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/StreakManager.swift; sourceTree = "<group>"; };
-		B10000482345678900000048 /* RPGLevelModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/RPGLevelModel.swift; sourceTree = "<group>"; };
-		B10000492345678900000049 /* RPGLevelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/RPGLevelManager.swift; sourceTree = "<group>"; };
-		B10000502345678900000050 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/HapticManager.swift; sourceTree = "<group>"; };
-		B10000512345678900000051 /* EPUBReaderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/EPUBReaderService.swift; sourceTree = "<group>"; };
-		B10000522345678900000052 /* EPUBReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/EPUBReaderView.swift; sourceTree = "<group>"; };
-		B10000532345678900000053 /* RPGDashboardCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/RPGDashboardCard.swift; sourceTree = "<group>"; };
-		B10000542345678900000054 /* ReadingHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ReadingHeatmapView.swift; sourceTree = "<group>"; };
-		B10000552345678900000055 /* SoundscapeMixerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift; sourceTree = "<group>"; };
+		67942F6EC3F6E884F8AD1FE8 /* BookParadise/Sources/Views/Components/ReadingCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ReadingCalendarView.swift; sourceTree = "<group>"; };
+		71CB116DAE3DBE79856B81FD /* BookParadise/Sources/Views/Sheets/ProgressUpdateSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/ProgressUpdateSheet.swift; sourceTree = "<group>"; };
+		8728AACE3BB474BB0BBC2519 /* BookParadise/Sources/Views/CyclesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/CyclesView.swift; sourceTree = "<group>"; };
+		877B4DF7790352BDB710122A /* BookParadiseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BookParadiseApp.swift; path = ../../../../../../../../../Users/max/.gemini/antigravity/scratch/BookParadise/BookParadise/Sources/BookParadiseApp.swift; sourceTree = SDKROOT; };
+		8A03507AC84488FA4E573A0B /* BookParadise/Sources/Services/GoogleSheetsAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/GoogleSheetsAPIService.swift; sourceTree = "<group>"; };
+		8A8E3587AEDC96834D727C95 /* BookParadise/Sources/Views/Sheets/SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/SettingsView.swift; sourceTree = "<group>"; };
+		8C5C4EF5CB3401E73A482849 /* BookParadise/Sources/Views/Components/BookCoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/BookCoverView.swift; sourceTree = "<group>"; };
+		9C8EDF406E8B40223BC90FA3 /* BookParadise/Sources/Views/Sheets/AddToPlanSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/AddToPlanSheet.swift; sourceTree = "<group>"; };
+		A00AFB99D8BA4E5AFA5AC851 /* BookParadise/Sources/Models/Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/Enums.swift; sourceTree = "<group>"; };
+		A11C0DE223456789ABCDEF02 /* BookParadise/Resources/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = BookParadise/Resources/Assets.xcassets; sourceTree = "<group>"; };
+		B10000012345678900000001 /* BookParadise/Sources/Models/BookQuote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BookQuote.swift; sourceTree = "<group>"; };
+		B10000022345678900000002 /* BookParadise/Sources/Models/ReadingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/ReadingSession.swift; sourceTree = "<group>"; };
+		B10000032345678900000003 /* BookParadise/Sources/Services/ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/ThemeManager.swift; sourceTree = "<group>"; };
+		B10000042345678900000004 /* BookParadise/Sources/Services/QuotesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/QuotesManager.swift; sourceTree = "<group>"; };
+		B10000052345678900000005 /* BookParadise/Sources/Services/ReadingSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/ReadingSessionManager.swift; sourceTree = "<group>"; };
+		B10000062345678900000006 /* BookParadise/Sources/Views/Sheets/QuoteScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/QuoteScannerView.swift; sourceTree = "<group>"; };
+		B10000072345678900000007 /* BookParadise/Sources/Views/Sheets/QuoteCardShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/QuoteCardShareView.swift; sourceTree = "<group>"; };
+		B10000082345678900000008 /* BookParadise/Sources/Views/Sheets/ReadingSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/ReadingSessionView.swift; sourceTree = "<group>"; };
+		B10000092345678900000009 /* BookParadise/Sources/Widgets/WidgetDataExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Widgets/WidgetDataExporter.swift; sourceTree = "<group>"; };
+		B10000102345678900000010 /* BookParadise/Sources/Widgets/BookParadiseWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Widgets/BookParadiseWidget.swift; sourceTree = "<group>"; };
+		B10000112345678900000011 /* BookParadise/Sources/Services/EBookStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/EBookStorageManager.swift; sourceTree = "<group>"; };
+		B10000122345678900000012 /* BookParadise/Sources/Views/QuotesGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/QuotesGalleryView.swift; sourceTree = "<group>"; };
+		B10000132345678900000013 /* BookParadise/Sources/Views/Components/DailyMotivationBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/DailyMotivationBanner.swift; sourceTree = "<group>"; };
+		B10000142345678900000014 /* BookParadise/Sources/Views/DetailedStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/DetailedStatsView.swift; sourceTree = "<group>"; };
+		B10000152345678900000015 /* BookParadise/Sources/Services/ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/ImageCacheManager.swift; sourceTree = "<group>"; };
+		B10000162345678900000016 /* BookParadise/Sources/Services/iCloudSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/iCloudSyncManager.swift; sourceTree = "<group>"; };
+		B10000172345678900000017 /* BookParadise/Sources/Views/Components/ThinkingOrbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ThinkingOrbView.swift; sourceTree = "<group>"; };
+		B10000182345678900000018 /* BookParadise/Sources/Views/ReadingChallengeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/ReadingChallengeView.swift; sourceTree = "<group>"; };
+		B10000192345678900000019 /* BookParadise/Sources/Views/Sheets/BookFilterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/BookFilterSheet.swift; sourceTree = "<group>"; };
+		B10000202345678900000020 /* BookParadise/Sources/Models/QuoteCardTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/QuoteCardTheme.swift; sourceTree = "<group>"; };
+		B10000212345678900000021 /* BookParadise/Sources/Models/BookLendingRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BookLendingRecord.swift; sourceTree = "<group>"; };
+		B10000222345678900000022 /* BookParadise/Sources/Services/LendingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/LendingManager.swift; sourceTree = "<group>"; };
+		B10000232345678900000023 /* BookParadise/Sources/Services/MarkdownExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/MarkdownExportService.swift; sourceTree = "<group>"; };
+		B10000242345678900000024 /* BookParadise/Sources/Services/SoundscapeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/SoundscapeManager.swift; sourceTree = "<group>"; };
+		B10000252345678900000025 /* BookParadise/Sources/Views/Sheets/LendBookSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/LendBookSheet.swift; sourceTree = "<group>"; };
+		B10000262345678900000026 /* BookParadise/Sources/Views/Sheets/LendingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/LendingListView.swift; sourceTree = "<group>"; };
+		B10000272345678900000027 /* BookParadise/Sources/Models/ReadingAchievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/ReadingAchievement.swift; sourceTree = "<group>"; };
+		B10000282345678900000028 /* BookParadise/Sources/Services/AchievementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/AchievementManager.swift; sourceTree = "<group>"; };
+		B10000292345678900000029 /* BookParadise/Sources/Views/Sheets/AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/AchievementsView.swift; sourceTree = "<group>"; };
+		B10000302345678900000030 /* BookParadise/Sources/Views/Components/TimeCapsuleCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/TimeCapsuleCard.swift; sourceTree = "<group>"; };
+		B10000312345678900000031 /* BookParadise/Sources/Services/BookOracleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/BookOracleManager.swift; sourceTree = "<group>"; };
+		B10000322345678900000032 /* BookParadise/Sources/Views/Sheets/BookOracleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/BookOracleView.swift; sourceTree = "<group>"; };
+		B10000332345678900000033 /* BookParadise/Sources/Views/Sheets/ReadingWrappedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/ReadingWrappedView.swift; sourceTree = "<group>"; };
+		B10000342345678900000034 /* BookParadise/Sources/Views/Components/BookSpineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/BookSpineView.swift; sourceTree = "<group>"; };
+		B10000352345678900000035 /* BookParadise/Sources/Views/Components/ReadingVelocityChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ReadingVelocityChartView.swift; sourceTree = "<group>"; };
+		B10000362345678900000036 /* BookParadise/Sources/Views/Components/HotReadsBentoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/HotReadsBentoView.swift; sourceTree = "<group>"; };
+		B10000372345678900000037 /* BookParadise/Sources/Views/Components/ExecutiveQuotaRingAndMixView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ExecutiveQuotaRingAndMixView.swift; sourceTree = "<group>"; };
+		B10000382345678900000038 /* BookParadise/Sources/Views/Components/FloatingQuickDockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/FloatingQuickDockView.swift; sourceTree = "<group>"; };
+		B10000392345678900000039 /* BookParadise/Sources/Models/ReadingNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/ReadingNote.swift; sourceTree = "<group>"; };
+		B10000402345678900000040 /* BookParadise/Sources/Services/ReadingNoteStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/ReadingNoteStore.swift; sourceTree = "<group>"; };
+		B10000412345678900000041 /* BookParadise/Sources/Views/MarkdownEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/MarkdownEditorView.swift; sourceTree = "<group>"; };
+		B10000422345678900000042 /* BookParadise/Sources/Views/NotesJournalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/NotesJournalView.swift; sourceTree = "<group>"; };
+		B10000432345678900000043 /* BookParadise/Sources/Views/Components/DesktopHoverEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/DesktopHoverEffect.swift; sourceTree = "<group>"; };
+		B10000442345678900000044 /* BookParadise/Sources/Services/UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/UpdateManager.swift; sourceTree = "<group>"; };
+		B10000452345678900000045 /* BookParadise/Sources/Views/Sheets/BookSpotifyShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/BookSpotifyShareCardView.swift; sourceTree = "<group>"; };
+		B10000462345678900000046 /* BookParadise/Sources/Models/StreakModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/StreakModel.swift; sourceTree = "<group>"; };
+		B10000472345678900000047 /* BookParadise/Sources/Services/StreakManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/StreakManager.swift; sourceTree = "<group>"; };
+		B10000482345678900000048 /* BookParadise/Sources/Models/RPGLevelModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/RPGLevelModel.swift; sourceTree = "<group>"; };
+		B10000492345678900000049 /* BookParadise/Sources/Services/RPGLevelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/RPGLevelManager.swift; sourceTree = "<group>"; };
+		B10000502345678900000050 /* BookParadise/Sources/Services/HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/HapticManager.swift; sourceTree = "<group>"; };
+		B10000512345678900000051 /* BookParadise/Sources/Services/EPUBReaderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/EPUBReaderService.swift; sourceTree = "<group>"; };
+		B10000522345678900000052 /* BookParadise/Sources/Views/EPUBReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/EPUBReaderView.swift; sourceTree = "<group>"; };
+		B10000532345678900000053 /* BookParadise/Sources/Views/Components/RPGDashboardCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/RPGDashboardCard.swift; sourceTree = "<group>"; };
+		B10000542345678900000054 /* BookParadise/Sources/Views/Components/ReadingHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Components/ReadingHeatmapView.swift; sourceTree = "<group>"; };
+		B10000552345678900000055 /* BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift; sourceTree = "<group>"; };
+		B31F051912C52A30FC0ADD33 /* BookParadise/Sources/Models/BingoAndCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/BingoAndCycle.swift; sourceTree = "<group>"; };
 		C10000012345678900000001 /* BookParadiseWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = BookParadiseWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		C10000022345678900000002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BookParadise/Sources/Widgets/Info.plist; sourceTree = "<group>"; };
+		C10000022345678900000002 /* BookParadise/Sources/Widgets/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BookParadise/Sources/Widgets/Info.plist; sourceTree = "<group>"; };
+		C9260CDC2323B88E799E0864 /* BookParadise/Sources/Views/Sheets/AddBookSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/Sheets/AddBookSheet.swift; sourceTree = "<group>"; };
+		C9873C29434472930EC446CE /* BookParadise/Sources/Views/MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/MainTabView.swift; sourceTree = "<group>"; };
+		DC4275F37C711520F972BFA7 /* BookParadise/Resources/Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = BookParadise/Resources/Info.plist; sourceTree = "<group>"; };
+		E20ADD9F23DD97B9804B9438 /* BookParadise/Sources/Views/BookDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Views/BookDetailView.swift; sourceTree = "<group>"; };
+		E34E6BC062DCA6DF3BB2E0B0 /* BookParadise/Sources/Services/GoogleBooksLookupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Services/GoogleBooksLookupService.swift; sourceTree = "<group>"; };
+		EC88039883819BB1DA33EC20 /* BookParadise/Sources/Models/SampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookParadise/Sources/Models/SampleData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -219,94 +219,10 @@
 			isa = PBXGroup;
 			children = (
 				D8459709F6D9BD48D2B42821 /* Sources */,
-				DC4275F37C711520F972BFA7 /* Info.plist */,
-				A11C0DE223456789ABCDEF02 /* Assets.xcassets */,
+				DC4275F37C711520F972BFA7 /* BookParadise/Resources/Info.plist */,
+				A11C0DE223456789ABCDEF02 /* BookParadise/Resources/Assets.xcassets */,
 				6D159F361021D92BC3E10E55 /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		D8459709F6D9BD48D2B42821 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				877B4DF7790352BDB710122A /* BookParadiseApp.swift */,
-				296DD7C36A7010814F00EADC /* LibraryViewModel.swift */,
-				B31F051912C52A30FC0ADD33 /* BingoAndCycle.swift */,
-				2C4D3F549A3188CE9CEC619A /* Book.swift */,
-				A00AFB99D8BA4E5AFA5AC851 /* Enums.swift */,
-				EC88039883819BB1DA33EC20 /* SampleData.swift */,
-				1A1A32797694F39BC24A4FAD /* BingoView.swift */,
-				E20ADD9F23DD97B9804B9438 /* BookDetailView.swift */,
-				8728AACE3BB474BB0BBC2519 /* CyclesView.swift */,
-				3B1A9BDE606E208601BE918B /* DashboardView.swift */,
-				2EF78C7237D080A6F64CE875 /* LibraryView.swift */,
-				C9873C29434472930EC446CE /* MainTabView.swift */,
-				C9260CDC2323B88E799E0864 /* AddBookSheet.swift */,
-				9C8EDF406E8B40223BC90FA3 /* AddToPlanSheet.swift */,
-				71CB116DAE3DBE79856B81FD /* ProgressUpdateSheet.swift */,
-				8A8E3587AEDC96834D727C95 /* SettingsView.swift */,
-				8C5C4EF5CB3401E73A482849 /* BookCoverView.swift */,
-				67942F6EC3F6E884F8AD1FE8 /* ReadingCalendarView.swift */,
-				00C7F3D0439FBAE61ACE5C4A /* BarcodeScannerView.swift */,
-				E34E6BC062DCA6DF3BB2E0B0 /* GoogleBooksLookupService.swift */,
-				8A03507AC84488FA4E573A0B /* GoogleSheetsAPIService.swift */,
-				B10000012345678900000001 /* BookQuote.swift */,
-				B10000022345678900000002 /* ReadingSession.swift */,
-				B10000032345678900000003 /* ThemeManager.swift */,
-				B10000042345678900000004 /* QuotesManager.swift */,
-				B10000052345678900000005 /* ReadingSessionManager.swift */,
-				B10000062345678900000006 /* QuoteScannerView.swift */,
-				B10000072345678900000007 /* QuoteCardShareView.swift */,
-				B10000082345678900000008 /* ReadingSessionView.swift */,
-				B10000092345678900000009 /* WidgetDataExporter.swift */,
-				B10000102345678900000010 /* BookParadiseWidget.swift */,
-				B10000112345678900000011 /* EBookStorageManager.swift */,
-				B10000122345678900000012 /* QuotesGalleryView.swift */,
-				B10000132345678900000013 /* DailyMotivationBanner.swift */,
-				B10000142345678900000014 /* DetailedStatsView.swift */,
-				B10000152345678900000015 /* ImageCacheManager.swift */,
-				B10000162345678900000016 /* iCloudSyncManager.swift */,
-				B10000172345678900000017 /* ThinkingOrbView.swift */,
-				B10000182345678900000018 /* ReadingChallengeView.swift */,
-				B10000192345678900000019 /* BookFilterSheet.swift */,
-				B10000202345678900000020 /* QuoteCardTheme.swift */,
-				B10000212345678900000021 /* BookLendingRecord.swift */,
-				B10000222345678900000022 /* LendingManager.swift */,
-				B10000232345678900000023 /* MarkdownExportService.swift */,
-				B10000242345678900000024 /* SoundscapeManager.swift */,
-				B10000252345678900000025 /* LendBookSheet.swift */,
-				B10000262345678900000026 /* LendingListView.swift */,
-				B10000272345678900000027 /* ReadingAchievement.swift */,
-				B10000282345678900000028 /* AchievementManager.swift */,
-				B10000292345678900000029 /* AchievementsView.swift */,
-				B10000302345678900000030 /* TimeCapsuleCard.swift */,
-				B10000312345678900000031 /* BookOracleManager.swift */,
-				B10000322345678900000032 /* BookOracleView.swift */,
-				B10000332345678900000033 /* ReadingWrappedView.swift */,
-				B10000342345678900000034 /* BookSpineView.swift */,
-				B10000352345678900000035 /* ReadingVelocityChartView.swift */,
-				B10000362345678900000036 /* HotReadsBentoView.swift */,
-				B10000372345678900000037 /* ExecutiveQuotaRingAndMixView.swift */,
-				B10000382345678900000038 /* FloatingQuickDockView.swift */,
-				B10000392345678900000039 /* ReadingNote.swift */,
-				B10000402345678900000040 /* ReadingNoteStore.swift */,
-				B10000412345678900000041 /* MarkdownEditorView.swift */,
-				B10000422345678900000042 /* NotesJournalView.swift */,
-				B10000432345678900000043 /* DesktopHoverEffect.swift */,
-				B10000442345678900000044 /* UpdateManager.swift */,
-				B10000452345678900000045 /* BookSpotifyShareCardView.swift */,
-				B10000462345678900000046 /* StreakModel.swift */,
-				B10000472345678900000047 /* StreakManager.swift */,
-				B10000482345678900000048 /* RPGLevelModel.swift */,
-				B10000492345678900000049 /* RPGLevelManager.swift */,
-				B10000502345678900000050 /* HapticManager.swift */,
-				B10000512345678900000051 /* EPUBReaderService.swift */,
-				B10000522345678900000052 /* EPUBReaderView.swift */,
-				B10000532345678900000053 /* RPGDashboardCard.swift */,
-				B10000542345678900000054 /* ReadingHeatmapView.swift */,
-				B10000552345678900000055 /* SoundscapeMixerSheet.swift */,
-				C10000022345678900000002 /* Info.plist */,
-			);
-			name = Sources;
 			sourceTree = "<group>";
 		};
 		6D159F361021D92BC3E10E55 /* Products */ = {
@@ -316,6 +232,90 @@
 				C10000012345678900000001 /* BookParadiseWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D8459709F6D9BD48D2B42821 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				877B4DF7790352BDB710122A /* BookParadiseApp.swift */,
+				296DD7C36A7010814F00EADC /* BookParadise/Sources/ViewModels/LibraryViewModel.swift */,
+				B31F051912C52A30FC0ADD33 /* BookParadise/Sources/Models/BingoAndCycle.swift */,
+				2C4D3F549A3188CE9CEC619A /* BookParadise/Sources/Models/Book.swift */,
+				A00AFB99D8BA4E5AFA5AC851 /* BookParadise/Sources/Models/Enums.swift */,
+				EC88039883819BB1DA33EC20 /* BookParadise/Sources/Models/SampleData.swift */,
+				1A1A32797694F39BC24A4FAD /* BookParadise/Sources/Views/BingoView.swift */,
+				E20ADD9F23DD97B9804B9438 /* BookParadise/Sources/Views/BookDetailView.swift */,
+				8728AACE3BB474BB0BBC2519 /* BookParadise/Sources/Views/CyclesView.swift */,
+				3B1A9BDE606E208601BE918B /* BookParadise/Sources/Views/DashboardView.swift */,
+				2EF78C7237D080A6F64CE875 /* BookParadise/Sources/Views/LibraryView.swift */,
+				C9873C29434472930EC446CE /* BookParadise/Sources/Views/MainTabView.swift */,
+				C9260CDC2323B88E799E0864 /* BookParadise/Sources/Views/Sheets/AddBookSheet.swift */,
+				9C8EDF406E8B40223BC90FA3 /* BookParadise/Sources/Views/Sheets/AddToPlanSheet.swift */,
+				71CB116DAE3DBE79856B81FD /* BookParadise/Sources/Views/Sheets/ProgressUpdateSheet.swift */,
+				8A8E3587AEDC96834D727C95 /* BookParadise/Sources/Views/Sheets/SettingsView.swift */,
+				8C5C4EF5CB3401E73A482849 /* BookParadise/Sources/Views/Components/BookCoverView.swift */,
+				67942F6EC3F6E884F8AD1FE8 /* BookParadise/Sources/Views/Components/ReadingCalendarView.swift */,
+				00C7F3D0439FBAE61ACE5C4A /* BookParadise/Sources/Services/BarcodeScannerView.swift */,
+				E34E6BC062DCA6DF3BB2E0B0 /* BookParadise/Sources/Services/GoogleBooksLookupService.swift */,
+				8A03507AC84488FA4E573A0B /* BookParadise/Sources/Services/GoogleSheetsAPIService.swift */,
+				B10000012345678900000001 /* BookParadise/Sources/Models/BookQuote.swift */,
+				B10000022345678900000002 /* BookParadise/Sources/Models/ReadingSession.swift */,
+				B10000032345678900000003 /* BookParadise/Sources/Services/ThemeManager.swift */,
+				B10000042345678900000004 /* BookParadise/Sources/Services/QuotesManager.swift */,
+				B10000052345678900000005 /* BookParadise/Sources/Services/ReadingSessionManager.swift */,
+				B10000062345678900000006 /* BookParadise/Sources/Views/Sheets/QuoteScannerView.swift */,
+				B10000072345678900000007 /* BookParadise/Sources/Views/Sheets/QuoteCardShareView.swift */,
+				B10000082345678900000008 /* BookParadise/Sources/Views/Sheets/ReadingSessionView.swift */,
+				B10000092345678900000009 /* BookParadise/Sources/Widgets/WidgetDataExporter.swift */,
+				B10000102345678900000010 /* BookParadise/Sources/Widgets/BookParadiseWidget.swift */,
+				B10000112345678900000011 /* BookParadise/Sources/Services/EBookStorageManager.swift */,
+				B10000122345678900000012 /* BookParadise/Sources/Views/QuotesGalleryView.swift */,
+				B10000132345678900000013 /* BookParadise/Sources/Views/Components/DailyMotivationBanner.swift */,
+				B10000142345678900000014 /* BookParadise/Sources/Views/DetailedStatsView.swift */,
+				B10000152345678900000015 /* BookParadise/Sources/Services/ImageCacheManager.swift */,
+				B10000162345678900000016 /* BookParadise/Sources/Services/iCloudSyncManager.swift */,
+				B10000172345678900000017 /* BookParadise/Sources/Views/Components/ThinkingOrbView.swift */,
+				B10000182345678900000018 /* BookParadise/Sources/Views/ReadingChallengeView.swift */,
+				B10000192345678900000019 /* BookParadise/Sources/Views/Sheets/BookFilterSheet.swift */,
+				B10000202345678900000020 /* BookParadise/Sources/Models/QuoteCardTheme.swift */,
+				B10000212345678900000021 /* BookParadise/Sources/Models/BookLendingRecord.swift */,
+				B10000222345678900000022 /* BookParadise/Sources/Services/LendingManager.swift */,
+				B10000232345678900000023 /* BookParadise/Sources/Services/MarkdownExportService.swift */,
+				B10000242345678900000024 /* BookParadise/Sources/Services/SoundscapeManager.swift */,
+				B10000252345678900000025 /* BookParadise/Sources/Views/Sheets/LendBookSheet.swift */,
+				B10000262345678900000026 /* BookParadise/Sources/Views/Sheets/LendingListView.swift */,
+				B10000272345678900000027 /* BookParadise/Sources/Models/ReadingAchievement.swift */,
+				B10000282345678900000028 /* BookParadise/Sources/Services/AchievementManager.swift */,
+				B10000292345678900000029 /* BookParadise/Sources/Views/Sheets/AchievementsView.swift */,
+				B10000302345678900000030 /* BookParadise/Sources/Views/Components/TimeCapsuleCard.swift */,
+				B10000312345678900000031 /* BookParadise/Sources/Services/BookOracleManager.swift */,
+				B10000322345678900000032 /* BookParadise/Sources/Views/Sheets/BookOracleView.swift */,
+				B10000332345678900000033 /* BookParadise/Sources/Views/Sheets/ReadingWrappedView.swift */,
+				B10000342345678900000034 /* BookParadise/Sources/Views/Components/BookSpineView.swift */,
+				B10000352345678900000035 /* BookParadise/Sources/Views/Components/ReadingVelocityChartView.swift */,
+				B10000362345678900000036 /* BookParadise/Sources/Views/Components/HotReadsBentoView.swift */,
+				B10000372345678900000037 /* BookParadise/Sources/Views/Components/ExecutiveQuotaRingAndMixView.swift */,
+				B10000382345678900000038 /* BookParadise/Sources/Views/Components/FloatingQuickDockView.swift */,
+				B10000392345678900000039 /* BookParadise/Sources/Models/ReadingNote.swift */,
+				B10000402345678900000040 /* BookParadise/Sources/Services/ReadingNoteStore.swift */,
+				B10000412345678900000041 /* BookParadise/Sources/Views/MarkdownEditorView.swift */,
+				B10000422345678900000042 /* BookParadise/Sources/Views/NotesJournalView.swift */,
+				B10000432345678900000043 /* BookParadise/Sources/Views/Components/DesktopHoverEffect.swift */,
+				B10000442345678900000044 /* BookParadise/Sources/Services/UpdateManager.swift */,
+				B10000452345678900000045 /* BookParadise/Sources/Views/Sheets/BookSpotifyShareCardView.swift */,
+				B10000462345678900000046 /* BookParadise/Sources/Models/StreakModel.swift */,
+				B10000472345678900000047 /* BookParadise/Sources/Services/StreakManager.swift */,
+				B10000482345678900000048 /* BookParadise/Sources/Models/RPGLevelModel.swift */,
+				B10000492345678900000049 /* BookParadise/Sources/Services/RPGLevelManager.swift */,
+				B10000502345678900000050 /* BookParadise/Sources/Services/HapticManager.swift */,
+				B10000512345678900000051 /* BookParadise/Sources/Services/EPUBReaderService.swift */,
+				B10000522345678900000052 /* BookParadise/Sources/Views/EPUBReaderView.swift */,
+				B10000532345678900000053 /* BookParadise/Sources/Views/Components/RPGDashboardCard.swift */,
+				B10000542345678900000054 /* BookParadise/Sources/Views/Components/ReadingHeatmapView.swift */,
+				B10000552345678900000055 /* BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift */,
+				C10000022345678900000002 /* BookParadise/Sources/Widgets/Info.plist */,
+			);
+			name = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -398,7 +398,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A11C0DE123456789ABCDEF01 /* Assets.xcassets in Resources */,
+				A11C0DE123456789ABCDEF01 /* BookParadise/Resources/Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,95 +412,95 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C10000062345678900000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C10000042345678900000004 /* BookParadise/Sources/Widgets/WidgetDataExporter.swift in Sources */,
+				C10000052345678900000005 /* BookParadise/Sources/Widgets/BookParadiseWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DE6EE531638FBF802B9F50F8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				E4830BD84B2E07F7A6C99C3C /* BookParadiseApp.swift in Sources */,
-				0406C60041C9C1E05C1CBC5F /* LibraryViewModel.swift in Sources */,
-				2F7CB2045D22F2C180772523 /* BingoAndCycle.swift in Sources */,
-				989669DB874D10C99909EFAA /* Book.swift in Sources */,
-				FC8B84D85D7E7B4F5C364E25 /* Enums.swift in Sources */,
-				6BC57A21967A0A76575113C7 /* SampleData.swift in Sources */,
-				A011276AE99FC75ABFB945F8 /* BingoView.swift in Sources */,
-				6404B9BD7B6F37BD8659A5F5 /* BookDetailView.swift in Sources */,
-				9FA497E12BBB2D9C4ED74924 /* CyclesView.swift in Sources */,
-				3AA3EE9A6E79F53428D01E26 /* DashboardView.swift in Sources */,
-				A2D01757B7FB30D83F71BC42 /* LibraryView.swift in Sources */,
-				AF6824F508686520BF8094D4 /* MainTabView.swift in Sources */,
-				2061AACA7DBD3819512CFFE1 /* AddBookSheet.swift in Sources */,
-				BE2E71ED763160EE540E3C56 /* AddToPlanSheet.swift in Sources */,
-				8502E0F48A052AA7E2144F86 /* ProgressUpdateSheet.swift in Sources */,
-				CD5BFEEF8063FE70085AFB8F /* SettingsView.swift in Sources */,
-				67A7B3596F0FE22F0EC42A7B /* BookCoverView.swift in Sources */,
-				B0B755CBA19473B38A8E3D1E /* ReadingCalendarView.swift in Sources */,
-				39591E8E58B37EA6B50D827E /* BarcodeScannerView.swift in Sources */,
-				5BFFAEEBBCB8538A58AEA921 /* GoogleBooksLookupService.swift in Sources */,
-				5D7A6CE5A3A37FD00163E6F6 /* GoogleSheetsAPIService.swift in Sources */,
-				A10000012345678900000001 /* BookQuote.swift in Sources */,
-				A10000022345678900000002 /* ReadingSession.swift in Sources */,
-				A10000032345678900000003 /* ThemeManager.swift in Sources */,
-				A10000042345678900000004 /* QuotesManager.swift in Sources */,
-				A10000052345678900000005 /* ReadingSessionManager.swift in Sources */,
-				A10000062345678900000006 /* QuoteScannerView.swift in Sources */,
-				A10000072345678900000007 /* QuoteCardShareView.swift in Sources */,
-				A10000082345678900000008 /* ReadingSessionView.swift in Sources */,
-				A10000092345678900000009 /* WidgetDataExporter.swift in Sources */,
-				A10000102345678900000010 /* BookParadiseWidget.swift in Sources */,
-				A10000112345678900000011 /* EBookStorageManager.swift in Sources */,
-				A10000122345678900000012 /* QuotesGalleryView.swift in Sources */,
-				A10000132345678900000013 /* DailyMotivationBanner.swift in Sources */,
-				A10000142345678900000014 /* DetailedStatsView.swift in Sources */,
-				A10000152345678900000015 /* ImageCacheManager.swift in Sources */,
-				A10000162345678900000016 /* iCloudSyncManager.swift in Sources */,
-				A10000172345678900000017 /* ThinkingOrbView.swift in Sources */,
-				A10000182345678900000018 /* ReadingChallengeView.swift in Sources */,
-				A10000192345678900000019 /* BookFilterSheet.swift in Sources */,
-				A10000202345678900000020 /* QuoteCardTheme.swift in Sources */,
-				A10000212345678900000021 /* BookLendingRecord.swift in Sources */,
-				A10000222345678900000022 /* LendingManager.swift in Sources */,
-				A10000232345678900000023 /* MarkdownExportService.swift in Sources */,
-				A10000242345678900000024 /* SoundscapeManager.swift in Sources */,
-				A10000252345678900000025 /* LendBookSheet.swift in Sources */,
-				A10000262345678900000026 /* LendingListView.swift in Sources */,
-				A10000272345678900000027 /* ReadingAchievement.swift in Sources */,
-				A10000282345678900000028 /* AchievementManager.swift in Sources */,
-				A10000292345678900000029 /* AchievementsView.swift in Sources */,
-				A10000302345678900000030 /* TimeCapsuleCard.swift in Sources */,
-				A10000312345678900000031 /* BookOracleManager.swift in Sources */,
-				A10000322345678900000032 /* BookOracleView.swift in Sources */,
-				A10000332345678900000033 /* ReadingWrappedView.swift in Sources */,
-				A10000342345678900000034 /* BookSpineView.swift in Sources */,
-				A10000352345678900000035 /* ReadingVelocityChartView.swift in Sources */,
-				A10000362345678900000036 /* HotReadsBentoView.swift in Sources */,
-				A10000372345678900000037 /* ExecutiveQuotaRingAndMixView.swift in Sources */,
-				A10000382345678900000038 /* FloatingQuickDockView.swift in Sources */,
-				A10000392345678900000039 /* ReadingNote.swift in Sources */,
-				A10000402345678900000040 /* ReadingNoteStore.swift in Sources */,
-				A10000412345678900000041 /* MarkdownEditorView.swift in Sources */,
-				A10000422345678900000042 /* NotesJournalView.swift in Sources */,
-				A10000432345678900000043 /* DesktopHoverEffect.swift in Sources */,
-				A10000442345678900000044 /* UpdateManager.swift in Sources */,
-				A10000452345678900000045 /* BookSpotifyShareCardView.swift in Sources */,
-				A10000462345678900000046 /* StreakModel.swift in Sources */,
-				A10000472345678900000047 /* StreakManager.swift in Sources */,
-				A10000482345678900000048 /* RPGLevelModel.swift in Sources */,
-				A10000492345678900000049 /* RPGLevelManager.swift in Sources */,
-				A10000502345678900000050 /* HapticManager.swift in Sources */,
-				A10000512345678900000051 /* EPUBReaderService.swift in Sources */,
-				A10000522345678900000052 /* EPUBReaderView.swift in Sources */,
-				A10000532345678900000053 /* RPGDashboardCard.swift in Sources */,
-				A10000542345678900000054 /* ReadingHeatmapView.swift in Sources */,
-				A10000552345678900000055 /* SoundscapeMixerSheet.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C10000062345678900000006 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C10000042345678900000004 /* WidgetDataExporter.swift in Sources */,
-				C10000052345678900000005 /* BookParadiseWidget.swift in Sources */,
+				0406C60041C9C1E05C1CBC5F /* BookParadise/Sources/ViewModels/LibraryViewModel.swift in Sources */,
+				2F7CB2045D22F2C180772523 /* BookParadise/Sources/Models/BingoAndCycle.swift in Sources */,
+				989669DB874D10C99909EFAA /* BookParadise/Sources/Models/Book.swift in Sources */,
+				FC8B84D85D7E7B4F5C364E25 /* BookParadise/Sources/Models/Enums.swift in Sources */,
+				6BC57A21967A0A76575113C7 /* BookParadise/Sources/Models/SampleData.swift in Sources */,
+				A011276AE99FC75ABFB945F8 /* BookParadise/Sources/Views/BingoView.swift in Sources */,
+				6404B9BD7B6F37BD8659A5F5 /* BookParadise/Sources/Views/BookDetailView.swift in Sources */,
+				9FA497E12BBB2D9C4ED74924 /* BookParadise/Sources/Views/CyclesView.swift in Sources */,
+				3AA3EE9A6E79F53428D01E26 /* BookParadise/Sources/Views/DashboardView.swift in Sources */,
+				A2D01757B7FB30D83F71BC42 /* BookParadise/Sources/Views/LibraryView.swift in Sources */,
+				AF6824F508686520BF8094D4 /* BookParadise/Sources/Views/MainTabView.swift in Sources */,
+				2061AACA7DBD3819512CFFE1 /* BookParadise/Sources/Views/Sheets/AddBookSheet.swift in Sources */,
+				BE2E71ED763160EE540E3C56 /* BookParadise/Sources/Views/Sheets/AddToPlanSheet.swift in Sources */,
+				8502E0F48A052AA7E2144F86 /* BookParadise/Sources/Views/Sheets/ProgressUpdateSheet.swift in Sources */,
+				CD5BFEEF8063FE70085AFB8F /* BookParadise/Sources/Views/Sheets/SettingsView.swift in Sources */,
+				67A7B3596F0FE22F0EC42A7B /* BookParadise/Sources/Views/Components/BookCoverView.swift in Sources */,
+				B0B755CBA19473B38A8E3D1E /* BookParadise/Sources/Views/Components/ReadingCalendarView.swift in Sources */,
+				39591E8E58B37EA6B50D827E /* BookParadise/Sources/Services/BarcodeScannerView.swift in Sources */,
+				5BFFAEEBBCB8538A58AEA921 /* BookParadise/Sources/Services/GoogleBooksLookupService.swift in Sources */,
+				5D7A6CE5A3A37FD00163E6F6 /* BookParadise/Sources/Services/GoogleSheetsAPIService.swift in Sources */,
+				A10000012345678900000001 /* BookParadise/Sources/Models/BookQuote.swift in Sources */,
+				A10000022345678900000002 /* BookParadise/Sources/Models/ReadingSession.swift in Sources */,
+				A10000032345678900000003 /* BookParadise/Sources/Services/ThemeManager.swift in Sources */,
+				A10000042345678900000004 /* BookParadise/Sources/Services/QuotesManager.swift in Sources */,
+				A10000052345678900000005 /* BookParadise/Sources/Services/ReadingSessionManager.swift in Sources */,
+				A10000062345678900000006 /* BookParadise/Sources/Views/Sheets/QuoteScannerView.swift in Sources */,
+				A10000072345678900000007 /* BookParadise/Sources/Views/Sheets/QuoteCardShareView.swift in Sources */,
+				A10000082345678900000008 /* BookParadise/Sources/Views/Sheets/ReadingSessionView.swift in Sources */,
+				A10000092345678900000009 /* BookParadise/Sources/Widgets/WidgetDataExporter.swift in Sources */,
+				A10000102345678900000010 /* BookParadise/Sources/Widgets/BookParadiseWidget.swift in Sources */,
+				A10000112345678900000011 /* BookParadise/Sources/Services/EBookStorageManager.swift in Sources */,
+				A10000122345678900000012 /* BookParadise/Sources/Views/QuotesGalleryView.swift in Sources */,
+				A10000132345678900000013 /* BookParadise/Sources/Views/Components/DailyMotivationBanner.swift in Sources */,
+				A10000142345678900000014 /* BookParadise/Sources/Views/DetailedStatsView.swift in Sources */,
+				A10000152345678900000015 /* BookParadise/Sources/Services/ImageCacheManager.swift in Sources */,
+				A10000162345678900000016 /* BookParadise/Sources/Services/iCloudSyncManager.swift in Sources */,
+				A10000172345678900000017 /* BookParadise/Sources/Views/Components/ThinkingOrbView.swift in Sources */,
+				A10000182345678900000018 /* BookParadise/Sources/Views/ReadingChallengeView.swift in Sources */,
+				A10000192345678900000019 /* BookParadise/Sources/Views/Sheets/BookFilterSheet.swift in Sources */,
+				A10000202345678900000020 /* BookParadise/Sources/Models/QuoteCardTheme.swift in Sources */,
+				A10000212345678900000021 /* BookParadise/Sources/Models/BookLendingRecord.swift in Sources */,
+				A10000222345678900000022 /* BookParadise/Sources/Services/LendingManager.swift in Sources */,
+				A10000232345678900000023 /* BookParadise/Sources/Services/MarkdownExportService.swift in Sources */,
+				A10000242345678900000024 /* BookParadise/Sources/Services/SoundscapeManager.swift in Sources */,
+				A10000252345678900000025 /* BookParadise/Sources/Views/Sheets/LendBookSheet.swift in Sources */,
+				A10000262345678900000026 /* BookParadise/Sources/Views/Sheets/LendingListView.swift in Sources */,
+				A10000272345678900000027 /* BookParadise/Sources/Models/ReadingAchievement.swift in Sources */,
+				A10000282345678900000028 /* BookParadise/Sources/Services/AchievementManager.swift in Sources */,
+				A10000292345678900000029 /* BookParadise/Sources/Views/Sheets/AchievementsView.swift in Sources */,
+				A10000302345678900000030 /* BookParadise/Sources/Views/Components/TimeCapsuleCard.swift in Sources */,
+				A10000312345678900000031 /* BookParadise/Sources/Services/BookOracleManager.swift in Sources */,
+				A10000322345678900000032 /* BookParadise/Sources/Views/Sheets/BookOracleView.swift in Sources */,
+				A10000332345678900000033 /* BookParadise/Sources/Views/Sheets/ReadingWrappedView.swift in Sources */,
+				A10000342345678900000034 /* BookParadise/Sources/Views/Components/BookSpineView.swift in Sources */,
+				A10000352345678900000035 /* BookParadise/Sources/Views/Components/ReadingVelocityChartView.swift in Sources */,
+				A10000362345678900000036 /* BookParadise/Sources/Views/Components/HotReadsBentoView.swift in Sources */,
+				A10000372345678900000037 /* BookParadise/Sources/Views/Components/ExecutiveQuotaRingAndMixView.swift in Sources */,
+				A10000382345678900000038 /* BookParadise/Sources/Views/Components/FloatingQuickDockView.swift in Sources */,
+				A10000392345678900000039 /* BookParadise/Sources/Models/ReadingNote.swift in Sources */,
+				A10000402345678900000040 /* BookParadise/Sources/Services/ReadingNoteStore.swift in Sources */,
+				A10000412345678900000041 /* BookParadise/Sources/Views/MarkdownEditorView.swift in Sources */,
+				A10000422345678900000042 /* BookParadise/Sources/Views/NotesJournalView.swift in Sources */,
+				A10000432345678900000043 /* BookParadise/Sources/Views/Components/DesktopHoverEffect.swift in Sources */,
+				A10000442345678900000044 /* BookParadise/Sources/Services/UpdateManager.swift in Sources */,
+				A10000452345678900000045 /* BookParadise/Sources/Views/Sheets/BookSpotifyShareCardView.swift in Sources */,
+				A10000462345678900000046 /* BookParadise/Sources/Models/StreakModel.swift in Sources */,
+				A10000472345678900000047 /* BookParadise/Sources/Services/StreakManager.swift in Sources */,
+				A10000482345678900000048 /* BookParadise/Sources/Models/RPGLevelModel.swift in Sources */,
+				A10000492345678900000049 /* BookParadise/Sources/Services/RPGLevelManager.swift in Sources */,
+				A10000502345678900000050 /* BookParadise/Sources/Services/HapticManager.swift in Sources */,
+				A10000512345678900000051 /* BookParadise/Sources/Services/EPUBReaderService.swift in Sources */,
+				A10000522345678900000052 /* BookParadise/Sources/Views/EPUBReaderView.swift in Sources */,
+				A10000532345678900000053 /* BookParadise/Sources/Views/Components/RPGDashboardCard.swift in Sources */,
+				A10000542345678900000054 /* BookParadise/Sources/Views/Components/ReadingHeatmapView.swift in Sources */,
+				A10000552345678900000055 /* BookParadise/Sources/Views/Sheets/SoundscapeMixerSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -515,6 +515,57 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		01952CAC1B334E89243BD8EE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		095DF3F2D2FDFEC38E15867F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 30;
+				DERIVE_MACS_SYNTHESIZED_BUNDLE_IDENTIFIER = NO;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = BookParadise/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 3.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,6";
+			};
+			name = Release;
+		};
 		661FD825701FED13ED9F47C2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -545,40 +596,16 @@
 			};
 			name = Debug;
 		};
-		01952CAC1B334E89243BD8EE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		A96B3627A87E45A738603565 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 30;
+				DERIVE_MACS_SYNTHESIZED_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
+				INFOPLIST_FILE = BookParadise/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -589,38 +616,11 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				DERIVE_MACS_SYNTHESIZED_BUNDLE_IDENTIFIER = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
-		};
-		095DF3F2D2FDFEC38E15867F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 30;
-				DEVELOPMENT_TEAM = "";
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "BookParadise/Resources/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 3.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				DERIVE_MACS_SYNTHESIZED_BUNDLE_IDENTIFIER = NO;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
-			};
-			name = Release;
 		};
 		C10000142345678900000014 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -629,7 +629,7 @@
 				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "BookParadise/Sources/Widgets/Info.plist";
+				INFOPLIST_FILE = BookParadise/Sources/Widgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -637,7 +637,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.maxim.bookparadise.widget";
+				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
@@ -656,7 +656,7 @@
 				CURRENT_PROJECT_VERSION = 30;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = "BookParadise/Sources/Widgets/Info.plist";
+				INFOPLIST_FILE = BookParadise/Sources/Widgets/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -664,12 +664,12 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 3.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.maxim.bookparadise.widget";
+				PRODUCT_BUNDLE_IDENTIFIER = com.maxim.bookparadise.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "WIDGET_EXTENSION";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = WIDGET_EXTENSION;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,6";
@@ -679,11 +679,11 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		FD89379CBD003ABEBD95A0DE /* Build configuration list for PBXProject "BookParadise" */ = {
+		C10000132345678900000013 /* Build configuration list for PBXNativeTarget "BookParadiseWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				661FD825701FED13ED9F47C2 /* Debug */,
-				01952CAC1B334E89243BD8EE /* Release */,
+				C10000142345678900000014 /* Debug */,
+				C10000152345678900000015 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -697,17 +697,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C10000132345678900000013 /* Build configuration list for PBXNativeTarget "BookParadiseWidgetExtension" */ = {
+		FD89379CBD003ABEBD95A0DE /* Build configuration list for PBXProject "BookParadise" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C10000142345678900000014 /* Debug */,
-				C10000152345678900000015 /* Release */,
+				661FD825701FED13ED9F47C2 /* Debug */,
+				01952CAC1B334E89243BD8EE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
 	};
 	rootObject = F93B4B99D35782E34D217397 /* Project object */;
 }
