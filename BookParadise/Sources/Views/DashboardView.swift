@@ -243,14 +243,38 @@ public struct DashboardView: View {
             
             Spacer()
             
-            Button(action: {
-                updateManager.installOTAUpdate()
-            }) {
+            Menu {
+                Button(action: {
+                    updateManager.installOTAUpdate()
+                }) {
+                    Label("Установить через OTA", systemImage: "bolt.fill")
+                }
+                
+                Button(action: {
+                    updateManager.installViaTrollStore()
+                }) {
+                    Label("Установить через TrollStore", systemImage: "sparkles")
+                }
+                
+                if let ipa = updateManager.ipaURL {
+                    Link(destination: ipa) {
+                        Label("Скачать .IPA файл", systemImage: "arrow.down.doc.fill")
+                    }
+                }
+                
+                if let page = updateManager.releasePageURL {
+                    Link(destination: page) {
+                        Label("Открыть на GitHub", systemImage: "safari.fill")
+                    }
+                }
+            } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "arrow.down.app.fill")
                         .font(.system(size: 11))
                     Text("Обновить")
                         .font(.system(size: 11, weight: .bold))
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 9, weight: .semibold))
                 }
                 .foregroundColor(.white)
                 .padding(.horizontal, 10)

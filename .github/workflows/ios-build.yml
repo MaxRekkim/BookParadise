@@ -108,6 +108,7 @@ jobs:
           echo "Found iOS app at: $APP_PATH"
           cp -r "$APP_PATH" Payload/
           zip -r "BookParadise-${VERSION}.ipa" Payload
+          cp "BookParadise-${VERSION}.ipa" "BookParadise.ipa"
           rm -rf Payload
 
       # --- MACOS (NATIVE RAYCAST/LINEAR COCOA WEBKIT APP, DMG & PKG) ---
@@ -125,7 +126,7 @@ jobs:
           mkdir -p "${APP_BUNDLE}/Contents/Resources"
           
           clang -O2 -fobjc-arc \
-            -target arm64-apple-macos12.0 \
+            -arch arm64 -arch x86_64 \
             -framework Cocoa \
             -framework WebKit \
             macos-runner/main.m \
@@ -134,6 +135,14 @@ jobs:
           
           cp macos-runner/Info.plist "${APP_BUNDLE}/Contents/Info.plist"
           cp -r dist "${APP_BUNDLE}/Contents/Resources/"
+          if [ -f macos-runner/AppIcon.icns ]; then
+            cp macos-runner/AppIcon.icns "${APP_BUNDLE}/Contents/Resources/AppIcon.icns"
+            echo "✅ Bundled AppIcon.icns into Contents/Resources/"
+          fi
+          
+          # Sign bundle and clear quarantine attributes
+          codesign --force --deep --sign - "${APP_BUNDLE}"
+          xattr -cr "${APP_BUNDLE}"
           
           # PKG
           mkdir -p pkg_root
@@ -154,7 +163,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: BookParadise-${{ steps.get-version.outputs.version }}-iOS-IPA
-          path: BookParadise-*.ipa
+          path: BookParadise*.ipa
           retention-days: 14
 
       - name: Upload macOS DMG Artifact
@@ -438,13 +447,20 @@ jobs:
           p = 'manifest.plist'
           with open(p, 'rb') as f:
               pl = plistlib.load(f)
-          pl['items'][0]['assets'][0]['url'] = 'https://github.com/MaxRekkim/BookParadise/releases/latest/download/BookParadise-' + ver + '.ipa'
+          pl['items'][0]['assets'][0]['url'] = 'https://github.com/MaxRekkim/BookParadise/releases/latest/download/BookParadise.ipa'
           pl['items'][0]['metadata']['bundle-version'] = ver
           with open(p, 'wb') as f:
               plistlib.dump(pl, f)
           "
           echo "Generated manifest.plist for v${{ steps.release-info.outputs.version }}:"
           cat manifest.plist
+
+      - name: Commit updated manifest.plist to main branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add manifest.plist
+          git diff --staged --quiet || (git commit -m "chore(release): update manifest.plist to v${{ steps.release-info.outputs.version }} [skip ci]" && git push origin HEAD:main)
 
       - name: Publish GitHub Release with all 4 platforms
         uses: softprops/action-gh-release@v2
@@ -453,7 +469,7 @@ jobs:
           name: "Книжный Рай ${{ steps.release-info.outputs.tag }} (iOS, macOS, Android, Windows)"
           body_path: CHANGELOG.md
           files: |
-            dist-release/BookParadise-*.ipa
+            dist-release/BookParadise*.ipa
             dist-release/BookParadise-*.dmg
             dist-release/BookParadise-*.pkg
             dist-release/BookParadise-*-Android.apk

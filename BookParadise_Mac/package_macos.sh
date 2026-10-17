@@ -15,9 +15,9 @@ rm -rf "$APP_BUNDLE"
 mkdir -p "${APP_BUNDLE}/Contents/MacOS"
 mkdir -p "${APP_BUNDLE}/Contents/Resources"
 
-echo "=== 3. Компиляция нативного Cocoa/WebKit раннера ==="
+echo "=== 3. Компиляция универсального нативного Cocoa/WebKit раннера (Apple Silicon + Intel) ==="
 clang -O2 -fobjc-arc \
-  -target arm64-apple-macos12.0 \
+  -arch arm64 -arch x86_64 \
   -framework Cocoa \
   -framework WebKit \
   "${DIR}/macos-runner/main.m" \
@@ -30,6 +30,9 @@ cp "${DIR}/macos-runner/Info.plist" "${APP_BUNDLE}/Contents/Info.plist"
 cp -r "${DIR}/dist" "${APP_BUNDLE}/Contents/Resources/"
 if [ -f "${DIR}/macos-runner/AppIcon.icns" ]; then
   cp "${DIR}/macos-runner/AppIcon.icns" "${APP_BUNDLE}/Contents/Resources/AppIcon.icns"
+  echo "✅ AppIcon.icns скопирован в Contents/Resources/AppIcon.icns"
+else
+  echo "⚠️ ВНИМАНИЕ: AppIcon.icns не найден в macos-runner!"
 fi
 
 echo "=== 4.1. Подпись бандла (ad-hoc codesign) и снятие атрибутов карантина ==="
@@ -37,7 +40,7 @@ codesign --force --deep --sign - "${APP_BUNDLE}"
 xattr -cr "${APP_BUNDLE}"
 
 echo "=== 5. Создание инсталлятора PKG ==="
-VERSION="2.12.1"
+VERSION="2.12.2"
 PKG_NAME="BookParadise-${VERSION}.pkg"
 rm -rf pkg_root "$PKG_NAME"
 mkdir -p pkg_root

@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## [2.12.2] — 2026-10-17
+
+### Исправлено и улучшено (Native macOS Networking, Real Google Sheets Sync, AppIcon.icns & Robust Apple OTA)
+- **Устранение проблем с иконкой и запуском на macOS**:
+  - Файл `AppIcon.icns` теперь гарантированно включается в `Contents/Resources/` как при локальной сборке, так и в CI workflow `.github/workflows/ios-build.yml`. Устранен баг с отображением пустой стандартной иконки документа в Dock и Finder.
+  - Добавлена рекурсивная подпись бандла (`codesign --force --deep --sign -`) и очистка атрибутов карантина (`xattr -cr`), благодаря чему приложение запускается в macOS без ошибок LaunchServices и блокировок Gatekeeper.
+  - Сборка бинарника раннера переведена на универсальную архитектуру (`-arch arm64 -arch x86_64`) с нативной поддержкой Apple Silicon (M1/M2/M3/M4) и Intel.
+- **Нативное проксирование сети и загрузка библиотеки из Google Sheets**:
+  - В `macos-runner/main.m` реализован нативный перехват запросов `/api/proxy` через `AppSchemeHandler` с вызовом системного `NSURLSession`. Это полностью устранило CORS-блокировки WebKit и проблемы с HTTP 302 редиректами скриптов Google (`script.google.com` -> `script.googleusercontent.com`).
+  - При запуске приложение автоматически подтягивает сохраненный в системных настройках macOS (`NSUserDefaults` ключа `GoogleAppsScriptURL`) адрес таблицы пользователя, мгновенно синхронизируя все 300+ книг библиотеки без необходимости повторного ввода URL.
+- **Исправление ошибки беспроводной установки (OTA) на iPhone**:
+  - Устранена ошибка 404 в `manifest.plist`, из-за которой iOS `installd` сообщал «Не удается установить приложение». В релизы теперь публикуется постоянный ассет `BookParadise.ipa`, а обновленный манифест автоматически пушится в ветку `main`.
+  - В мобильном баннере `DashboardView` кнопка обновления расширена до удобного контекстного меню с тремя опциями: «Установить через OTA», «Установить через TrollStore» и «Скачать .IPA» (для AltStore/Scarlet/Sideloadly).
+
 ## [2.12.0] — 2026-10-17
 
 ### Добавлено и улучшено (Multiplatform Over-The-Air Auto-Updates & Raycast/Linear Native macOS Overhaul)

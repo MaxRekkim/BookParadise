@@ -36,9 +36,14 @@ interface ApiResponse {
 
 export const apiService = {
   getEffectiveUrl(): string {
+    const nativeInjected = (window as any).__NATIVE_DEFAULT_SHEETS_URL;
     const saved = storageService.getSheetsUrl();
     if (saved && saved.trim().startsWith('https://')) {
       return saved.trim();
+    }
+    if (nativeInjected && typeof nativeInjected === 'string' && nativeInjected.trim().startsWith('https://')) {
+      storageService.saveSheetsUrl(nativeInjected.trim());
+      return nativeInjected.trim();
     }
     // Используем сохраненный URL по умолчанию
     storageService.saveSheetsUrl(DEFAULT_SHEETS_URL);
@@ -46,16 +51,25 @@ export const apiService = {
   },
 
   async fetchLibrary(): Promise<{ success: boolean; books: Book[]; count: number; error?: string }> {
-    const url = this.getEffectiveUrl();
-    if (!url) {
+    const rawUrl = this.getEffectiveUrl();
+    if (!rawUrl) {
       return { success: false, books: [], count: 0, error: 'URL Google Таблицы не настроен' };
     }
 
+    // Если приложение запущено внутри нативного macOS-бандла (app://),
+    // маршрутизируем запрос через встроенный нативный сетевой прокси Cocoa (AppSchemeHandler) для 100% обхода CORS и системных редиректов
+    const isNativeMac = window.location.protocol === 'app:' || Boolean((window as any).webkit?.messageHandlers);
+    const targetUrl = isNativeMac
+      ? `/api/proxy?url=${encodeURIComponent(rawUrl)}`
+      : rawUrl;
+
+    console.log(`[BookParadise API] Fetching library from: ${rawUrl} (via: ${targetUrl})`);
+
     try {
-      const response = await fetch(url, {
+      const response = await fetch(targetUrl, {
         method: 'GET',
         headers: {
-          Accept: 'application/json',
+          Accept: 'application/json, text/plain, */*',
         },
       });
 
