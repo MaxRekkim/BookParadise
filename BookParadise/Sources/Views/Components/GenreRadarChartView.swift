@@ -1,4 +1,5 @@
 import SwiftUI
+import Darwin
 
 // MARK: - Виджет интерактивного жанрового радара (Spider Chart)
 public struct GenreRadarChartView: View {
@@ -170,12 +171,12 @@ struct RadarBackgroundGrid: Shape {
         
         // Концентрические полигоны
         for level in 1...levels {
-            let currentRadius = radius * (Double(level) / Double(levels))
+            let currentRadius = radius * CGFloat(Double(level) / Double(levels))
             for i in 0..<sides {
                 let angle = Double(i) * angleStep - Double.pi / 2
                 let point = CGPoint(
-                    x: center.x + CGFloat(cos(angle) * currentRadius),
-                    y: center.y + CGFloat(sin(angle) * currentRadius)
+                    x: center.x + CGFloat(Darwin.cos(angle)) * currentRadius,
+                    y: center.y + CGFloat(Darwin.sin(angle)) * currentRadius
                 )
                 if i == 0 {
                     path.move(to: point)
@@ -190,8 +191,8 @@ struct RadarBackgroundGrid: Shape {
         for i in 0..<sides {
             let angle = Double(i) * angleStep - Double.pi / 2
             let point = CGPoint(
-                x: center.x + CGFloat(cos(angle) * radius),
-                y: center.y + CGFloat(sin(angle) * radius)
+                x: center.x + CGFloat(Darwin.cos(angle)) * radius,
+                y: center.y + CGFloat(Darwin.sin(angle)) * radius
             )
             path.move(to: center)
             path.addLine(to: point)
@@ -224,10 +225,10 @@ struct RadarDataPolygon: Shape {
         for (i, pt) in points.enumerated() {
             let angle = Double(i) * angleStep - Double.pi / 2
             // Минимальный радиус 0.08 для видимости полигона
-            let effectiveRadius = (0.08 + pt.normalizedRadius * 0.92) * maxRadius * scale
+            let effectiveRadius = CGFloat((0.08 + pt.normalizedRadius * 0.92) * scale) * maxRadius
             let currentPoint = CGPoint(
-                x: center.x + CGFloat(cos(angle) * effectiveRadius),
-                y: center.y + CGFloat(sin(angle) * effectiveRadius)
+                x: center.x + CGFloat(Darwin.cos(angle)) * effectiveRadius,
+                y: center.y + CGFloat(Darwin.sin(angle)) * effectiveRadius
             )
             
             if isFirst {
@@ -259,17 +260,17 @@ struct RadarVerticesView: View {
             ForEach(0..<count, id: \.self) { i in
                 let pt = points[i]
                 let angle = Double(i) * angleStep - Double.pi / 2
-                let effectiveRadius = (0.08 + pt.normalizedRadius * 0.92) * maxRadius * scale
+                let effectiveRadius = CGFloat((0.08 + pt.normalizedRadius * 0.92) * scale) * maxRadius
                 let pointPos = CGPoint(
-                    x: center.x + CGFloat(cos(angle) * effectiveRadius),
-                    y: center.y + CGFloat(sin(angle) * effectiveRadius)
+                    x: center.x + CGFloat(Darwin.cos(angle)) * effectiveRadius,
+                    y: center.y + CGFloat(Darwin.sin(angle)) * effectiveRadius
                 )
                 
                 // Внешняя метка иконки жанра
                 let labelRadius = maxRadius + 16
                 let labelPos = CGPoint(
-                    x: center.x + CGFloat(cos(angle) * labelRadius),
-                    y: center.y + CGFloat(sin(angle) * labelRadius)
+                    x: center.x + CGFloat(Darwin.cos(angle)) * labelRadius,
+                    y: center.y + CGFloat(Darwin.sin(angle)) * labelRadius
                 )
                 
                 ZStack {
