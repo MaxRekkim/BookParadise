@@ -8,11 +8,14 @@ import SwiftUI
 /// - Выбор благородного ночного спектра (Янтарь 1800K, Глубокий Рубин 650nm, Теплая Свеча 2200K)
 /// - Безупречная микротипографика без переносов букв и разрывов времени
 /// - Быстрое управление звуковым пейзажем библиотеки (камин, дождь)
+@MainActor
 public struct StandByNightstandClockView: View {
     public let currentBook: Book?
     public var quoteOfTheDay: String = "Человек с хорошей книгой в руках никогда не может быть одиноким."
     public var quoteAuthor: String = "Карло Гольдони"
     public var onDismiss: (() -> Void)? = nil
+
+    @ObservedObject private var soundscape = SoundscapeManager.shared
 
     /// Цветовой спектр ночного освещения
     public enum NightIllumination: String, CaseIterable, Identifiable {
@@ -143,18 +146,18 @@ public struct StandByNightstandClockView: View {
             HStack(spacing: 16) {
                 // Быстрый переключатель звукового фона
                 Button(action: {
-                    SoundscapeManager.shared.togglePlayback()
+                    soundscape.togglePlayback()
                     HapticManager.shared.lightTap()
                 }) {
                     HStack(spacing: 6) {
-                        Image(systemName: SoundscapeManager.shared.isPlaying ? "waveform" : "headphones")
+                        Image(systemName: soundscape.isPlaying ? "waveform" : "headphones")
                             .font(.system(size: 14, weight: .semibold))
                         if !isLandscape {
-                            Text(SoundscapeManager.shared.isPlaying ? "Звуки ночи" : "Тишина")
+                            Text(soundscape.isPlaying ? "Звуки ночи" : "Тишина")
                                 .font(.system(size: 11, weight: .medium))
                         }
                     }
-                    .foregroundColor(activeGlow.opacity(SoundscapeManager.shared.isPlaying ? 0.95 : 0.6))
+                    .foregroundColor(activeGlow.opacity(soundscape.isPlaying ? 0.95 : 0.6))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
                     .background(
