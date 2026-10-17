@@ -11,7 +11,7 @@ public struct BookParadiseApp: App {
             MainTabView()
                 .tint(theme.primaryAccent)
                 #if targetEnvironment(macCatalyst) || os(macOS)
-                .frame(minWidth: 850, idealWidth: 1050, minHeight: 620, idealHeight: 750)
+                .frame(minWidth: 980, idealWidth: 1200, minHeight: 680, idealHeight: 820)
                 #endif
         }
         #if targetEnvironment(macCatalyst) || os(macOS)

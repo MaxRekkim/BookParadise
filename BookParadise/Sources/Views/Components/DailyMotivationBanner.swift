@@ -176,7 +176,9 @@ public struct DailyMotivationBanner: View {
             quoteIndex = (day + hour) % quotes.count
         }
         .sheet(isPresented: $isShowingChallenge) {
-            ReadingChallengeView(viewModel: viewModel)
+            ReadingChallengeView(viewModel: viewModel, onDismiss: {
+                isShowingChallenge = false
+            })
         }
         .sheet(isPresented: $isShowingQuotesGallery) {
             QuotesGalleryView(viewModel: viewModel, onDismiss: {

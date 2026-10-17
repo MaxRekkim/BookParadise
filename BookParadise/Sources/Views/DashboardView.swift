@@ -19,6 +19,7 @@ public struct DashboardView: View {
     @State private var isShowingWrapped: Bool = false
     @State private var isShowingAddBook: Bool = false
     @State private var isShowingNotesJournal: Bool = false
+    @State private var isShowingSearchSheet: Bool = false
     
     public init(viewModel: LibraryViewModel) {
         self.viewModel = viewModel
@@ -92,7 +93,7 @@ public struct DashboardView: View {
                 // Плавающий док быстрых действий (Floating Quick Navigation Dock)
                 FloatingQuickDockView(
                     viewModel: viewModel,
-                    onSearchTapped: { isShowingDetailedStats = true },
+                    onSearchTapped: { isShowingSearchSheet = true },
                     onAddBookTapped: { isShowingAddBook = true },
                     onTimerTapped: {
                         if let first = viewModel.readingNowBooks.first ?? viewModel.books.first {
@@ -179,6 +180,16 @@ public struct DashboardView: View {
             .sheet(isPresented: $isShowingDetailedStats) {
                 NavigationStack {
                     DetailedStatsView(viewModel: viewModel)
+                }
+            }
+            .sheet(isPresented: $isShowingSearchSheet) {
+                NavigationStack {
+                    FilteredBooksView(
+                        title: "Поиск по библиотеке",
+                        books: viewModel.books,
+                        viewModel: viewModel,
+                        onDismiss: { isShowingSearchSheet = false }
+                    )
                 }
             }
             .sheet(isPresented: $isShowingLending) {

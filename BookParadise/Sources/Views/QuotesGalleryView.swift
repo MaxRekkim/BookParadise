@@ -19,20 +19,21 @@ public struct QuotesGalleryView: View {
     }
     
     private var filteredQuotes: [(quote: BookQuote, book: Book)] {
+        let booksDict = Dictionary(uniqueKeysWithValues: viewModel.books.map { ($0.id, $0) })
+        let query = searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         var results: [(quote: BookQuote, book: Book)] = []
         
         for quote in quotesManager.quotes {
-            let matchingBook = viewModel.books.first(where: { $0.id == quote.bookId }) ?? Book(
+            let matchingBook = booksDict[quote.bookId] ?? Book(
                 id: quote.bookId,
                 title: "Книга #\(quote.bookId)",
                 author: "Автор неизвестен",
                 totalPages: 1
             )
             
-            if searchText.isEmpty {
+            if query.isEmpty {
                 results.append((quote, matchingBook))
             } else {
-                let query = searchText.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
                 if quote.text.lowercased().contains(query) ||
                     (quote.note?.lowercased().contains(query) ?? false) ||
                     matchingBook.title.lowercased().contains(query) ||
@@ -45,9 +46,20 @@ public struct QuotesGalleryView: View {
         return results
     }
     
+    private func handleDismiss() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        if let onDismiss = onDismiss {
+            onDismiss()
+        } else {
+            dismiss()
+        }
+    }
+    
     public var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
+                searchBarView
+                
                 if filteredQuotes.isEmpty {
                     emptyQuotesView
                 } else {
@@ -56,15 +68,13 @@ public struct QuotesGalleryView: View {
             }
             .background(Color(UIColor.systemGroupedBackground))
             .navigationTitle("Цитаты и заметки (\(quotesManager.quotes.count))")
-            .searchable(text: $searchText, prompt: "Поиск по цитатам, авторам, книгам...")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                if onDismiss != nil {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Готово") {
-                            onDismiss?()
-                            dismiss()
-                        }
-                        .fontWeight(.semibold)
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(action: handleDismiss) {
+                        Text("Готово")
+                            .fontWeight(.bold)
+                            .foregroundColor(theme.primaryAccent)
                     }
                 }
             }
@@ -87,11 +97,34 @@ public struct QuotesGalleryView: View {
         }
     }
     
+    private var searchBarView: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.secondary)
+            TextField("Поиск по цитатам, авторам, книгам...", text: $searchText)
+                .textFieldStyle(.plain)
+            if !searchText.isEmpty {
+                Button(action: { searchText = "" }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color(UIColor.tertiarySystemGroupedBackground))
+        .cornerRadius(10)
+        .padding(.horizontal)
+        .padding(.top, 8)
+    }
+    
     private var quotesScrollView: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
                 ForEach(filteredQuotes, id: \.quote.id) { item in
                     quoteCardView(quote: item.quote, book: item.book)
+                        .desktopHover(scale: 1.015, yOffset: -2)
                 }
             }
             .padding()
@@ -153,12 +186,15 @@ public struct QuotesGalleryView: View {
                         Label("Удалить", systemImage: "trash")
                     }
                 } label: {
-                    Image(systemName: "ellipsis.circle")
-                        .font(.title3)
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.secondary)
-                        .frame(width: 36, height: 36)
-                        .contentShape(Rectangle())
+                        .frame(width: 32, height: 32)
+                        .background(Color(UIColor.tertiarySystemFill))
+                        .clipShape(Circle())
                 }
+                .menuStyle(.borderlessButton)
+                .buttonStyle(.plain)
             }
             
             Divider()

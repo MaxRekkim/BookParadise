@@ -6,12 +6,20 @@ public struct ReadingChallengeView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
 
-    @AppStorage("annualGoalBooks") private var annualGoal: Int = 30
-    @State private var customGoalText: String = ""
-    @State private var isEditingGoal: Bool = false
+    public var onDismiss: (() -> Void)? = nil
 
-    public init(viewModel: LibraryViewModel) {
+    @AppStorage("annualGoalBooks") private var annualGoal: Int = 30
+    @AppStorage("monthlySprintPagesGoal") private var monthlySprintPagesGoal: Int = 400
+    @ObservedObject private var sessionManager = ReadingSessionManager.shared
+
+    @State private var isExpandedGrid: Bool = false
+    @State private var selectedBookForDetail: Book? = nil
+    @State private var sprintGoalInput: String = ""
+    @State private var annualGoalInput: String = ""
+
+    public init(viewModel: LibraryViewModel, onDismiss: (() -> Void)? = nil) {
         self.viewModel = viewModel
+        self.onDismiss = onDismiss
     }
 
     private var readBooksCount: Int {
@@ -41,8 +49,24 @@ public struct ReadingChallengeView: View {
         viewModel.books.filter { $0.status == .read }
     }
 
-    @AppStorage("monthlySprintPagesGoal") private var monthlySprintPagesGoal: Int = 400
-    @ObservedObject private var sessionManager = ReadingSessionManager.shared
+    private var completedTotalPages: Int {
+        completedBooks.reduce(0) { $0 + $1.totalPages }
+    }
+
+    private var averageBookPages: Int {
+        guard !completedBooks.isEmpty else { return 0 }
+        return completedTotalPages / completedBooks.count
+    }
+
+    private var topCompletedGenre: String {
+        guard !completedBooks.isEmpty else { return "Разное" }
+        var counts: [String: Int] = [:]
+        for book in completedBooks {
+            let g = book.genre.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !g.isEmpty { counts[g, default: 0] += 1 }
+        }
+        return counts.max(by: { $0.value < $1.value })?.key ?? "Художественная литература"
+    }
 
     private var currentMonthName: String {
         let formatter = DateFormatter()
@@ -97,51 +121,80 @@ public struct ReadingChallengeView: View {
     }
 
     public var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // 1. Главный прогресс-круг и цель
-                    goalProgressCard
-
-                    // 2. Умная аналитика темпа
-                    paceAnalyticsCard
-
-                    // 2.5. Марафон текущего месяца (Спринт)
-                    monthlySprintCard
-
-                    // 3. Быстрая настройка персональной цели
-                    goalSettingCard
-
-                    // 4. Полка завершённых книг года
-                    completedBooksShelf
-
-                    Spacer(minLength: 40)
+        Group {
+            if onDismiss != nil {
+                NavigationStack {
+                    scrollContent
+                        .navigationTitle("Книжный вызов 2026")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Готово") {
+                                    handleDismiss()
+                                }
+                                .fontWeight(.bold)
+                                .foregroundColor(theme.primaryAccent)
+                                .keyboardShortcut(.defaultAction)
+                            }
+                        }
                 }
-                .padding(20)
+            } else {
+                scrollContent
+                    .navigationTitle("Книжный вызов 2026")
+                    .navigationBarTitleDisplayMode(.inline)
             }
-            .background(Color(UIColor.systemGroupedBackground))
-            .navigationTitle("Книжный вызов 2026")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Готово") {
-                        dismiss()
-                    }
-                    .fontWeight(.bold)
-                    .foregroundColor(theme.primaryAccent)
-                }
+        }
+        .sheet(item: $selectedBookForDetail) { book in
+            NavigationStack {
+                BookDetailView(viewModel: viewModel, bookId: book.id)
             }
         }
     }
 
-    // MARK: - 1. Главная карточка прогресса
+    private var scrollContent: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                // 1. Главный прогресс-круг и цель (без обрезки сверху)
+                goalProgressCard
+
+                // 2. Умная аналитика темпа
+                paceAnalyticsCard
+
+                // 3. Марафон текущего месяца (Спринт с ползунком до 10 000 стр)
+                monthlySprintCard
+
+                // 4. Настройка годовой цели (с шагом 1)
+                goalSettingCard
+
+                // 5. Полка завершённых книг года (с разворотом в сетку и переходом в детали)
+                completedBooksShelf
+
+                Spacer(minLength: 40)
+            }
+            .padding(20)
+        }
+        .background(Color(UIColor.systemGroupedBackground))
+    }
+
+    private func handleDismiss() {
+        #if targetEnvironment(macCatalyst)
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        #endif
+        if let onDismiss = onDismiss {
+            onDismiss()
+        } else {
+            dismiss()
+        }
+    }
+
+    // MARK: - 1. Главная карточка прогресса (с запасом высоты)
     private var goalProgressCard: some View {
         VStack(spacing: 16) {
             ZStack {
                 // Фоновое кольцо
                 Circle()
                     .stroke(theme.primaryAccent.opacity(0.12), lineWidth: 16)
-                    .frame(width: 190, height: 190)
+                    .frame(width: 180, height: 180)
 
                 // Прогресс кольцо
                 Circle()
@@ -155,12 +208,12 @@ public struct ReadingChallengeView: View {
                         style: StrokeStyle(lineWidth: 16, lineCap: .round)
                     )
                     .rotationEffect(.degrees(-90))
-                    .frame(width: 190, height: 190)
+                    .frame(width: 180, height: 180)
                     .animation(.spring(response: 0.6, dampingFraction: 0.8), value: progressRatio)
 
                 VStack(spacing: 4) {
                     Text("\(readBooksCount)")
-                        .font(.system(size: 48, weight: .black, design: .rounded))
+                        .font(.system(size: 46, weight: .black, design: .rounded))
                         .foregroundColor(Color(UIColor.label))
 
                     Text("из \(annualGoal) книг")
@@ -174,7 +227,8 @@ public struct ReadingChallengeView: View {
                         .foregroundColor(theme.primaryAccent)
                 }
             }
-            .frame(width: 200, height: 200)
+            .frame(width: 210, height: 210)
+            .padding(.top, 10)
 
             HStack(spacing: 24) {
                 VStack(spacing: 2) {
@@ -248,7 +302,7 @@ public struct ReadingChallengeView: View {
         )
     }
 
-    // MARK: - 2.5. Марафон месяца (Спринт)
+    // MARK: - 3. Марафон месяца (Спринт с ползунком и строкой ввода до 10 000 стр)
     private var monthlySprintCard: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
@@ -341,22 +395,86 @@ public struct ReadingChallengeView: View {
             }
             .padding(.top, 4)
 
-            // Быстрый выбор планки спринта
-            HStack(spacing: 8) {
-                ForEach([250, 400, 600, 1000], id: \.self) { goal in
-                    Button(action: {
-                        withAnimation { monthlySprintPagesGoal = goal }
-                    }) {
-                        Text("\(goal) стр")
-                            .font(.caption2)
-                            .fontWeight(.medium)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(monthlySprintPagesGoal == goal ? Color.orange : Color(UIColor.tertiarySystemGroupedBackground))
-                            .foregroundColor(monthlySprintPagesGoal == goal ? .white : .primary)
-                            .cornerRadius(8)
+            Divider()
+
+            // Ползунок и строка ввода цели до 10 000 страниц
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("Настройка цели спринта:")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.secondary)
+
+                    Spacer()
+
+                    HStack(spacing: 4) {
+                        TextField(
+                            "Цель",
+                            value: $monthlySprintPagesGoal,
+                            format: .number
+                        )
+                        .keyboardType(.numberPad)
+                        .multilineTextAlignment(.trailing)
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .frame(width: 65)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(Color(UIColor.tertiarySystemFill))
+                        .cornerRadius(6)
+
+                        Text("стр.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
+
+                Slider(
+                    value: Binding(
+                        get: { Double(monthlySprintPagesGoal) },
+                        set: { monthlySprintPagesGoal = Int($0) }
+                    ),
+                    in: 50...10000,
+                    step: 50
+                )
+                .tint(.orange)
+
+                HStack {
+                    Text("50 стр.")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text("5 000 стр.")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text("10 000 стр.")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+
+                // Быстрые пресеты до 10000
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        ForEach([300, 500, 1000, 2500, 5000, 10000], id: \.self) { goal in
+                            let isSelected = monthlySprintPagesGoal == goal
+                            Button(action: {
+                                withAnimation { monthlySprintPagesGoal = goal }
+                            }) {
+                                Text("\(goal) стр")
+                                    .font(.caption2)
+                                    .fontWeight(isSelected ? .bold : .medium)
+                                    .padding(.horizontal, 9)
+                                    .padding(.vertical, 5)
+                                    .background(isSelected ? Color.orange : Color(UIColor.tertiarySystemGroupedBackground))
+                                    .foregroundColor(isSelected ? .white : .primary)
+                                    .cornerRadius(8)
+                            }
+                            .buttonStyle(.plain)
+                            .desktopHover(scale: 1.05, yOffset: -1)
+                        }
+                    }
+                }
+                .padding(.top, 2)
             }
         }
         .padding(16)
@@ -369,7 +487,7 @@ public struct ReadingChallengeView: View {
         )
     }
 
-    // MARK: - 3. Настройка цели
+    // MARK: - 4. Настройка годовой цели (Шаг = 1)
     private var goalSettingCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Ваша годовая цель")
@@ -387,31 +505,49 @@ public struct ReadingChallengeView: View {
 
                 HStack(spacing: 12) {
                     Button(action: {
-                        if annualGoal > 5 { annualGoal -= 5 }
+                        if annualGoal > 1 { annualGoal -= 1 }
                     }) {
                         Image(systemName: "minus.circle.fill")
                             .font(.title2)
                             .foregroundColor(theme.primaryAccent)
                     }
+                    .buttonStyle(.plain)
+                    .desktopHover(scale: 1.1, yOffset: -1)
 
-                    Text("\(annualGoal)")
-                        .font(.title3)
-                        .fontWeight(.heavy)
-                        .frame(minWidth: 44)
+                    HStack(spacing: 2) {
+                        TextField(
+                            "Цель",
+                            value: $annualGoal,
+                            format: .number
+                        )
+                        .keyboardType(.numberPad)
+                        .multilineTextAlignment(.center)
+                        .font(.system(size: 18, weight: .heavy, design: .rounded))
+                        .frame(width: 48)
+                        .padding(.vertical, 2)
+                        .background(Color(UIColor.tertiarySystemFill))
+                        .cornerRadius(6)
+
+                        Text("книг")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
 
                     Button(action: {
-                        annualGoal += 5
+                        annualGoal += 1
                     }) {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
                             .foregroundColor(theme.primaryAccent)
                     }
+                    .buttonStyle(.plain)
+                    .desktopHover(scale: 1.1, yOffset: -1)
                 }
             }
 
             // Быстрые пресеты
             HStack(spacing: 8) {
-                ForEach([20, 30, 40, 50, 75, 100], id: \.self) { preset in
+                ForEach([12, 24, 30, 50, 75, 100], id: \.self) { preset in
                     let isSelected = annualGoal == preset
                     Button(action: {
                         annualGoal = preset
@@ -425,6 +561,8 @@ public struct ReadingChallengeView: View {
                             .foregroundColor(isSelected ? .white : Color(UIColor.label))
                             .cornerRadius(8)
                     }
+                    .buttonStyle(.plain)
+                    .desktopHover(scale: 1.05, yOffset: -1)
                 }
             }
             .padding(.top, 4)
@@ -439,59 +577,84 @@ public struct ReadingChallengeView: View {
         )
     }
 
-    // MARK: - 4. Полка завершённых книг
+    // MARK: - 5. Полка завершённых книг (с разворотом в сетку и открытием)
     private var completedBooksShelf: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text("Прочитано в этом году")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundColor(.secondary)
-                    .textCase(.uppercase)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Прочитано в этом году")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(.secondary)
+                        .textCase(.uppercase)
+
+                    Text("\(completedBooks.count) \(bookWord(for: completedBooks.count)) • \(completedTotalPages) стр.")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
 
                 Spacer()
 
-                Text("\(completedBooks.count) книг")
-                    .font(.caption)
-                    .fontWeight(.semibold)
-                    .foregroundColor(theme.primaryAccent)
+                if !completedBooks.isEmpty {
+                    Button(action: {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                            isExpandedGrid.toggle()
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: isExpandedGrid ? "rectangle.grid.1x2" : "square.grid.2x2")
+                            Text(isExpandedGrid ? "Свернуть" : "Развернуть сетку")
+                        }
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(theme.primaryAccent)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(theme.primaryAccent.opacity(0.12))
+                        .cornerRadius(8)
+                    }
+                    .buttonStyle(.plain)
+                    .desktopHover(scale: 1.05, yOffset: -1)
+                }
             }
 
             if completedBooks.isEmpty {
-                Text("Пока нет прочитанных книг в этом году")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding(.vertical, 12)
+                VStack(spacing: 8) {
+                    Image(systemName: "books.vertical")
+                        .font(.largeTitle)
+                        .foregroundColor(.secondary.opacity(0.5))
+                    Text("Пока нет прочитанных книг в этом году")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
             } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
+                // Статистический срез по завершённым книгам
+                HStack(spacing: 12) {
+                    statPill(title: "Всего страниц", value: "\(completedTotalPages)", icon: "book.pages")
+                    statPill(title: "Средний объём", value: "\(averageBookPages) стр.", icon: "ruler")
+                    statPill(title: "Топ жанр", value: topCompletedGenre, icon: "tag.fill")
+                }
+
+                if isExpandedGrid {
+                    // Развёрнутая адаптивная сетка книг
+                    LazyVGrid(
+                        columns: [GridItem(.adaptive(minimum: 120), spacing: 14)],
+                        spacing: 16
+                    ) {
                         ForEach(completedBooks) { book in
-                            NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    BookCoverView(
-                                        coverURL: book.cleanCoverURL,
-                                        title: book.title,
-                                        author: book.author,
-                                        genre: book.genre,
-                                        cornerRadius: 8
-                                    )
-                                    .frame(width: 80, height: 120)
-
-                                    Text(book.title)
-                                        .font(.caption2)
-                                        .fontWeight(.semibold)
-                                        .lineLimit(1)
-                                        .frame(width: 80, alignment: .leading)
-                                        .foregroundColor(Color(UIColor.label))
-
-                                    if let rating = book.rating {
-                                        Text(rating.rawValue)
-                                            .font(.system(size: 9))
-                                            .foregroundColor(.orange)
-                                    }
-                                }
+                            bookCard(for: book, isCompact: false)
+                        }
+                    }
+                    .padding(.top, 4)
+                } else {
+                    // Компактная горизонтальная карусель
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(completedBooks) { book in
+                                bookCard(for: book, isCompact: true)
                             }
-                            .buttonStyle(.plain)
                         }
                     }
                 }
@@ -505,6 +668,73 @@ public struct ReadingChallengeView: View {
             RoundedRectangle(cornerRadius: 16)
                 .stroke(theme.cardBorder(for: colorScheme), lineWidth: 1)
         )
+    }
+
+    private func statPill(title: String, value: String, icon: String) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.system(size: 9))
+                    .foregroundColor(theme.primaryAccent)
+                Text(title)
+                    .font(.system(size: 9, weight: .medium))
+                    .foregroundColor(.secondary)
+            }
+            Text(value)
+                .font(.system(size: 11, weight: .bold))
+                .foregroundColor(Color(UIColor.label))
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .background(Color(UIColor.tertiarySystemFill))
+        .cornerRadius(8)
+    }
+
+    private func bookCard(for book: Book, isCompact: Bool) -> some View {
+        Button(action: {
+            selectedBookForDetail = book
+        }) {
+            VStack(alignment: .leading, spacing: 4) {
+                BookCoverView(
+                    coverURL: book.cleanCoverURL,
+                    title: book.title,
+                    author: book.author,
+                    genre: book.genre,
+                    cornerRadius: 8
+                )
+                .frame(width: isCompact ? 80 : 120, height: isCompact ? 120 : 175)
+                .shadow(color: Color.black.opacity(0.12), radius: 4, x: 0, y: 2)
+
+                Text(book.title)
+                    .font(.caption2)
+                    .fontWeight(.semibold)
+                    .lineLimit(isCompact ? 1 : 2)
+                    .frame(width: isCompact ? 80 : 120, alignment: .leading)
+                    .foregroundColor(Color(UIColor.label))
+
+                Text(book.author)
+                    .font(.system(size: 10))
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                    .frame(width: isCompact ? 80 : 120, alignment: .leading)
+
+                if let rating = book.rating {
+                    Text(rating.rawValue)
+                        .font(.system(size: 9))
+                        .foregroundColor(.orange)
+                }
+
+                if !isCompact {
+                    Text("\(book.totalPages) стр.")
+                        .font(.system(size: 9, weight: .medium))
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .desktopHover(scale: 1.04, yOffset: -2)
     }
 
     private func bookWord(for count: Int) -> String {

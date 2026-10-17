@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../view_models/library_view_model.dart';
 import '../widgets/book_cover_widget.dart';
+import 'book_detail_view.dart';
 
 class ReadingChallengeView extends StatefulWidget {
   const ReadingChallengeView({super.key});
@@ -14,6 +15,7 @@ class ReadingChallengeView extends StatefulWidget {
 
 class _ReadingChallengeViewState extends State<ReadingChallengeView> {
   int _monthlySprintGoal = 400;
+  bool _isExpandedGrid = false;
   static const String _prefsKeyMonthlySprint = 'bp_monthly_sprint_goal';
 
   @override
@@ -30,11 +32,84 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
   }
 
   Future<void> _setMonthlyGoal(int goal) async {
+    final clamped = goal.clamp(50, 10000);
     setState(() {
-      _monthlySprintGoal = goal;
+      _monthlySprintGoal = clamped;
     });
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_prefsKeyMonthlySprint, goal);
+    await prefs.setInt(_prefsKeyMonthlySprint, clamped);
+  }
+
+  void _showSetMonthlyGoalDialog(BuildContext context) {
+    final controller = TextEditingController(text: '$_monthlySprintGoal');
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Цель спринта (до 10 000 стр)'),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: 'Количество страниц',
+            suffixText: 'стр.',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Отмена'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final val = int.tryParse(controller.text.trim());
+              if (val != null && val > 0) {
+                _setMonthlyGoal(val);
+              }
+              Navigator.pop(ctx);
+            },
+            child: const Text('Сохранить'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSetAnnualGoalDialog(BuildContext context, LibraryViewModel viewModel) {
+    final controller = TextEditingController(text: '${viewModel.annualGoal}');
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Годовая цель книг'),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: 'Количество книг',
+            suffixText: 'книг',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Отмена'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final val = int.tryParse(controller.text.trim());
+              if (val != null && val > 0) {
+                viewModel.setAnnualGoal(val);
+              }
+              Navigator.pop(ctx);
+            },
+            child: const Text('Сохранить'),
+          ),
+        ],
+      ),
+    );
   }
 
   static const List<String> _monthNames = [
@@ -50,6 +125,9 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
     final readBooks = viewModel.books.where((b) => b.isFinished).toList();
     final readBooksCount = readBooks.length;
     final annualGoal = viewModel.annualGoal;
+
+    final totalPagesReadCompleted = readBooks.fold<int>(0, (sum, b) => sum + b.totalPages);
+    final avgPages = readBooks.isNotEmpty ? (totalPagesReadCompleted / readBooks.length).round() : 0;
 
     final now = DateTime.now();
     final dayOfYear = int.parse("${now.difference(DateTime(now.year, 1, 1)).inDays + 1}");
@@ -101,22 +179,22 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              letterSpacing: 0.8,
+                              letterSpacing: 1.0,
                               color: primaryAccent,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '$readBooksCount из $annualGoal книг',
+                            '$readBooksCount из $annualGoal ${_bookWord(annualGoal)}',
                             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
                           color: primaryAccent.withOpacity(0.12),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           '${(percent * 100).toStringAsFixed(1)}%',
@@ -135,9 +213,33 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
                     child: LinearProgressIndicator(
                       value: percent,
                       minHeight: 12,
-                      backgroundColor: primaryAccent.withOpacity(0.12),
-                      valueColor: AlwaysStoppedAnimation<Color>(primaryAccent),
+                      backgroundColor: primaryAccent.withOpacity(0.15),
                     ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            '${max(0, annualGoal - readBooksCount)}',
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          const Text('Осталось', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                        ],
+                      ),
+                      Container(width: 1, height: 24, color: Colors.grey.withOpacity(0.3)),
+                      Column(
+                        children: [
+                          Text(
+                            '${daysInYear - dayOfYear}',
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          const Text('Дней осталось', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -145,7 +247,7 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
           ),
           const SizedBox(height: 16),
 
-          // 2. Анализ темпа (Pace analysis)
+          // 2. Умная аналитика темпа
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -155,15 +257,15 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
                   Row(
                     children: [
                       Icon(
-                        paceDifference >= 0 ? Icons.trending_up : Icons.timelapse,
+                        paceDifference >= 0 ? Icons.trending_up : Icons.warning_amber_rounded,
                         color: paceDifference >= 0 ? Colors.green : Colors.orange,
                         size: 20,
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        paceDifference >= 0 ? 'Опережаете график!' : 'Нужно ускориться',
+                        paceDifference >= 0 ? 'Вы опережаете график!' : 'Отставание от графика',
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: paceDifference >= 0 ? Colors.green : Colors.orange,
                         ),
@@ -171,12 +273,15 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  if (paceDifference >= 0)
-                    Text(
-                      'Вы прочитали на ${paceDifference.toInt()} ${_bookWord(paceDifference.toInt())} больше графика на текущий день года. Прекрасный результат!',
-                      style: const TextStyle(fontSize: 13, height: 1.4),
-                    )
-                  else ...[
+                  if (paceDifference >= 0) ...[
+                    Builder(builder: (context) {
+                      final ahead = paceDifference.toInt();
+                      return Text(
+                        'Вы прочитали на $ahead ${_bookWord(ahead)} больше, чем запланировано на этот день года. Отличный темп!',
+                        style: const TextStyle(fontSize: 13, height: 1.4),
+                      );
+                    }),
+                  ] else ...[
                     Builder(builder: (context) {
                       final behind = paceDifference.abs().toInt();
                       final remBooks = max(1, annualGoal - readBooksCount);
@@ -196,7 +301,7 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
           ),
           const SizedBox(height: 16),
 
-          // 2.5. Марафон текущего месяца (Спринт)
+          // 2.5. Марафон текущего месяца (Спринт с ползунком и вводом до 10 000 стр)
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -326,16 +431,57 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
 
-                  // Быстрый выбор цели спринта
+                  // Ползунок до 10 000 страниц и кнопка прямого ввода
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Шкала спринта (50 — 10 000 стр):',
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey),
+                      ),
+                      InkWell(
+                        onTap: () => _showSetMonthlyGoalDialog(context),
+                        borderRadius: BorderRadius.circular(6),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          child: Row(
+                            children: [
+                              Text(
+                                '$_monthlySprintGoal стр.',
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.orange),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.edit, size: 12, color: Colors.orange),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Slider(
+                    value: _monthlySprintGoal.clamp(50, 10000).toDouble(),
+                    min: 50,
+                    max: 10000,
+                    divisions: 199,
+                    activeColor: Colors.orange,
+                    label: '$_monthlySprintGoal стр',
+                    onChanged: (val) {
+                      _setMonthlyGoal(val.round());
+                    },
+                  ),
+
+                  // Быстрый выбор цели спринта до 10 000
                   Wrap(
                     spacing: 8,
-                    children: [250, 400, 600, 1000].map((goal) {
+                    runSpacing: 6,
+                    children: [300, 500, 1000, 2500, 5000, 10000].map((goal) {
                       final isSelected = _monthlySprintGoal == goal;
                       return ChoiceChip(
                         label: Text('$goal стр'),
                         selected: isSelected,
+                        selectedColor: Colors.orange.withOpacity(0.2),
                         onSelected: (_) => _setMonthlyGoal(goal),
                       );
                     }).toList(),
@@ -346,7 +492,7 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
           ),
           const SizedBox(height: 16),
 
-          // 3. Настройка годовой цели
+          // 3. Настройка годовой цели (Шаг = 1)
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -361,20 +507,33 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '$annualGoal ${_bookWord(annualGoal)} в год',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      InkWell(
+                        onTap: () => _showSetAnnualGoalDialog(context, viewModel),
+                        borderRadius: BorderRadius.circular(6),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          child: Row(
+                            children: [
+                              Text(
+                                '$annualGoal ${_bookWord(annualGoal)} в год',
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                              ),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.edit, size: 14, color: Colors.grey),
+                            ],
+                          ),
+                        ),
                       ),
                       Row(
                         children: [
                           IconButton.outlined(
                             icon: const Icon(Icons.remove, size: 18),
-                            onPressed: annualGoal > 5 ? () => viewModel.setAnnualGoal(annualGoal - 5) : null,
+                            onPressed: annualGoal > 1 ? () => viewModel.setAnnualGoal(annualGoal - 1) : null,
                           ),
                           const SizedBox(width: 8),
                           IconButton.outlined(
                             icon: const Icon(Icons.add, size: 18),
-                            onPressed: () => viewModel.setAnnualGoal(annualGoal + 5),
+                            onPressed: () => viewModel.setAnnualGoal(annualGoal + 1),
                           ),
                         ],
                       ),
@@ -383,7 +542,7 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
                   const SizedBox(height: 12),
                   Wrap(
                     spacing: 8,
-                    children: [20, 30, 50, 75, 100].map((preset) {
+                    children: [12, 24, 30, 50, 75, 100].map((preset) {
                       final isSelected = annualGoal == preset;
                       return ChoiceChip(
                         label: Text('$preset книг'),
@@ -398,62 +557,156 @@ class _ReadingChallengeViewState extends State<ReadingChallengeView> {
           ),
           const SizedBox(height: 16),
 
-          // 4. Виртуальная полка прочитанных книг
-          Text(
-            'Прочитано в 2026 году ($readBooksCount)',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          if (readBooks.isEmpty)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Center(
-                  child: Column(
+          // 4. Полка прочитанных книг с разворотом и открытием
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(Icons.auto_stories_outlined, size: 40, color: primaryAccent.withOpacity(0.5)),
-                      const SizedBox(height: 10),
-                      const Text('Пока нет прочитанных книг в 2026 году'),
+                      Text(
+                        'Прочитано в 2026 году ($readBooksCount)',
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      if (readBooks.isNotEmpty)
+                        TextButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              _isExpandedGrid = !_isExpandedGrid;
+                            });
+                          },
+                          icon: Icon(
+                            _isExpandedGrid ? Icons.view_headline : Icons.grid_view,
+                            size: 16,
+                          ),
+                          label: Text(_isExpandedGrid ? 'Свернуть' : 'Развернуть'),
+                        ),
                     ],
                   ),
-                ),
-              ),
-            )
-          else
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 0.65,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemCount: readBooks.length,
-              itemBuilder: (context, index) {
-                final book = readBooks[index];
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: BookCoverWidget(
-                        coverURL: book.cleanCoverURL,
-                        title: book.title,
-                        author: book.author,
-                        width: double.infinity,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
+                  if (readBooks.isNotEmpty) ...[
+                    const SizedBox(height: 6),
                     Text(
-                      book.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                      'Всего страниц: $totalPagesReadCompleted • Средний объём: $avgPages стр.',
+                      style: const TextStyle(fontSize: 11, color: Colors.grey),
                     ),
                   ],
-                );
-              },
+                  const SizedBox(height: 14),
+                  if (readBooks.isEmpty)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          children: [
+                            Icon(Icons.auto_stories_outlined, size: 40, color: primaryAccent.withOpacity(0.5)),
+                            const SizedBox(height: 10),
+                            const Text('Пока нет прочитанных книг в 2026 году'),
+                          ],
+                        ),
+                      ),
+                    )
+                  else if (_isExpandedGrid)
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 0.60,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                      ),
+                      itemCount: readBooks.length,
+                      itemBuilder: (context, index) {
+                        final book = readBooks[index];
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BookDetailView(book: book),
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: BookCoverWidget(
+                                  coverURL: book.cleanCoverURL,
+                                  title: book.title,
+                                  author: book.author,
+                                  width: double.infinity,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                book.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+                              ),
+                              Text(
+                                '${book.totalPages} стр.',
+                                style: const TextStyle(fontSize: 9, color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    )
+                  else
+                    SizedBox(
+                      height: 150,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: readBooks.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 12),
+                        itemBuilder: (context, index) {
+                          final book = readBooks[index];
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => BookDetailView(book: book),
+                                ),
+                              );
+                            },
+                            borderRadius: BorderRadius.circular(8),
+                            child: SizedBox(
+                              width: 85,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: BookCoverWidget(
+                                      coverURL: book.cleanCoverURL,
+                                      title: book.title,
+                                      author: book.author,
+                                      width: 85,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    book.title,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                ],
+              ),
             ),
+          ),
         ],
       ),
     );

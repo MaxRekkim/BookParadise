@@ -59,84 +59,91 @@ public struct HotReadsBentoView: View {
         let remainingTime = sessionManager.estimatedTimeToFinish(remainingPages: book.remainingPages).displayString
         let percent = Int(book.progressPercent)
         
-        return NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
-            VStack(alignment: .leading, spacing: 10) {
-                // Верхний статус времени
-                HStack {
-                    HStack(spacing: 4) {
-                        Image(systemName: "timer")
-                            .font(.system(size: 10))
-                        Text(remainingTime)
+        return VStack(alignment: .leading, spacing: 10) {
+            // Кликабельная область для перехода к карточке книги
+            NavigationLink(destination: BookDetailView(viewModel: viewModel, bookId: book.id)) {
+                VStack(alignment: .leading, spacing: 10) {
+                    // Верхний статус времени
+                    HStack {
+                        HStack(spacing: 4) {
+                            Image(systemName: "timer")
+                                .font(.system(size: 10))
+                            Text(remainingTime)
+                                .font(.system(size: 10, weight: .bold))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                        }
+                        .foregroundColor(.white.opacity(0.85))
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 3)
+                        .background(Color.white.opacity(0.16))
+                        .cornerRadius(7)
+                        
+                        Spacer()
+                        
+                        Image(systemName: "arrow.up.right")
                             .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.white.opacity(0.7))
+                            .padding(5)
+                            .background(Color.white.opacity(0.12))
+                            .clipShape(Circle())
                     }
-                    .foregroundColor(.white.opacity(0.85))
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 3)
-                    .background(Color.white.opacity(0.16))
-                    .cornerRadius(7)
                     
-                    Spacer()
+                    Spacer(minLength: 4)
                     
-                    Image(systemName: "arrow.up.right")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.white.opacity(0.7))
-                        .padding(5)
-                        .background(Color.white.opacity(0.12))
-                        .clipShape(Circle())
-                }
-                
-                Spacer()
-                
-                // Название и автор
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(book.title)
-                        .font(.subheadline)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
-                    
-                    Text(book.author)
-                        .font(.caption2)
-                        .foregroundColor(.white.opacity(0.7))
-                        .lineLimit(1)
-                }
-                
-                // Прогресс бар
-                HStack(spacing: 8) {
-                    ProgressView(value: book.progressPercent / 100.0)
-                        .tint(.white)
-                        .background(Color.white.opacity(0.2))
-                    
-                    Text("\(percent)%")
-                        .font(.system(size: 11, weight: .heavy, design: .rounded))
-                        .foregroundColor(.white)
-                }
-                
-                // Кнопка Быстрый старт чтения
-                Button(action: {
-                    selectedBookForSession = book
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "play.fill")
-                            .font(.system(size: 9))
-                        Text("Продолжить")
-                            .font(.system(size: 11, weight: .bold))
+                    // Название и автор
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(book.title)
+                            .font(.subheadline)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                        
+                        Text(book.author)
+                            .font(.caption2)
+                            .foregroundColor(.white.opacity(0.7))
+                            .lineLimit(1)
                     }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 6)
-                    .background(Color.white.opacity(0.22))
-                    .cornerRadius(8)
+                    
+                    // Прогресс бар
+                    HStack(spacing: 8) {
+                        ProgressView(value: book.progressPercent / 100.0)
+                            .tint(.white)
+                            .background(Color.white.opacity(0.2))
+                        
+                        Text("\(percent)%")
+                            .font(.system(size: 11, weight: .heavy, design: .rounded))
+                            .foregroundColor(.white)
+                    }
                 }
-                .buttonStyle(.plain)
+                .contentShape(Rectangle())
             }
-            .padding(14)
-            .frame(width: 230, height: 175)
-            .background(bgColor)
-            .cornerRadius(18)
-            .shadow(color: Color.black.opacity(0.12), radius: 6, x: 0, y: 3)
+            .buttonStyle(.plain)
+            
+            // Кнопка Быстрый старт чтения (без коллизии с NavigationLink)
+            Button(action: {
+                selectedBookForSession = book
+            }) {
+                HStack(spacing: 4) {
+                    Image(systemName: "play.fill")
+                        .font(.system(size: 9))
+                    Text("Продолжить")
+                        .font(.system(size: 11, weight: .bold))
+                }
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 6)
+                .background(Color.white.opacity(0.22))
+                .cornerRadius(8)
+            }
+            .buttonStyle(.plain)
         }
-        .buttonStyle(.plain)
+        .padding(14)
+        .frame(width: 230, height: 175)
+        .background(bgColor)
+        .cornerRadius(18)
+        .shadow(color: Color.black.opacity(0.12), radius: 6, x: 0, y: 3)
+        .desktopHover(scale: 1.03, yOffset: -3)
     }
 }

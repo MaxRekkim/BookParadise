@@ -564,12 +564,14 @@ public struct FilteredBooksView: View {
     public let title: String
     public let books: [Book]
     @ObservedObject public var viewModel: LibraryViewModel
+    public var onDismiss: (() -> Void)? = nil
     @State private var searchText: String = ""
 
-    public init(title: String, books: [Book], viewModel: LibraryViewModel) {
+    public init(title: String, books: [Book], viewModel: LibraryViewModel, onDismiss: (() -> Void)? = nil) {
         self.title = title
         self.books = books
         self.viewModel = viewModel
+        self.onDismiss = onDismiss
     }
 
     private var displayedBooks: [Book] {
@@ -626,6 +628,7 @@ public struct FilteredBooksView: View {
                             }
                         }
                         .buttonStyle(.plain)
+                        .desktopHover(scale: 1.04, yOffset: -2)
                     }
                 }
                 .padding()
@@ -635,6 +638,16 @@ public struct FilteredBooksView: View {
         .background(Color(UIColor.systemGroupedBackground))
         .navigationTitle("\(title) (\(books.count))")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if let onDismiss = onDismiss {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Готово") {
+                        onDismiss()
+                    }
+                    .fontWeight(.bold)
+                }
+            }
+        }
     }
 }
 

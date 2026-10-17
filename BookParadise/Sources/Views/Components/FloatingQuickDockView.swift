@@ -90,6 +90,7 @@ public struct FloatingQuickDockView: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .desktopHover(scale: 1.15, yOffset: -2)
     }
     
     private var dockDivider: some View {
