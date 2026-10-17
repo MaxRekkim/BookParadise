@@ -110,47 +110,44 @@ jobs:
           zip -r "BookParadise-${VERSION}.ipa" Payload
           rm -rf Payload
 
-      # --- MACOS (CATALYST DMG & PKG) ---
-      - name: Build macOS App (Mac Catalyst Release)
-        run: |
-          set -o pipefail
-          xcodebuild build \
-            -project "${{ steps.find-project.outputs.project_path }}" \
-            -scheme BookParadise \
-            -configuration Release \
-            -destination 'generic/platform=macOS,variant=Mac Catalyst' \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            BUILD_DIR="${{ github.workspace }}/build-mac" 2>&1 | tee xcode-mac.log
-
-      - name: Report macOS Build Failure
-        if: failure()
-        run: |
-          echo "::error::macOS Build Failed:"
-          grep -E "error:|fatal error:" xcode-mac.log | head -n 25 | while IFS= read -r line; do
-            echo "::error::$line"
-          done || true
-
-      - name: Package macOS App into .dmg and .pkg
+      # --- MACOS (NATIVE RAYCAST/LINEAR COCOA WEBKIT APP, DMG & PKG) ---
+      - name: Build macOS App (Native BookParadise_Mac DMG & PKG)
         run: |
           VERSION="${{ steps.get-version.outputs.version }}"
-          MAC_APP_PATH=$(find build-mac -name "BookParadise.app" -type d | head -n 1)
-          if [ -z "$MAC_APP_PATH" ]; then
-            echo "Error: BookParadise.app not found in build-mac!"
-            exit 1
-          fi
-          echo "Found macOS app at: $MAC_APP_PATH"
-
-          # 1. Образ диска DMG
-          mkdir -p dmg_folder
-          cp -R "$MAC_APP_PATH" dmg_folder/
-          ln -s /Applications dmg_folder/Applications
-          hdiutil create -volname "BookParadise" -srcfolder dmg_folder -ov -format UDZO "BookParadise-${VERSION}.dmg"
-          rm -rf dmg_folder
-
-          # 2. Инсталлятор PKG
-          pkgbuild --component "$MAC_APP_PATH" --install-location /Applications "BookParadise-${VERSION}.pkg"
+          cd BookParadise_Mac
+          npm install
+          npm run build
+          
+          APP_NAME="BookParadise"
+          APP_BUNDLE="BookParadise.app"
+          rm -rf "$APP_BUNDLE"
+          mkdir -p "${APP_BUNDLE}/Contents/MacOS"
+          mkdir -p "${APP_BUNDLE}/Contents/Resources"
+          
+          clang -O2 -fobjc-arc \
+            -target arm64-apple-macos12.0 \
+            -framework Cocoa \
+            -framework WebKit \
+            macos-runner/main.m \
+            -o "${APP_BUNDLE}/Contents/MacOS/${APP_NAME}"
+          chmod +x "${APP_BUNDLE}/Contents/MacOS/${APP_NAME}"
+          
+          cp macos-runner/Info.plist "${APP_BUNDLE}/Contents/Info.plist"
+          cp -r dist "${APP_BUNDLE}/Contents/Resources/"
+          
+          # PKG
+          mkdir -p pkg_root
+          cp -r "${APP_BUNDLE}" pkg_root/
+          pkgbuild --root pkg_root --identifier com.maxim.bookparadise.mac --version "$VERSION" --install-location /Applications "../BookParadise-${VERSION}.pkg"
+          rm -rf pkg_root
+          
+          # DMG
+          mkdir -p dmg_staging
+          cp -r "${APP_BUNDLE}" dmg_staging/
+          ln -s /Applications dmg_staging/Applications
+          hdiutil create -volname "BookParadise" -srcfolder dmg_staging -ov -format UDZO "../BookParadise-${VERSION}.dmg"
+          rm -rf dmg_staging
+          cd ..
 
       # --- ARTIFACTS ---
       - name: Upload iOS IPA Artifact
@@ -432,19 +429,21 @@ jobs:
           ls -lh dist-release/
 
       - name: Update manifest.plist for Apple OTA
+        env:
+          RELEASE_VERSION: ${{ steps.release-info.outputs.version }}
         run: |
-          VERSION="${{ steps.release-info.outputs.version }}"
           python3 -c "
-          import plistlib
+          import os, plistlib
+          ver = os.environ['RELEASE_VERSION']
           p = 'manifest.plist'
           with open(p, 'rb') as f:
               pl = plistlib.load(f)
-          pl['items'][0]['assets'][0]['url'] = f'https://github.com/MaxRekkim/BookParadise/releases/latest/download/BookParadise-{VERSION}.ipa'
-          pl['items'][0]['metadata']['bundle-version'] = str(VERSION)
+          pl['items'][0]['assets'][0]['url'] = 'https://github.com/MaxRekkim/BookParadise/releases/latest/download/BookParadise-' + ver + '.ipa'
+          pl['items'][0]['metadata']['bundle-version'] = ver
           with open(p, 'wb') as f:
               plistlib.dump(pl, f)
           "
-          echo "Generated manifest.plist for v$VERSION:"
+          echo "Generated manifest.plist for v${{ steps.release-info.outputs.version }}:"
           cat manifest.plist
 
       - name: Publish GitHub Release with all 4 platforms

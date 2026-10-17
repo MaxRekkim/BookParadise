@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Книжный Рай — macOS</title>
+    <style>
+      /* macOS Native Window System Styles */
+      * {
+        -webkit-user-drag: none;
+        user-select: none;
+      }
+      input, textarea, [contenteditable="true"] {
+        user-select: text;
+      }
+      /* Скрываем системные скроллбары для чистого Raycast-вида */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 9999px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+      .app-drag-region {
+        -webkit-app-region: drag;
+      }
+      .app-no-drag {
+        -webkit-app-region: no-drag;
+      }
+    </style>
+  </head>
+  <body class="bg-[#121216] text-[#f3f4f6] font-sans antialiased overflow-hidden select-none">
+    <div id="root" class="h-screen w-screen flex flex-col"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

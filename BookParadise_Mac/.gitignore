@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-ssr
+*.local
+*.app
+*.dmg
+*.pkg
+pkg_root
+dmg_staging
